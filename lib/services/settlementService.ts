@@ -33,9 +33,10 @@ export interface WebhookProcessResult {
   message: string;
 }
 
-// Default delay untuk background auto-settlement (10 detik agar realistis saat scan di HP)
+// Auto-settlement timer dinonaktifkan (Strict Real Webhook Mode)
+// Pesanan HANYA lunas jika ada notifikasi mutasi masuk dari aplikasi PaymentGatewayin
 let autoSettleDelayMs = 10_000;
-let isAutoSettlementEnabled = true;
+let isAutoSettlementEnabled = false;
 
 export const settlementService = {
   getAutoSettleDelayMs(): number {
