@@ -138,7 +138,13 @@ export const settlementService = {
 
     // Ping check dari aplikasi Android PaymentGatewayin
     const anyPayload = payload as any;
-    if (anyPayload.is_test || anyPayload.channel === 'Test Ping' || anyPayload.title === 'Uji Coba Ping') {
+    if (
+      anyPayload.is_test ||
+      anyPayload.channel === 'Test Ping' ||
+      anyPayload.app_name === 'Test Ping' ||
+      anyPayload.title === 'Uji Coba Ping' ||
+      (typeof anyPayload.raw_text === 'string' && anyPayload.raw_text.toLowerCase().includes('ping'))
+    ) {
       return {
         success: true,
         message: 'Koneksi ping dari aplikasi PaymentGatewayin berhasil tersambung!',

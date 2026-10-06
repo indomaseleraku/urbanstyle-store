@@ -67,3 +67,16 @@ export async function POST(request: Request) {
     );
   }
 }
+
+export async function GET() {
+  return NextResponse.json(
+    {
+      success: true,
+      service: 'PaymentGatewayin Webhook Receiver',
+      status: 'ONLINE',
+      message: 'Webhook endpoint aktif dan siap menerima mutasi transaksi.',
+      timestamp: new Date().toISOString(),
+    },
+    { status: 200 }
+  );
+}
