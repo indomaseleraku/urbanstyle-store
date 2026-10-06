@@ -90,39 +90,12 @@ export const settlementService = {
       };
     }
 
-    // Jika auto-settlement aktif, cek apakah batas waktu sudah terpenuhi
-    if (isAutoSettlementEnabled) {
-      const createdAtMs = new Date(order.created_at).getTime();
-      const nowMs = Date.now();
-      const elapsedMs = Math.max(0, nowMs - createdAtMs);
-
-      if (elapsedMs >= autoSettleDelayMs) {
-        // Sistem secara otonom memverifikasi dan mengubah status pesanan
-        await orderService.updateOrderStatus(order.order_number, 'Dibayar');
-        const updated = await orderService.getOrderByNumber(order.order_number);
-        return {
-          success: true,
-          order: updated || { ...order, status: 'Dibayar' },
-          settled: true,
-          remainingMs: 0,
-          reason: 'Diverifikasi otomatis oleh Sistem Backend UrbanStyle.',
-        };
-      }
-
-      return {
-        success: true,
-        order,
-        settled: false,
-        remainingMs: Math.max(0, autoSettleDelayMs - elapsedMs),
-        reason: 'Sistem sedang menunggu mutasi pembayaran dari acquirer...',
-      };
-    }
-
+    // Pesanan tetap dalam status Menunggu Pembayaran sampai webhook notifikasi HP masuk
     return {
       success: true,
       order,
       settled: false,
-      reason: 'Auto-settlement daemon nonaktif. Menunggu webhook mutasi.',
+      reason: 'Menunggu notifikasi pembayaran masuk dari aplikasi PaymentGatewayin...',
     };
   },
 

@@ -299,8 +299,6 @@ export default async function InvoicePage({ params }: { params: Promise<{ orderN
                   paymentMethod={order.payment_method}
                   amount={Number(order.total_amount)}
                 />
-
-                <InvoicePaymentButton orderNumber={order.order_number} currentStatus={order.status} />
               </div>
             ) : (
               /* QRIS Standar Bank Indonesia EMVCo & CRC-16 */
@@ -317,8 +315,6 @@ export default async function InvoicePage({ params }: { params: Promise<{ orderN
                   paymentMethod={order.payment_method}
                   amount={Number(order.total_amount)}
                 />
-
-                <InvoicePaymentButton orderNumber={order.order_number} currentStatus={order.status} />
               </div>
             )}
 
