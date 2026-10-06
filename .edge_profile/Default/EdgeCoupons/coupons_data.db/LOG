@@ -1,0 +1,6 @@
+2026/10/06-18:17:50.218 431c Reusing MANIFEST c:\project\websites\urbanstyle-store\.edge_profile\Default\EdgeCoupons/coupons_data.db/MANIFEST-000001
+2026/10/06-18:17:50.220 431c Recovering log #10
+2026/10/06-18:17:50.221 431c Reusing old log c:\project\websites\urbanstyle-store\.edge_profile\Default\EdgeCoupons/coupons_data.db/000010.log 
+2026/10/06-18:17:50.294 38cc Level-0 table #14: started
+2026/10/06-18:17:50.300 38cc Level-0 table #14: 683455 bytes OK
+2026/10/06-18:17:50.306 38cc Delete type=0 #10
