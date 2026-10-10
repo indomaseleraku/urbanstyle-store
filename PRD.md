@@ -1,19 +1,19 @@
 ---
 title: "PRD: urbanstyle-store"
-date: 2026-10-06
+date: 2026-10-10
 tags: [prd, website, urbanstyle-store]
 project_slug: urbanstyle-store
-status: Updated
+status: Production-Synchronized (V5.3)
 folder: c:\project\websites\urbanstyle-store
 ---
 
-# 📜 PRODUCT REQUIREMENT DOCUMENT (PRD) V5.2
+# 📜 PRODUCT REQUIREMENT DOCUMENT (PRD) V5.3
 # UrbanStyle Store — Flagship LifeWear E-Commerce Engine & Autonomous Payment Core
 **Proyek:** UrbanStyle Store (Codename: *Kuro-Commerce Engine*)  
 **Pemilik Proyek:** Kimy Eka Ardiansyah (Teknik Informatika, Universitas Pamulang)  
 **Dokumen:** `PRD.md` (Master Product Requirement Document)  
 **Target Milestone:** Ujian Akhir Semester (UAS), Publikasi Jurnal Komputer JIUP, & Komersialisasi White-Label Distro Fashion Lokal  
-**Status:** Approved & Implementation-Ready  
+**Status:** Approved & Production-Aligned (V5.3)  
 
 ---
 
@@ -21,12 +21,12 @@ folder: c:\project\websites\urbanstyle-store
 
 **UrbanStyle Store** adalah platform e-commerce retail fashion modern kelas industri yang menggabungkan estetika **Japanese Industrial Minimalism** (*Uniqlo LifeWear — Simple Made Better*) dengan keandalan sistem berskala enterprise:
 
-1. **Digital Editorial Flagship Experience:** Menghadirkan ritme visual majalah gaya hidup, edukasi kenyamanan teknologi tekstil (AIRism, Heavyweight Cotton, Double-Brushed Flannel), dan ergonomi sentuhan satu jempol (*mobile thumb zone*).
+1. **Digital Editorial Flagship Experience:** Menghadirkan ritme visual majalah gaya hidup, edukasi kenyamanan teknologi tekstil (AIRism, Heavyweight Cotton, Double-Brushed Flannel), katalog kurasi dewasa (Pria, Wanita, Unisex), dan ergonomi sentuhan satu jempol (*mobile thumb zone*).
 2. **In-House Zero-Fee Payment Engine:** Pemrosesan pembayaran transfer bank mandiri berbasis kode unik 3 digit acak dan generator QRIS Dinamis standar **EMVCo & CRC-16** mandiri (0% potongan fee pihak ketiga, 100% dana langsung masuk ke rekening/dompet merchant).
-3. **Autonomous WhatsApp CRM Service:** Microservice mandiri berbasis protokol WebSocket WhatsApp Multi-Device (**@whiskeysockets/baileys**) tanpa biaya langganan bulanan vendor (Rp 0), mengotomasi notifikasi tagihan, verifikasi lunas, dan nomor resi ekspedisi.
-4. **Pemisahan Pintu Autentikasi & Multi-Role RBAC:** Isolasi 100% antara portal pelanggan publik (`/login`) dan portal staf internal (`/admin/login`), dilengkapi modul penambahan karyawan bertingkat (Owner, Staf Gudang, Staf Kasir).
-5. **Atomic Inventory & Flexible Restock Control:** Kendali stok multi-varian kombinasi ($Warna \times Ukuran$) anti-overselling dengan input restok fleksibel tanpa batasan kelipatan kaku, didukung tombol jalan pintas cepat.
-6. **Dual-Mode Engine (UAS Sidang vs Komersial):** Bypass simulator transaksi 1-klik untuk pengujian interaktif dosen serta analitik **Decision Support System (DSS)** berbasis distribusi Pareto 80/20.
+3. **Autonomous Mobile Notification Gateway (PaymentGatewayin):** Aplikasi native Android khusus listener notifikasi perbankan & e-wallet merchant (GoBiz, BRImo, DANA, ShopeePay, Bank Jago, SeaBank) yang secara otonom mendeteksi mutasi dan menembak webhook ke server cloud (`/api/webhooks/payment`) untuk melunaskan pesanan detik itu juga tanpa perlu MacroDroid atau timer simulasi palsu.
+4. **Pemisahan Pintu Autentikasi & Multi-Role RBAC:** Isolasi 100% antara portal pelanggan publik (`/login`) dan portal staf internal (`/admin/login`), dilengkapi modul penambahan karyawan bertingkat (Owner, Staf Gudang, Staf Kasir) berproteksi session token HMAC.
+5. **Atomic Inventory & Flexible Restock Control:** Kendali stok varian anti-overselling dengan input restok fleksibel tanpa batasan kelipatan kaku, didukung tombol jalan pintas cepat `[+1], [+5], [+10], [+50]`.
+6. **Sistem Pengambilan Keputusan (DSS) Pareto:** Analitik **Decision Support System (DSS)** berbasis distribusi omzet Pareto 80/20 & klasifikasi ABC siap cetak laporan eksekutif A4.
 
 ---
 
@@ -141,11 +141,11 @@ Halaman utama dirancang dengan ritme visual editorial bertingkat agar mengelimin
   * Memodifikasi tag struktur EMVCo: menyuntikkan **Tag 54** (Transaction Amount = `grand_total`) dan mengubah tipe inisiasi ke dinamis (**Tag 01 = 12**).
   * Mengkalkulasi ulang kode integritas **Tag 63** menggunakan algoritma matematis **CRC-16/CCITT-FALSE**.
   * Hasil QRIS dinamis dirender di layar: pembeli dapat memindai via BCA Mobile, Livin Mandiri, GoPay, OVO, ShopeePay, Dana, dll., dengan nominal yang langsung terisi otomatis tanpa input manual.
-* **FR-15 (Verifikasi Pembayaran Ganda - Webhook & Upload Struk):**
-  * **Verifikasi Otomatis:** Endpoint `/api/webhooks/mutation` membaca mutasi bank/rekening. Jika mutasi masuk bernilai persis sama dengan `grand_total` pesanan yang *pending*, status otomatis berubah menjadi `PAID`.
-  * **Verifikasi Manual:** Tersedia formulir upload foto bukti transfer / tangkapan layar pembayaran bagi pembeli konvensional. Data masuk ke dasbor kasir admin untuk disetujui.
+* **FR-15 (Verifikasi Mutasi Otomatis via PaymentGatewayin & Webhook Receiver):**
+  * **Verifikasi Otomatis Webhook:** Endpoint resmi `/api/webhooks/payment` menerima sinyal mutasi terenkripsi dari aplikasi native Android **`PaymentGatewayin`** (menangkap notifikasi GoPay Merchant/GoBiz, BRImo, DANA Bisnis, ShopeePay, Bank Jago, SeaBank, BCA, Mandiri). Jika mutasi masuk bernilai cocok dengan `grand_total` pesanan yang *pending*, status otomatis berubah menjadi `DIBAYAR` (`PAID`) seketika secara otonom.
+  * **Verifikasi Manual Fallback:** Formulir upload bukti transfer dan pelunasan manual oleh kasir di dasbor admin SIM tetap tersedia sebagai cadangan jika jaringan ponsel merchant mengalami kendala.
 * **FR-16 (Pengurangan Stok Atomik PostgreSQL RPC):**
-  * Pemotongan kuantitas stok dijalankan via transaksi atomik database (`UPDATE product_variants SET stock = stock - qty WHERE id = variant_id AND stock >= qty`).
+  * Pemotongan kuantitas stok dijalankan via transaksi atomik database (`UPDATE products SET stock = stock - qty WHERE id = product_id AND stock >= qty`).
   * Mencegah insiden *race condition* atau penjualan melebihi kapasitas (*overselling*).
 
 ### 4.4. Autonomous WhatsApp CRM Bot (@whiskeysockets/baileys)
@@ -161,11 +161,11 @@ Halaman utama dirancang dengan ritme visual editorial bertingkat agar mengelimin
   * Seluruh pemanggilan fungsi notifikasi WhatsApp di web Next.js bersifat asinkron (`async / fire-and-forget`).
   * Jika server bot WhatsApp sedang offline/restart, transaksi checkout dan pembayaran di website dipastikan **tetap berjalan lancar 100% tanpa error**. Sistem mencatat log status pesan yang gagal terkirim.
 
-### 4.5. Faktur, Pelacakan Resi & Simulasi Ujian UAS
+### 4.5. Faktur, Pelacakan Resi & Real-Time Auto-Settlement
 * **FR-20 (Digital Invoice TPS & Print Ready):** Nota faktur resmi dengan rincian biaya, kode transaksi, cap status lunas, rincian potongan diskon, dan tombol *Cetak Faktur PDF*.
-* **FR-21 (Tombol Simulasi Sidang UAS Dosen):**
-  * Tombol `⚡ Simulasi Bayar Instan (Demo Dosen)` tersedia di halaman pembayaran ketika `NEXT_PUBLIC_DEMO_MODE=true`.
-  * Mengirim payload tiruan ke endpoint verifikasi untuk mengubah status transaksi menjadi `PAID` secara real-time di depan dosen tanpa perlu mentransfer uang sungguhan.
+* **FR-21 (Real-Time Radar Status Pelunasan Transaksi):**
+  * Komponen reaktif `RealtimePaymentStatus.tsx` melakukan radar polling cerdas ke `/api/orders/[orderNumber]/status` setiap 2.5 detik.
+  * Begitu notifikasi mutasi ditangkap oleh aplikasi Android `PaymentGatewayin` dan dikirimkan ke `/api/webhooks/payment`, status pesanan otomatis berubah menjadi `DIBAYAR` dengan audio chime lembut dan stempel resmi lunas tanpa perlu refresh manual ataupun timer palsu.
 * **FR-22 (Live Stepper Tracking Kurir):** Indikator status 5 tahap visual (*Dibuat $\rightarrow$ Terverifikasi $\rightarrow$ Dikemas $\rightarrow$ Dikirim $\rightarrow$ Selesai*) terhubung langsung dengan nomor resi kurir pengiriman.
 
 ### 4.6. Dasbor Manajemen Admin SIM, DSS & Manajemen Karyawan (RBAC)
