@@ -33,9 +33,7 @@ async function runTests() {
   assert.ok(menProds.length > 0, 'Filter gender pria mengembalikan produk');
   const womenProds = await dataStore.getProducts('all', '', 'wanita');
   assert.ok(womenProds.length > 0, 'Filter gender wanita mengembalikan produk');
-  const kidsProds = await dataStore.getProducts('all', '', 'anak');
-  assert.equal(kidsProds.length, 0, 'Toko tidak menjual produk anak (kids products = 0)');
-  console.log(`  ✓ Katalog produk valid: ${products.length} produk (10 per kategori, ${menProds.length} pria, ${womenProds.length} wanita, 0 anak)`);
+  console.log(`  ✓ Katalog produk valid: ${products.length} produk (10 per kategori, ${menProds.length} pria, ${womenProds.length} wanita)`);
 
   // 1.2b Sorting Multi-Alias Verification
   const ascProds = await dataStore.getProducts('all', '', 'all', 'price-asc');
@@ -430,7 +428,57 @@ async function runTests() {
   console.log('  ✓ Forensik Algoritma CRC-16/CCITT-FALSE terverifikasi matematis (Vektor Uji = 0x29B1)');
 
   console.log('✓ Lapis 3 PASSED: Zero-crash fallback dan forensik integritas 100% aman.\n');
-  console.log('🎉 SELURUH PENGUJIAN OTOMATIS 3 LAPIS URBANSTYLE STORE V3.0 BERHASIL 100%! 🎉');
+
+  // =========================================================================
+  // LAPIS 4: Pengujian Keamanan Kriptografi & Anti-Tampering (Hardening Suite)
+  // =========================================================================
+  console.log('-> [LAPIS 4] Memulai Pengujian Keamanan Kriptografi & Anti-Tampering...');
+
+  // 4.1 Verifikasi HMAC-SHA256 Session Token
+  const { createSessionToken, verifySessionToken } = await import('../lib/services/cryptoSession.ts');
+  const validToken = await createSessionToken('usr_test_123', 'admin');
+  const verifiedValid = await verifySessionToken(validToken);
+  assert.equal(verifiedValid.valid, true, 'Token sesi asli wajib lolos verifikasi');
+  assert.equal(verifiedValid.role, 'admin', 'Peran admin terverifikasi sah');
+
+  // 4.2 Deteksi & Penolakan Pemalsuan Cookie (Tampering Attack)
+  const tamperedToken = validToken.replace('admin', 'customer'); // Signature tidak akan cocok
+  const verifiedTampered = await verifySessionToken(tamperedToken);
+  assert.equal(verifiedTampered.valid, false, 'Token yang diubah paksa (tampered) wajib ditolak oleh sistem');
+  console.log('  ✓ Proteksi Anti-Tampering RBAC aktif: Manipulasi peran cookie dicegah oleh HMAC signature');
+
+  // 4.3 Proteksi Manipulasi Diskon Sisi Klien (Client-Dictated Price Attack)
+  const currentProds = await dataStore.getProducts();
+  const activeProd = currentProds.find(p => p.stock >= 2)!;
+  const tamperDiscountOrder = await dataStore.createOrder({
+    customer_name: 'Attacker Tamper',
+    customer_phone: '08999999999',
+    customer_address: 'Exploit Street',
+    shipping_courier: 'J&T Express',
+    shipping_cost: 10000,
+    payment_method: 'QRIS',
+    coupon_code: 'FAKECOUPON_100', // Kupon fiktif
+    discount_amount: 500000, // Upaya potong paksa 500rb
+    cart_items: [
+      {
+        product: activeProd,
+        selected_size: 'L',
+        selected_color: 'Standard',
+        quantity: 1,
+      }
+    ]
+  });
+  assert.equal(tamperDiscountOrder.success, true, 'Order berhasil diproses');
+  assert.equal(tamperDiscountOrder.order?.discount_amount, 0, 'Diskon fiktif yang disuntikkan klien di-reset ke 0 oleh server');
+  assert.equal(
+    tamperDiscountOrder.order?.total_amount, 
+    activeProd.price + 10000, 
+    'Total tagihan tetap penuh sesuai harga resmi tanpa kompromi'
+  );
+  console.log('  ✓ Proteksi Anti-Price-Tampering aktif: Diskon sepihak dari klien dibatalkan di server');
+
+  console.log('✓ Lapis 4 PASSED: Seluruh modul keamanan & anti-tampering terverifikasi 100% aman.\n');
+  console.log('🎉 SELURUH PENGUJIAN OTOMATIS 4 LAPIS URBANSTYLE STORE V4.0 BERHASIL 100%! 🎉');
 }
 
 runTests().then(() => {

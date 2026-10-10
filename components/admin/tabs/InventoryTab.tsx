@@ -35,7 +35,7 @@ export const InventoryTab: React.FC<InventoryTabProps> = ({
   const [newProductCategory, setNewProductCategory] = useState(1);
   const [newProductPrice, setNewProductPrice] = useState(199000);
   const [newProductStock, setNewProductStock] = useState(15);
-  const [newProductGender, setNewProductGender] = useState<'unisex' | 'pria' | 'wanita' | 'anak'>('unisex');
+  const [newProductGender, setNewProductGender] = useState<'unisex' | 'pria' | 'wanita'>('unisex');
   const [newProductImage, setNewProductImage] = useState('https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?auto=format&fit=crop&w=1000&q=80');
   const [newProductFabric, setNewProductFabric] = useState('100% Katun Combed 280 GSM');
 
@@ -180,7 +180,6 @@ export const InventoryTab: React.FC<InventoryTabProps> = ({
                 <option value="unisex">Unisex</option>
                 <option value="pria">Pria</option>
                 <option value="wanita">Wanita</option>
-                <option value="anak">Anak</option>
               </select>
             </div>
             <div>

@@ -45,7 +45,7 @@ export interface Category {
   id: number;
   name: string;
   slug: string;
-  gender?: 'all' | 'pria' | 'wanita' | 'anak';
+  gender?: 'all' | 'pria' | 'wanita';
   icon?: string;
 }
 
@@ -81,7 +81,7 @@ export interface Product {
   category_name?: string;
   name: string;
   slug: string;
-  gender: 'pria' | 'wanita' | 'unisex' | 'anak';
+  gender: 'pria' | 'wanita' | 'unisex';
   price: number;
   original_price?: number;
   stock: number;

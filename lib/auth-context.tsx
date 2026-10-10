@@ -6,6 +6,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { UserProfile, UserRole, StaffRole } from './types';
 import { INITIAL_USERS } from './mock-data';
+import { createSessionToken } from './services/cryptoSession';
 
 interface AuthContextType {
   user: UserProfile | null;
@@ -34,6 +35,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 const COOKIE_USER_KEY = 'urbanstyle_auth_user';
 const COOKIE_ROLE_KEY = 'urbanstyle_auth_role';
+const COOKIE_TOKEN_KEY = 'urbanstyle_session_token';
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<UserProfile | null>(null);
@@ -56,14 +58,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }, []);
 
-  const setAuthCookies = (u: UserProfile | null) => {
+  const setAuthCookies = async (u: UserProfile | null) => {
     if (typeof document === 'undefined') return;
     if (u) {
       document.cookie = `${COOKIE_USER_KEY}=${u.id}; path=/; max-age=604800; SameSite=Lax`;
       document.cookie = `${COOKIE_ROLE_KEY}=${u.role}; path=/; max-age=604800; SameSite=Lax`;
+      try {
+        const token = await createSessionToken(u.id, u.role);
+        document.cookie = `${COOKIE_TOKEN_KEY}=${token}; path=/; max-age=604800; SameSite=Lax`;
+      } catch (err) {
+        console.error('Gagal membuat signed token:', err);
+      }
     } else {
       document.cookie = `${COOKIE_USER_KEY}=; path=/; max-age=0; SameSite=Lax`;
       document.cookie = `${COOKIE_ROLE_KEY}=; path=/; max-age=0; SameSite=Lax`;
+      document.cookie = `${COOKIE_TOKEN_KEY}=; path=/; max-age=0; SameSite=Lax`;
     }
   };
 
@@ -138,6 +147,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return { 
         success: false, 
         message: 'Akses ditolak: Akun tidak terdaftar sebagai staf internal (Owner, Gudang, atau Kasir).' 
+      };
+    }
+
+    if (!pass || pass.trim().length === 0) {
+      setIsLoading(false);
+      return {
+        success: false,
+        message: 'Kata sandi wajib diisi untuk mengakses portal staf.',
       };
     }
 

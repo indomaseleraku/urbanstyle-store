@@ -1,10 +1,33 @@
 // app/api/orders/route.ts
-import { NextResponse } from 'next/server';
+import { NextResponse, type NextRequest } from 'next/server';
 import { dataStore } from '@/lib/store';
+import { verifySessionToken } from '@/lib/services/cryptoSession';
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    const orders = await dataStore.getOrders();
+    // 1. Proteksi Keamanan PII: Validasi hak akses sebelum mengembalikan data pesanan
+    const token = request.cookies.get('urbanstyle_session_token')?.value ||
+      request.headers.get('authorization')?.replace('Bearer ', '');
+
+    const session = await verifySessionToken(token);
+
+    if (!session.valid || !session.userId || !session.role) {
+      return NextResponse.json(
+        { 
+          success: false, 
+          message: 'Akses ditolak: Autentikasi sesi sah diperlukan untuk mengakses riwayat transaksi.' 
+        },
+        { status: 401 }
+      );
+    }
+
+    const isStaff = ['admin', 'owner', 'gudang', 'kasir'].includes(session.role);
+
+    // Staf berhak melihat semua pesanan, pelanggan hanya berhak melihat pesanan miliknya sendiri
+    const orders = isStaff 
+      ? await dataStore.getOrders() 
+      : await dataStore.getOrders(session.userId);
+
     return NextResponse.json({
       success: true,
       count: orders.length,

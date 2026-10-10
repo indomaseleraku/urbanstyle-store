@@ -84,7 +84,6 @@ export const EditProductModal: React.FC<EditProductModalProps> = ({
               <option value="unisex">Unisex</option>
               <option value="pria">Pria</option>
               <option value="wanita">Wanita</option>
-              <option value="anak">Anak</option>
             </select>
           </div>
 

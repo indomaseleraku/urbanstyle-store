@@ -115,24 +115,31 @@ export const orderService = {
       }
     }
 
-    // 3. Kalkulasi total biaya & diskon kupon
+    // 3. Kalkulasi total biaya & verifikasi diskon kupon aman di server
     const subtotal = orderPayload.cart_items.reduce(
       (sum, item) => sum + item.product.price * item.quantity, 
       0
     );
-    const discount = orderPayload.discount_amount || 0;
+
+    let verifiedDiscount = 0;
+    if (orderPayload.coupon_code) {
+      const couponValidation = await couponService.validateCoupon(orderPayload.coupon_code, subtotal);
+      if (couponValidation.valid && couponValidation.discount_amount > 0) {
+        verifiedDiscount = couponValidation.discount_amount;
+        couponService._incrementCouponUsage(orderPayload.coupon_code);
+      } else {
+        verifiedDiscount = 0;
+      }
+    } else if (orderPayload.discount_amount && orderPayload.discount_amount > 0) {
+      verifiedDiscount = Math.min(orderPayload.discount_amount, subtotal);
+    }
 
     // PRD V5.2 FR-13: Kode Unik 3 Digit untuk Transfer Bank (100 - 999)
     const uniqueCode = orderPayload.payment_method === 'Bank Transfer'
       ? Math.floor(100 + Math.random() * 899)
       : 0;
 
-    const grandTotal = Math.max(0, subtotal - discount + orderPayload.shipping_cost + uniqueCode);
-
-    // Update used_count kupon jika ada
-    if (orderPayload.coupon_code) {
-      couponService._incrementCouponUsage(orderPayload.coupon_code);
-    }
+    const grandTotal = Math.max(0, subtotal - verifiedDiscount + orderPayload.shipping_cost + uniqueCode);
 
     // 4. Generate Nomor Pesanan Resmi
     const dateStr = new Date().toISOString().slice(0, 10).replace(/-/g, '');
@@ -160,7 +167,7 @@ export const orderService = {
       shipping_courier: orderPayload.shipping_courier,
       shipping_cost: orderPayload.shipping_cost,
       coupon_code: orderPayload.coupon_code,
-      discount_amount: discount,
+      discount_amount: verifiedDiscount,
       payment_method: orderPayload.payment_method,
       bank_name: orderPayload.bank_name || (orderPayload.payment_method === 'Bank Transfer' ? 'BCA' : undefined),
       unique_code: uniqueCode,

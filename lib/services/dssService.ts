@@ -61,9 +61,9 @@ export const dssService = {
       }))
       .sort((a, b) => b.revenue - a.revenue);
 
-    // Hitung Kumulatif Pareto & Klasifikasi ABC
+    // Hitung Kumulatif Pareto & Klasifikasi ABC pada seluruh produk terjual
     let runningCumulative = 0;
-    const topProducts = sortedProducts.slice(0, 8).map((p) => {
+    const allClassifiedProducts = sortedProducts.map((p) => {
       runningCumulative += p.percentage;
       let abcClass: 'A' | 'B' | 'C' = 'C';
       let actionRecommendation = 'Evaluasi kuota / Kurangi stok pengadaan';
@@ -83,6 +83,8 @@ export const dssService = {
         actionRecommendation,
       };
     });
+
+    const topProducts = allClassifiedProducts.slice(0, 8);
 
     return {
       totalRevenue,

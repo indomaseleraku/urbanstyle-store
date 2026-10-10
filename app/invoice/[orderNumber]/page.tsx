@@ -62,12 +62,6 @@ export default async function InvoicePage({ params }: { params: Promise<{ orderN
               <Truck size={14} />
               <span>Lacak Pengiriman 🚚</span>
             </Link>
-            <Link
-              href="/admin"
-              className="text-xs font-bold uppercase tracking-wider text-zinc-600 hover:text-zinc-950 flex items-center gap-1 border border-zinc-300 bg-white px-3 py-1.5"
-            >
-              Dasbor SIM <ExternalLink size={12} />
-            </Link>
             <InvoicePrintButton />
           </div>
         </div>

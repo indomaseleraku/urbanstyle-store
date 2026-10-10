@@ -133,8 +133,6 @@ export const productService = {
         list = list.filter(p => p.gender === 'pria' || p.gender === 'unisex');
       } else if (categorySlug === 'wanita') {
         list = list.filter(p => p.gender === 'wanita' || p.gender === 'unisex');
-      } else if (categorySlug === 'anak') {
-        list = list.filter(p => p.gender === 'anak');
       } else {
         list = list.filter(p => {
           const cat = INITIAL_CATEGORIES.find(c => c.slug === categorySlug);
@@ -146,8 +144,6 @@ export const productService = {
     if (gender && gender !== 'all') {
       if (gender === 'sale') {
         list = list.filter(p => p.is_sale || (p.original_price && p.original_price > p.price));
-      } else if (gender === 'anak') {
-        list = list.filter(p => p.gender === 'anak');
       } else {
         list = list.filter(p => p.gender === gender || p.gender === 'unisex');
       }

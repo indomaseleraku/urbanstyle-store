@@ -53,9 +53,7 @@ async function sync() {
 
   console.log('\n--- VERIFYING SUPABASE GENDERS ---');
   const { data: dbProducts } = await supabase.from('products').select('id, category_id, name, gender');
-  const kidsCount = dbProducts?.filter(p => p.gender === 'anak').length || 0;
   console.log('Supabase total products:', dbProducts?.length);
-  console.log('Supabase kids products count:', kidsCount);
   console.log('Sync completed successfully!');
 }
 

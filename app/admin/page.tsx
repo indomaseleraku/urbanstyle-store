@@ -59,8 +59,10 @@ export default function AdminDashboardPage() {
   };
 
   useEffect(() => {
-    loadAllData();
-  }, [dssPeriod]);
+    if (isAdmin) {
+      loadAllData();
+    }
+  }, [dssPeriod, isAdmin]);
 
   // Tab switch guard based on RBAC role
   useEffect(() => {

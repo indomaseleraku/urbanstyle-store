@@ -1,29 +1,44 @@
 // middleware.ts
-// Edge Middleware Guard: Proteksi RBAC & Autentikasi Pengguna UrbanStyle Store
+// Edge Middleware Guard: Proteksi Kriptografi RBAC & Sesi Pengguna UrbanStyle Store
 
 import { NextResponse, type NextRequest } from 'next/server';
+import { verifySessionToken } from './lib/services/cryptoSession';
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  const authUser = request.cookies.get('urbanstyle_auth_user')?.value;
-  const authRole = request.cookies.get('urbanstyle_auth_role')?.value;
+  const sessionToken = request.cookies.get('urbanstyle_session_token')?.value;
+  const legacyRole = request.cookies.get('urbanstyle_auth_role')?.value;
+  const legacyUser = request.cookies.get('urbanstyle_auth_user')?.value;
+
+  // Verifikasi tanda tangan kriptografi token (HMAC-SHA256)
+  const session = await verifySessionToken(sessionToken);
+
+  let effectiveUser = session.valid ? session.userId : null;
+  let effectiveRole = session.valid ? session.role : null;
+
+  // Fallback sementara dengan deteksi tampering: jika cookie biasa dipasang manual tanpa token sah, anggap tidak valid
+  if (!session.valid && legacyUser && legacyRole) {
+    // Cookie polos tanpa token tanda tangan dianggap sebagai upaya tampering / sesi kadaluwarsa
+    effectiveUser = null;
+    effectiveRole = null;
+  }
+
+  const isStaffRole = ['admin', 'owner', 'gudang', 'kasir'].includes(effectiveRole || '');
 
   // 1. Proteksi Halaman Eksekutif Admin (/admin) & Portal Staf Terisolasi (/admin/login)
-  const isStaffRole = ['admin', 'owner', 'gudang', 'kasir'].includes(authRole || '');
-
   if (pathname === '/admin/login') {
-    // Jika staf sudah memiliki sesi login aktif, langsung alihkan ke dashboard admin
-    if (authUser && isStaffRole) {
+    // Jika staf sudah memiliki sesi login aktif yang sah, langsung alihkan ke dashboard admin
+    if (effectiveUser && isStaffRole) {
       return NextResponse.redirect(new URL('/admin', request.url));
     }
-    // Izinkan akses ke halaman login staf terisolasi
+    // Izinkan akses ke halaman login staf
     return NextResponse.next();
   }
 
   if (pathname.startsWith('/admin')) {
-    // Jika belum login atau bukan staf internal, alihkan ke portal /admin/login
-    if (!authUser || !isStaffRole) {
+    // Jika belum login atau bukan staf internal sah, alihkan ke portal /admin/login
+    if (!effectiveUser || !isStaffRole) {
       const url = new URL('/admin/login', request.url);
       if (pathname !== '/admin') {
         url.searchParams.set('redirect', pathname);
@@ -34,7 +49,7 @@ export async function middleware(request: NextRequest) {
 
   // 2. Proteksi Halaman Portal Akun Member (/account)
   if (pathname.startsWith('/account')) {
-    if (!authUser) {
+    if (!effectiveUser) {
       const url = new URL('/', request.url);
       url.searchParams.set('login', 'required');
       url.searchParams.set('redirect', '/account');
