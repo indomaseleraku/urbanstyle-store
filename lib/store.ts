@@ -23,6 +23,7 @@ import { staffService } from './services/staffService';
 import { dssService } from './services/dssService';
 import { qrisService } from './services/qrisService';
 import { settlementService, PaymentWebhookPayload } from './services/settlementService';
+import { reservationService } from './services/reservationService';
 
 import { 
   Product, Category, Order, Review, Coupon, 
@@ -105,4 +106,9 @@ export const dataStore = {
   checkAndSettleOrder: (orderNumber: string) => settlementService.checkAndSettleOrder(orderNumber),
   processPaymentWebhook: (payload: PaymentWebhookPayload) => settlementService.processPaymentWebhook(payload),
   simulateInstantSettle: (orderNumber: string) => settlementService.simulateInstantSettle(orderNumber),
+
+  // 12. 10-Minute Inventory Stock Reservation (PRD 3.0 Seksi 5 & 6)
+  reserveCartItems: (sessionId: string, items: CartItem[]) => reservationService.reserveItems(sessionId, items),
+  releaseCartReservation: (sessionId: string) => reservationService.releaseReservation(sessionId),
+  getReservedStockQuantity: (productId: number, size?: string, color?: string) => reservationService.getReservedQuantity(productId, size, color),
 };

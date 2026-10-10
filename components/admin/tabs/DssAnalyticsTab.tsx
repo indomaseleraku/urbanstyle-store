@@ -1,12 +1,10 @@
 // components/admin/tabs/DssAnalyticsTab.tsx
-// Executive Decision Support System (DSS) & Pareto 80/20 ABC Analysis Tab Component
+'use client';
 
 import React from 'react';
-import { 
-  Clock, Printer, Download, TrendingUp, ShoppingCart, 
-  Package, AlertTriangle, Lock 
-} from 'lucide-react';
+import { Clock, Printer, Download, TrendingUp, ShoppingCart, Package, AlertTriangle, Lock } from 'lucide-react';
 import { Order } from '@/lib/types';
+import DssAbcMatrix from './dss/DssAbcMatrix';
 
 export interface DSSData {
   totalRevenue: number;
@@ -43,7 +41,7 @@ export const DssAnalyticsTab: React.FC<DssAnalyticsTabProps> = ({
 }) => {
   if (isGudang) {
     return (
-      <div className="bg-amber-50 border border-amber-300 p-4 text-xs text-amber-900 flex items-start gap-2.5">
+      <div className="bg-amber-50 border border-amber-300 p-4 text-xs text-amber-900 flex items-start gap-2.5 rounded-none font-sans">
         <Lock size={16} className="text-amber-700 shrink-0 mt-0.5" />
         <div>
           <p className="font-bold uppercase tracking-tight">Wewenang Dibatasi (RBAC PRD V5.2 FR-23)</p>
@@ -57,7 +55,7 @@ export const DssAnalyticsTab: React.FC<DssAnalyticsTabProps> = ({
 
   if (!dssData) {
     return (
-      <div className="p-8 text-center text-xs text-zinc-500 bg-white border border-zinc-200">
+      <div className="p-8 text-center text-xs text-zinc-500 bg-white border border-zinc-200 rounded-none font-sans">
         Memuat data Decision Support System...
       </div>
     );
@@ -65,7 +63,7 @@ export const DssAnalyticsTab: React.FC<DssAnalyticsTabProps> = ({
 
   const handleExportCSV = () => {
     const headers = ['No. Pesanan', 'Tanggal', 'Nama Pelanggan', 'No. WhatsApp', 'Kurir', 'Total Biaya (Rp)', 'Status', 'Nomor Resi'];
-    const rows = orders.map(o => [
+    const rows = orders.map((o) => [
       o.order_number,
       new Date(o.created_at).toLocaleDateString('id-ID'),
       `"${o.customer_name.replace(/"/g, '""')}"`,
@@ -75,8 +73,7 @@ export const DssAnalyticsTab: React.FC<DssAnalyticsTabProps> = ({
       o.status,
       o.tracking_number || '-',
     ]);
-
-    const csvContent = 'data:text/csv;charset=utf-8,\uFEFF' + [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+    const csvContent = 'data:text/csv;charset=utf-8,\uFEFF' + [headers.join(','), ...rows.map((r) => r.join(','))].join('\n');
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement('a');
     link.setAttribute('href', encodedUri);
@@ -87,189 +84,77 @@ export const DssAnalyticsTab: React.FC<DssAnalyticsTabProps> = ({
   };
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-200">
-      
+    <div className="space-y-6 font-sans">
       {/* Action Bar: Period Selector & Print / Export */}
-      <div className="bg-white p-4 border border-zinc-200 flex flex-wrap items-center justify-between gap-3 shadow-2xs print:hidden">
+      <div className="bg-white p-4 border border-zinc-200 flex flex-wrap items-center justify-between gap-3 shadow-2xs print:hidden rounded-none">
         <div className="flex items-center gap-2">
           <span className="text-xs font-bold uppercase text-zinc-500 flex items-center gap-1">
-            <Clock size={14} />
-            <span>Periode Analisis:</span>
+            <Clock size={14} /> <span>Periode Analisis:</span>
           </span>
-          <div className="inline-flex border border-zinc-300 text-xs font-bold uppercase overflow-hidden">
-            <button
-              onClick={() => setDssPeriod('all')}
-              className={`px-3 py-1.5 transition-colors cursor-pointer ${dssPeriod === 'all' ? 'bg-zinc-950 text-white' : 'bg-white hover:bg-zinc-100 text-zinc-700'}`}
-            >
-              Semua Waktu
-            </button>
-            <button
-              onClick={() => setDssPeriod('30days')}
-              className={`px-3 py-1.5 border-l border-zinc-300 transition-colors cursor-pointer ${dssPeriod === '30days' ? 'bg-zinc-950 text-white' : 'bg-white hover:bg-zinc-100 text-zinc-700'}`}
-            >
-              30 Hari Terakhir
-            </button>
-            <button
-              onClick={() => setDssPeriod('7days')}
-              className={`px-3 py-1.5 border-l border-zinc-300 transition-colors cursor-pointer ${dssPeriod === '7days' ? 'bg-zinc-950 text-white' : 'bg-white hover:bg-zinc-100 text-zinc-700'}`}
-            >
-              7 Hari Terakhir
-            </button>
-            <button
-              onClick={() => setDssPeriod('today')}
-              className={`px-3 py-1.5 border-l border-zinc-300 transition-colors cursor-pointer ${dssPeriod === 'today' ? 'bg-zinc-950 text-white' : 'bg-white hover:bg-zinc-100 text-zinc-700'}`}
-            >
-              Hari Ini
-            </button>
+          <div className="inline-flex border border-zinc-300 text-xs font-bold uppercase overflow-hidden rounded-none">
+            {(['all', 'today', '7days', '30days'] as const).map((p) => (
+              <button
+                key={p} onClick={() => setDssPeriod(p)}
+                className={`px-3 py-1.5 cursor-pointer ${dssPeriod === p ? 'bg-zinc-950 text-white' : 'bg-white hover:bg-zinc-100 text-zinc-700'}`}
+              >
+                {p === 'all' ? 'Sepanjang Waktu' : p === 'today' ? 'Hari Ini' : p === '7days' ? '7 Hari Terakhir' : '30 Hari Terakhir'}
+              </button>
+            ))}
           </div>
         </div>
 
         <div className="flex items-center gap-2">
-          <button
-            onClick={() => window.print()}
-            className="flex items-center gap-1.5 px-3 py-1.5 border border-zinc-300 bg-white hover:bg-zinc-100 text-zinc-800 text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer"
-          >
-            <Printer size={14} />
-            <span>Cetak Laporan DSS (A4)</span>
+          <button onClick={() => window.print()} className="px-3 py-1.5 border border-zinc-300 bg-white hover:bg-zinc-100 text-zinc-800 text-xs font-bold uppercase flex items-center gap-1.5 rounded-none cursor-pointer">
+            <Printer size={13} /> <span>Cetak Laporan</span>
           </button>
-          <button
-            onClick={handleExportCSV}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-zinc-950 hover:bg-[#E60012] text-white text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer"
-          >
-            <Download size={14} />
-            <span>Ekspor CSV Transaksi</span>
+          <button onClick={handleExportCSV} className="px-3 py-1.5 bg-zinc-950 hover:bg-[#E60012] text-white text-xs font-bold uppercase flex items-center gap-1.5 rounded-none cursor-pointer">
+            <Download size={13} /> <span>Ekspor CSV</span>
           </button>
         </div>
       </div>
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white p-5 border border-zinc-200 shadow-2xs">
-          <div className="flex items-center justify-between text-zinc-500 mb-2">
-            <span className="text-[11px] font-bold uppercase tracking-wider">Total Omzet Bersih</span>
-            <TrendingUp size={16} className="text-[#E60012]" />
+        <div className="bg-white p-5 border border-zinc-200 shadow-2xs rounded-none">
+          <div className="flex items-center justify-between text-zinc-400">
+            <span className="text-[10px] font-bold uppercase tracking-wider">Total Omzet Penjualan</span>
+            <TrendingUp size={16} className="text-emerald-600" />
           </div>
-          <p className="text-xl sm:text-2xl font-black text-zinc-950">
+          <p className="text-xl sm:text-2xl font-black font-mono text-zinc-950 mt-2 tabular-nums">
             Rp {dssData.totalRevenue.toLocaleString('id-ID')}
           </p>
-          <p className="text-[11px] text-zinc-400 mt-1">Status pesanan Dibayar s/d Selesai</p>
         </div>
-
-        <div className="bg-white p-5 border border-zinc-200 shadow-2xs">
-          <div className="flex items-center justify-between text-zinc-500 mb-2">
-            <span className="text-[11px] font-bold uppercase tracking-wider">Volume Transaksi (TPS)</span>
-            <ShoppingCart size={16} className="text-zinc-700" />
+        <div className="bg-white p-5 border border-zinc-200 shadow-2xs rounded-none">
+          <div className="flex items-center justify-between text-zinc-400">
+            <span className="text-[10px] font-bold uppercase tracking-wider">Total Transaksi</span>
+            <ShoppingCart size={16} className="text-zinc-600" />
           </div>
-          <p className="text-xl sm:text-2xl font-black text-zinc-950">
+          <p className="text-xl sm:text-2xl font-black font-mono text-zinc-950 mt-2 tabular-nums">
             {dssData.totalOrders} Pesanan
           </p>
-          <p className="text-[11px] text-zinc-400 mt-1">Total order tercatat dalam periode</p>
         </div>
-
-        <div className="bg-white p-5 border border-zinc-200 shadow-2xs">
-          <div className="flex items-center justify-between text-zinc-500 mb-2">
-            <span className="text-[11px] font-bold uppercase tracking-wider">SKU Katalog Aktif</span>
-            <Package size={16} className="text-zinc-700" />
+        <div className="bg-white p-5 border border-zinc-200 shadow-2xs rounded-none">
+          <div className="flex items-center justify-between text-zinc-400">
+            <span className="text-[10px] font-bold uppercase tracking-wider">Total SKU Produk</span>
+            <Package size={16} className="text-zinc-600" />
           </div>
-          <p className="text-xl sm:text-2xl font-black text-zinc-950">
+          <p className="text-xl sm:text-2xl font-black font-mono text-zinc-950 mt-2 tabular-nums">
             {dssData.totalProducts} Model
           </p>
-          <p className="text-[11px] text-zinc-400 mt-1">Siap dipasarkan di etalase</p>
         </div>
-
-        <div className="bg-white p-5 border border-zinc-200 shadow-2xs">
-          <div className="flex items-center justify-between text-zinc-500 mb-2">
-            <span className="text-[11px] font-bold uppercase tracking-wider">SKU Stok Kritis</span>
+        <div className="bg-white p-5 border border-zinc-200 shadow-2xs rounded-none">
+          <div className="flex items-center justify-between text-zinc-400">
+            <span className="text-[10px] font-bold uppercase tracking-wider">Stok Kritis (&le;5)</span>
             <AlertTriangle size={16} className="text-[#E60012]" />
           </div>
-          <p className="text-xl sm:text-2xl font-black text-[#E60012]">
+          <p className="text-xl sm:text-2xl font-black font-mono text-[#E60012] mt-2 tabular-nums">
             {dssData.criticalStockCount} Item
           </p>
-          <p className="text-[11px] text-red-500 mt-1 font-semibold">Stok gudang tersisa ≤ 5 unit</p>
         </div>
       </div>
 
-      {/* Pareto 80/20 & ABC Analysis Matrix Card */}
-      <div className="bg-white p-6 border border-zinc-200 shadow-2xs space-y-4">
-        <div className="flex flex-wrap items-center justify-between border-b border-zinc-200 pb-4 gap-2">
-          <div>
-            <h3 className="text-base font-extrabold uppercase tracking-tight text-zinc-950 flex items-center gap-2">
-              <span>Analisis Pareto 80/20 & Klasifikasi ABC (DSS Decision Engine)</span>
-              <span className="text-[10px] bg-red-100 text-[#E60012] px-2 py-0.5 font-mono font-bold">PRD V5.2 FR-25</span>
-            </h3>
-            <p className="text-xs text-zinc-500 mt-0.5">
-              Metode klasifikasi persediaan: Kelas A menyumbang 80% omzet kumulatif, Kelas B 15%, dan Kelas C 5%
-            </p>
-          </div>
-          <div className="flex items-center gap-1 text-[11px] font-mono">
-            <span className="px-2 py-0.5 bg-red-100 text-[#E60012] font-bold border border-red-200">Kelas A: Omzet 80%</span>
-            <span className="px-2 py-0.5 bg-amber-100 text-amber-800 font-bold border border-amber-200">Kelas B: Omzet 15%</span>
-            <span className="px-2 py-0.5 bg-zinc-100 text-zinc-700 font-bold border border-zinc-200">Kelas C: Omzet 5%</span>
-          </div>
-        </div>
-
-        {/* Table Pareto ABC */}
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs">
-            <thead className="bg-zinc-50 border-y border-zinc-200 text-zinc-600 font-bold uppercase tracking-wider text-[11px]">
-              <tr>
-                <th className="py-3 px-3 w-12 text-center">Rank</th>
-                <th className="py-3 px-4">Nama Produk Unggulan</th>
-                <th className="py-3 px-4 text-center">Terjual</th>
-                <th className="py-3 px-4">Total Omzet</th>
-                <th className="py-3 px-4 text-center">Kontribusi (%)</th>
-                <th className="py-3 px-4 text-center">Kumulatif (%)</th>
-                <th className="py-3 px-4 text-center">Kelas ABC</th>
-                <th className="py-3 px-4">Rekomendasi Keputusan SIM</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-zinc-200">
-              {dssData.topProducts.map((p, idx) => (
-                <tr key={idx} className="hover:bg-zinc-50/80 transition-colors">
-                  <td className="py-3 px-3 text-center font-mono font-bold">
-                    <span className={`w-6 h-6 inline-flex items-center justify-center text-xs ${
-                      p.abcClass === 'A' ? 'bg-[#E60012] text-white' : 'bg-zinc-200 text-zinc-800'
-                    }`}>
-                      {idx + 1}
-                    </span>
-                  </td>
-                  <td className="py-3 px-4 font-bold text-zinc-950 uppercase">
-                    {p.name}
-                  </td>
-                  <td className="py-3 px-4 text-center font-mono font-semibold">
-                    {p.sold} Unit
-                  </td>
-                  <td className="py-3 px-4 font-mono font-bold text-zinc-900">
-                    Rp {p.revenue.toLocaleString('id-ID')}
-                  </td>
-                  <td className="py-3 px-4 text-center font-mono">
-                    {p.percentage.toFixed(1)}%
-                  </td>
-                  <td className="py-3 px-4 text-center font-mono font-bold text-zinc-800">
-                    {p.cumulativePercentage}%
-                  </td>
-                  <td className="py-3 px-4 text-center">
-                    <span className={`px-2.5 py-0.5 text-xs font-black font-mono border ${
-                      p.abcClass === 'A' 
-                        ? 'bg-red-50 text-[#E60012] border-red-300' 
-                        : p.abcClass === 'B' 
-                          ? 'bg-amber-50 text-amber-800 border-amber-300' 
-                          : 'bg-zinc-100 text-zinc-600 border-zinc-300'
-                    }`}>
-                      KELAS {p.abcClass}
-                    </span>
-                  </td>
-                  <td className="py-3 px-4 text-[11px] text-zinc-700">
-                    {p.actionRecommendation}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-
-      </div>
-
+      {/* Pareto ABC Analysis Table */}
+      <DssAbcMatrix topProducts={dssData.topProducts} />
     </div>
   );
 };

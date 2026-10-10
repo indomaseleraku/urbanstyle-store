@@ -50,12 +50,12 @@ export default function UserAccountMenu() {
       <button
         type="button"
         onClick={() => setDropdownOpen(!dropdownOpen)}
-        className="flex items-center gap-1.5 p-1.5 rounded-full hover:bg-zinc-100 transition-colors cursor-pointer group"
+        className="flex items-center gap-1.5 p-1.5 rounded-none hover:bg-zinc-100 transition-colors cursor-pointer group"
         title="Menu Akun Member"
         aria-label="Keanggotaan / Riwayat pembelian"
       >
         <div
-          className={`w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-black text-white shadow-xs ${
+          className={`w-7 h-7 rounded-none flex items-center justify-center text-[10px] font-black text-white ${
             isAdmin
               ? 'bg-[#E60012]'
               : 'bg-zinc-900'

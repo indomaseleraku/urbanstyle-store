@@ -3,6 +3,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { motion } from 'framer-motion';
 import { Product } from '@/lib/types';
 import { getOptimizedImageUrl } from '@/lib/utils';
 import { Heart, Star, Eye } from 'lucide-react';
@@ -47,15 +48,20 @@ export default function ProductCard({
   const hasDiscount = Boolean(product.original_price && product.original_price > product.price);
 
   return (
-    <div className="group border-none bg-transparent rounded-none transition-all duration-200 flex flex-col relative">
+    <motion.div 
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3, ease: 'easeOut' }}
+      className="group border-none bg-transparent rounded-none flex flex-col relative"
+    >
       
-      {/* A. BLOK GAMBAR (Rasio 3:4) */}
+      {/* A. BLOK GAMBAR (Rasio 3:4 LifeWear Standard) */}
       <div className="relative aspect-[3/4] overflow-hidden bg-[#F6F6F6] rounded-none">
         <Link href={`/product/${product.id}`} className="block w-full h-full">
           <img
             src={getOptimizedImageUrl(currentColor.image_url, 450, 75)}
             alt={product.name}
-            className="w-full h-full object-cover object-center group-hover:scale-[1.03] transition-transform duration-500"
+            className="w-full h-full object-cover object-center group-hover:scale-[1.03] transition-transform duration-500 ease-out"
             loading="lazy"
           />
         </Link>
@@ -75,15 +81,18 @@ export default function ProductCard({
           </div>
         ) : null}
 
-        {/* Pojok kanan atas: Tombol icon Wishlist outline tipis transparan (Heart) */}
+        {/* Pojok kanan atas: Tombol icon Wishlist outline tipis transparan (Heart) dengan spring tactile tap */}
         <div className="absolute top-2 right-2 z-10">
-          <button
+          <motion.button
+            whileTap={{ scale: 0.85 }}
+            whileHover={{ scale: 1.1 }}
+            transition={{ type: 'spring', stiffness: 400, damping: 17 }}
             type="button"
             onClick={handleWishlist}
-            className={`p-1.5 rounded-none transition-all duration-200 cursor-pointer ${
+            className={`p-1.5 rounded-none transition-colors duration-200 cursor-pointer ${
               isWishlisted
-                ? 'text-[#E60012] bg-white/80'
-                : 'text-zinc-500 hover:text-[#E60012] bg-white/50 hover:bg-white/80'
+                ? 'text-[#E60012] bg-white/90 shadow-xs'
+                : 'text-zinc-500 hover:text-[#E60012] bg-white/60 hover:bg-white/90'
             }`}
             title={isWishlisted ? 'Hapus dari Favorit' : 'Simpan ke Favorit'}
             aria-label="Wishlist"
@@ -93,19 +102,20 @@ export default function ProductCard({
               strokeWidth={1.5}
               fill={isWishlisted ? '#E60012' : 'none'}
             />
-          </button>
+          </motion.button>
         </div>
 
         {/* Efek Hover: Tombol Quick View semi-transparan muncul lembut di bagian bawah foto */}
         {onOpenDetail && (
-          <button
+          <motion.button
+            whileTap={{ scale: 0.97 }}
             type="button"
             onClick={handleQuickView}
-            className="absolute inset-x-0 bottom-0 py-2.5 bg-black/60 hover:bg-black/80 backdrop-blur-xs text-white text-[10px] font-bold uppercase tracking-wider text-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-1.5 z-10 cursor-pointer"
+            className="absolute inset-x-0 bottom-0 py-2.5 bg-black/75 hover:bg-black/90 backdrop-blur-xs text-white text-[10px] font-bold uppercase tracking-wider text-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-1.5 z-10 cursor-pointer"
           >
             <Eye size={13} />
             <span>Lihat Cepat (Quick View)</span>
-          </button>
+          </motion.button>
         )}
       </div>
 
@@ -162,15 +172,15 @@ export default function ProductCard({
         <div className="flex items-baseline gap-1.5 flex-wrap pt-0.5">
           {hasDiscount ? (
             <>
-              <span className="text-[#E60012] font-mono font-bold text-sm sm:text-base">
+              <span className="text-[#E60012] font-mono font-bold text-sm sm:text-base tabular-nums">
                 Rp {product.price.toLocaleString('id-ID')}
               </span>
-              <span className="text-zinc-400 line-through text-xs font-mono">
+              <span className="text-zinc-400 line-through text-xs font-mono tabular-nums">
                 Rp {product.original_price?.toLocaleString('id-ID')}
               </span>
             </>
           ) : (
-            <span className="text-zinc-950 font-mono font-bold text-sm sm:text-base">
+            <span className="text-zinc-950 font-mono font-bold text-sm sm:text-base tabular-nums">
               Rp {product.price.toLocaleString('id-ID')}
             </span>
           )}
@@ -188,6 +198,6 @@ export default function ProductCard({
         </div>
       </div>
 
-    </div>
+    </motion.div>
   );
 }

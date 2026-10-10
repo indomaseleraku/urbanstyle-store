@@ -7,7 +7,7 @@ import { OrderStatus } from '@/lib/types';
 
 interface RealtimePaymentStatusProps {
   orderNumber: string;
-  initialStatus: OrderStatus;
+  initialStatus?: OrderStatus;
   paymentMethod?: string;
   amount?: number;
   onStatusChanged?: (newStatus: OrderStatus) => void;
@@ -47,7 +47,7 @@ function playSuccessChime() {
 
 export function RealtimePaymentStatus({
   orderNumber,
-  initialStatus,
+  initialStatus = 'Menunggu Pembayaran',
   paymentMethod = 'QRIS',
   amount,
   onStatusChanged,

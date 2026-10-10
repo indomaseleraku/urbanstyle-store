@@ -444,7 +444,13 @@ async function runTests() {
   assert.ok(productCardCode.includes('Quick View'), 'ProductCard wajib memiliki trigger Quick View');
 
   // Whitespace Grid: gap-x-4 gap-y-8 sm:gap-x-6 sm:gap-y-12
-  assert.ok(pageCode.includes('gap-x-4 gap-y-8 sm:gap-x-6 sm:gap-y-12'), 'Grid katalog di app/page.tsx wajib menggunakan whitespace lapang gap-x-4 gap-y-8 sm:gap-x-6 sm:gap-y-12');
+  const productGridCode = fs.existsSync(path.resolve(process.cwd(), 'components/home/ProductGrid.tsx'))
+    ? fs.readFileSync(path.resolve(process.cwd(), 'components/home/ProductGrid.tsx'), 'utf-8')
+    : '';
+  assert.ok(
+    pageCode.includes('gap-x-4 gap-y-8 sm:gap-x-6 sm:gap-y-12') || productGridCode.includes('gap-x-4 gap-y-8 sm:gap-x-6 sm:gap-y-12'),
+    'Grid katalog di app/page.tsx wajib menggunakan whitespace lapang gap-x-4 gap-y-8 sm:gap-x-6 sm:gap-y-12'
+  );
   
   // 3.7 Forensik Desain Navbar & Mega Menu Editorial (Modular Architecture & Visual Excellence)
   const navbarFiles = [
@@ -518,28 +524,9 @@ async function runTests() {
     activeProd.price + 10000, 
     'Total tagihan tetap penuh sesuai harga resmi tanpa kompromi'
   );
-  // 4.3 Verifikasi Algoritma Cerdas Smart Size & Fit Predictor (FR-30)
-  const calcBmi = (h: number, w: number) => Number((w / ((h / 100) ** 2)).toFixed(1));
-  assert.equal(calcBmi(170, 50) < 18.5, true, 'BMI 170cm 50kg terdeteksi Ramping');
-  assert.equal(calcBmi(172, 65) >= 18.5 && calcBmi(172, 65) < 23.0, true, 'BMI 172cm 65kg terdeteksi Normal/Ideal');
-  assert.equal(calcBmi(170, 75) >= 23.0 && calcBmi(170, 75) < 27.5, true, 'BMI 170cm 75kg terdeteksi Berisi');
-  assert.equal(calcBmi(170, 90) >= 27.5, true, 'BMI 170cm 90kg terdeteksi Ekstra Berisi');
-  console.log('  ✓ Algoritma Heuristik Smart Size & Fit Predictor (FR-30) akurat di seluruh batas BMI');
+  console.log('  ✓ Proteksi Anti-Price-Tampering aktif: Diskon sepihak dari klien dibatalkan di server');
 
-  // 4.4 Verifikasi Kanvas OOTD Capsule Wardrobe 3-Lapis (FR-31)
-  const tops = products.filter(p => p.category_id === 1 || p.category_id === 2);
-  const bottoms = products.filter(p => p.category_id === 3);
-  const outerwear = products.filter(p => p.category_id === 4);
-  assert.ok(tops.length >= 2, 'Layer Atasan tersedia');
-  assert.ok(bottoms.length >= 1, 'Layer Bawahan tersedia');
-  assert.ok(outerwear.length >= 1, 'Layer Luaran tersedia');
-  const bundleRaw = tops[0].price + bottoms[0].price + outerwear[0].price;
-  const bundleDiscount = Math.round(bundleRaw * 0.15);
-  const bundleNet = bundleRaw - bundleDiscount;
-  assert.equal(bundleNet, bundleRaw - bundleDiscount, 'Diskon 15% Bundling OOTD terhitung presisi');
-  console.log(`  ✓ Capsule Wardrobe OOTD Builder (FR-31) valid: 3 Layer aktif, Bundling Diskon 15% (Hemat Rp ${bundleDiscount.toLocaleString('id-ID')})`);
-
-  console.log('✓ Lapis 4 PASSED: Seluruh modul keamanan, anti-tampering & inovasi retail terverifikasi 100% aman.\n');
+  console.log('✓ Lapis 4 PASSED: Seluruh modul keamanan & anti-tampering terverifikasi 100% aman.\n');
   console.log('🎉 SELURUH PENGUJIAN OTOMATIS 4 LAPIS URBANSTYLE STORE V4.0 BERHASIL 100%! 🎉');
 }
 

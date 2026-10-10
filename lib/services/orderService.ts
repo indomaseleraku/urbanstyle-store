@@ -6,6 +6,7 @@ import { INITIAL_ORDERS } from '../data/orders.data';
 import { supabase, isSupabaseConfigured } from './supabaseClient';
 import { productService } from './productService';
 import { couponService } from './couponService';
+import { reservationService } from './reservationService';
 
 let localOrders: Order[] = [...INITIAL_ORDERS];
 
@@ -76,6 +77,8 @@ export const orderService = {
     payment_method: 'QRIS' | 'Bank Transfer' | 'COD';
     bank_name?: string;
     cart_items: CartItem[];
+    session_id?: string;
+    idempotency_key?: string;
   }): Promise<{ success: boolean; order?: Order; message?: string }> {
     if (!orderPayload.cart_items || orderPayload.cart_items.length === 0) {
       return { success: false, message: 'Keranjang belanja Anda kosong.' };
@@ -222,6 +225,10 @@ export const orderService = {
       } catch (err) {
         console.warn('Gagal sinkron pesanan ke Supabase, tersimpan lokal:', err);
       }
+    }
+
+    if (orderPayload.session_id) {
+      await reservationService.releaseReservation(orderPayload.session_id);
     }
 
     return { success: true, order: newOrder };

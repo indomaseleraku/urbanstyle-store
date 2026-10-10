@@ -126,7 +126,7 @@ export default function Navbar({
                   placeholder="Apa yang Anda cari?"
                   value={searchQuery}
                   onChange={(e) => onSearchChange(e.target.value)}
-                  className="w-full pl-9 pr-8 py-1.5 text-xs font-medium rounded-full bg-zinc-100 border border-zinc-200 text-zinc-900 placeholder-zinc-400 focus:outline-none focus:bg-white focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-all"
+                  className="w-full pl-9 pr-8 py-1.5 text-xs font-medium rounded-none bg-zinc-100 border border-zinc-200 text-zinc-900 placeholder-zinc-400 focus:outline-none focus:bg-white focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-all"
                 />
                 {searchQuery && (
                   <button
@@ -165,7 +165,7 @@ export default function Navbar({
                   className={wishlistCount > 0 ? 'text-[#E60012]' : 'text-zinc-900'}
                 />
                 {wishlistCount > 0 && (
-                  <span className="absolute top-1 right-1 w-4 h-4 bg-[#E60012] text-white text-[9px] font-black flex items-center justify-center rounded-full">
+                  <span className="absolute top-1 right-1 w-4 h-4 bg-[#E60012] text-white text-[9px] font-black flex items-center justify-center rounded-none font-mono">
                     {wishlistCount}
                   </span>
                 )}

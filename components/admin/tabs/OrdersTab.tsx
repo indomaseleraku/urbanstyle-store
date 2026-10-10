@@ -8,10 +8,11 @@ import { Order, OrderStatus } from '@/lib/types';
 
 interface OrdersTabProps {
   orders: Order[];
-  onUpdateOrderStatus: (orderNumber: string, status: OrderStatus) => Promise<void>;
-  onSimulateInstantPaid: (orderNumber: string) => Promise<void>;
-  onSaveResi: (orderNumber: string, resi: string) => Promise<void>;
+  onUpdateOrderStatus?: (orderNumber: string, status: OrderStatus) => Promise<void>;
+  onSimulateInstantPaid?: (orderNumber: string) => Promise<void>;
+  onSaveResi?: (orderNumber: string, resi: string) => Promise<void>;
   onOpenShippingLabel: (order: Order) => void;
+  onUpdateStatus?: (orderNumber: string, status: OrderStatus, trackingNo?: string) => Promise<void>;
 }
 
 export const OrdersTab: React.FC<OrdersTabProps> = ({
@@ -20,6 +21,7 @@ export const OrdersTab: React.FC<OrdersTabProps> = ({
   onSimulateInstantPaid,
   onSaveResi,
   onOpenShippingLabel,
+  onUpdateStatus,
 }) => {
   const [orderStatusFilter, setOrderStatusFilter] = useState<'all' | OrderStatus>('all');
   const [searchOrder, setSearchOrder] = useState('');
@@ -35,8 +37,20 @@ export const OrdersTab: React.FC<OrdersTabProps> = ({
     });
   }, [orders, searchOrder, orderStatusFilter]);
 
+  const handleUpdateOrderStatus = onUpdateOrderStatus || (async (oNo: string, status: OrderStatus) => {
+    if (onUpdateStatus) await onUpdateStatus(oNo, status);
+  });
+
+  const handleSimulateInstantPaid = onSimulateInstantPaid || (async (oNo: string) => {
+    if (onUpdateStatus) await onUpdateStatus(oNo, 'Dibayar');
+  });
+
   const handleSaveResiSubmit = async (orderNumber: string, resi: string) => {
-    await onSaveResi(orderNumber, resi);
+    if (onSaveResi) {
+      await onSaveResi(orderNumber, resi);
+    } else if (onUpdateStatus) {
+      await onUpdateStatus(orderNumber, 'Dikirim', resi);
+    }
     setEditingResi(null);
   };
 
@@ -199,7 +213,7 @@ export const OrdersTab: React.FC<OrdersTabProps> = ({
                 <td className="py-3 px-4 space-y-1">
                   <select
                     value={o.status}
-                    onChange={(e) => onUpdateOrderStatus(o.order_number, e.target.value as OrderStatus)}
+                    onChange={(e) => handleUpdateOrderStatus(o.order_number, e.target.value as OrderStatus)}
                     className="px-2.5 py-1 text-xs border border-zinc-300 bg-white font-bold text-zinc-800 focus:outline-none focus:border-zinc-900 block cursor-pointer"
                   >
                     <option value="Menunggu Pembayaran">Menunggu Pembayaran</option>
@@ -212,7 +226,7 @@ export const OrdersTab: React.FC<OrdersTabProps> = ({
 
                   {o.status === 'Menunggu Pembayaran' && (
                     <button
-                      onClick={() => onSimulateInstantPaid(o.order_number)}
+                      onClick={() => handleSimulateInstantPaid(o.order_number)}
                       className="inline-flex items-center gap-1 px-2 py-0.5 bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] font-bold uppercase tracking-wider cursor-pointer"
                       title="Verifikasi pembayaran lunas"
                     >
