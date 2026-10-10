@@ -285,8 +285,8 @@ function HomePageContent() {
         {/* 2. Hero Lookbook & Category Story Tiles */}
         {!searchQuery && (
           <>
-            {/* 2a. Hero Lookbook Slider (Overlay behind Navbar) */}
-            <div className="-mt-16 sm:-mt-20 relative z-0">
+            {/* 2a. Hero Lookbook Slider */}
+            <div className="relative z-0">
               <LookbookSlider
                 onSelectCategory={(slug) => {
                   setSelectedCategory(slug);

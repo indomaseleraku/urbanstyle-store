@@ -24,55 +24,58 @@ export default function AnnouncementTicker({
   };
 
   return (
-    <div className="bg-[#111111] text-white text-[10px] sm:text-xs py-2 px-4 text-center font-bold tracking-wider flex items-center justify-between">
-      <div className="max-w-7xl mx-auto w-full flex items-center justify-between">
-        <div className="hidden sm:flex items-center gap-4 text-zinc-400">
+    <div className="bg-[#F4F4F4] text-zinc-700 text-[11px] py-1.5 px-4 border-b border-zinc-200">
+      <div className="max-w-7xl mx-auto flex items-center justify-between font-medium">
+        {/* Left assurances */}
+        <div className="hidden sm:flex items-center gap-3 text-zinc-500">
           <button 
             type="button"
             onClick={() => onOpenInfoModal('shipping')} 
-            className="hover:text-white transition-colors flex items-center gap-1 cursor-pointer"
+            className="hover:text-zinc-950 transition-colors flex items-center gap-1 cursor-pointer"
           >
-            <Truck size={13} />
-            <span>GRATIS ONGKIR MIN. RP 400.000</span>
+            <Truck size={12} className="text-[#E60012]" />
+            <span>Gratis Ongkir Min. Rp 400.000</span>
           </button>
-          <span>•</span>
+          <span className="text-zinc-300">•</span>
           <button 
             type="button"
             onClick={() => onOpenInfoModal('return')} 
-            className="hover:text-white transition-colors flex items-center gap-1 cursor-pointer"
+            className="hover:text-zinc-950 transition-colors flex items-center gap-1 cursor-pointer"
           >
-            <RotateCcw size={13} />
-            <span>GARANSI RETUR 30 HARI</span>
+            <RotateCcw size={12} className="text-[#E60012]" />
+            <span>Garansi Retur 30 Hari</span>
           </button>
         </div>
 
+        {/* Center Voucher chip */}
         <button
           type="button"
           onClick={handleCopyVoucher}
-          className="mx-auto sm:mx-0 flex items-center gap-2 hover:opacity-90 transition-opacity cursor-pointer group"
-          title="Klik untuk salin kode voucher Rp 50.000"
+          className="mx-auto sm:mx-0 flex items-center gap-2 hover:opacity-80 transition-opacity cursor-pointer group"
+          title="Klik untuk salin kode kupon"
         >
-          <span className="text-[#E60012] font-black bg-black/40 px-1.5 py-0.5 group-hover:bg-[#E60012] group-hover:text-white transition-colors">
-            MEMBER VOUCHER
+          <span className="text-[10px] font-bold bg-[#E60012] text-white px-1.5 py-0.2">
+            VOUCHER
           </span>
-          <span className="text-zinc-200 uppercase flex items-center gap-1.5 text-[10px] sm:text-xs">
-            <span>{copiedVoucher ? '✓ KODE TERSALIN: URBANWELCOME50' : 'Gunakan URBANWELCOME50 Potongan Rp 50.000'}</span>
-            <Copy size={11} className="text-zinc-400 group-hover:text-white" />
+          <span className="text-zinc-800 text-[11px] flex items-center gap-1 font-semibold">
+            <span>{copiedVoucher ? '✓ Tersalin: URBANWELCOME50' : 'Gunakan URBANWELCOME50 (Hemat Rp 50.000)'}</span>
+            <Copy size={11} className="text-zinc-400 group-hover:text-zinc-800" />
           </span>
         </button>
 
-        <div className="hidden md:flex items-center gap-3">
+        {/* Right Info Links */}
+        <div className="hidden md:flex items-center gap-3 text-zinc-500">
           <button
             type="button"
             onClick={() => onOpenInfoModal('lifewear')}
-            className="text-zinc-400 hover:text-white transition-colors cursor-pointer"
+            className="hover:text-zinc-950 transition-colors cursor-pointer"
           >
             Tentang LifeWear
           </button>
           {isAdmin && (
             <Link
               href="/admin"
-              className="text-white font-mono text-[10px] bg-[#E60012] px-2 py-0.5 font-bold uppercase tracking-wider"
+              className="text-[#E60012] font-bold text-[10px] hover:underline"
             >
               Dasbor SIM ↗
             </Link>

@@ -64,8 +64,8 @@ export default function LookbookSlider({ onSelectCategory }: LookbookSliderProps
   return (
     <section className="relative bg-zinc-950 text-white overflow-hidden border-b border-zinc-200">
       
-      {/* Background Image Container with Full Behind-Navbar Extension */}
-      <div className="relative h-[500px] sm:h-[580px] lg:h-[620px] w-full">
+      {/* Background Image Container */}
+      <div className="relative h-[460px] sm:h-[520px] lg:h-[560px] w-full">
         {SLIDES.map((s, idx) => (
           <div
             key={s.id}
@@ -79,14 +79,13 @@ export default function LookbookSlider({ onSelectCategory }: LookbookSliderProps
               className="w-full h-full object-cover object-center"
               loading={idx === 0 ? 'eager' : 'lazy'}
             />
-            {/* Subtle scrim: light top gradient for white navbar contrast, soft left gradient for headline readability */}
-            <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/30 pointer-events-none" />
-            <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/20 to-transparent pointer-events-none" />
+            {/* Subtle editorial scrim for text readability */}
+            <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/30 to-transparent pointer-events-none" />
           </div>
         ))}
 
-        {/* Content Container (Padded to Sit Elegantly Below Overlay Header) */}
-        <div className="absolute inset-0 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col justify-center pt-20 sm:pt-24">
+        {/* Content Container (Vertically centered) */}
+        <div className="absolute inset-0 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col justify-center py-12">
           <div className="max-w-xl space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500" key={currentIdx}>
             
             {/* Tag Badge */}

@@ -14,11 +14,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
 
-interface UserAccountMenuProps {
-  isScrolled: boolean;
-}
-
-export default function UserAccountMenu({ isScrolled }: UserAccountMenuProps) {
+export default function UserAccountMenu() {
   const { user, isAuthenticated, isAdmin, openAuthModal, logout } = useAuth();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -39,14 +35,12 @@ export default function UserAccountMenu({ isScrolled }: UserAccountMenuProps) {
       <button
         type="button"
         onClick={openAuthModal}
-        className={`flex items-center gap-1.5 px-2.5 py-1.5 text-[11px] font-bold uppercase tracking-wider transition-colors cursor-pointer ${
-          isScrolled
-            ? 'border border-zinc-300 hover:border-black text-zinc-900 hover:text-black bg-transparent'
-            : 'border border-white/40 hover:border-white text-white hover:bg-white/10 bg-transparent'
-        }`}
+        className="flex items-center gap-1.5 p-2 text-zinc-800 hover:text-black transition-colors cursor-pointer"
+        title="Masuk ke Akun Member"
+        aria-label="Keanggotaan / Masuk"
       >
-        <User size={14} className={isScrolled ? 'text-zinc-900' : 'text-white'} />
-        <span className="hidden sm:inline">Masuk</span>
+        <User size={20} />
+        <span className="text-xs font-bold hidden lg:inline">Masuk</span>
       </button>
     );
   }
@@ -56,34 +50,27 @@ export default function UserAccountMenu({ isScrolled }: UserAccountMenuProps) {
       <button
         type="button"
         onClick={() => setDropdownOpen(!dropdownOpen)}
-        className={`flex items-center gap-2 pl-1 pr-2.5 py-1 rounded-full transition-all cursor-pointer shadow-xs group bg-transparent ${
-          isScrolled
-            ? 'border border-zinc-300 hover:border-zinc-500 text-zinc-900'
-            : 'border border-white/30 hover:border-white/60 text-white'
-        }`}
+        className="flex items-center gap-1.5 p-1.5 rounded-full hover:bg-zinc-100 transition-colors cursor-pointer group"
         title="Menu Akun Member"
+        aria-label="Keanggotaan / Riwayat pembelian"
       >
         <div
-          className={`w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-black text-white shadow-xs transition-transform group-hover:scale-105 ${
+          className={`w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-black text-white shadow-xs ${
             isAdmin
-              ? 'bg-gradient-to-tr from-[#E60012] to-rose-600'
-              : 'bg-gradient-to-tr from-zinc-950 to-zinc-700'
+              ? 'bg-[#E60012]'
+              : 'bg-zinc-900'
           }`}
         >
           {user.full_name?.slice(0, 2).toUpperCase() || 'US'}
         </div>
-        <span
-          className={`text-xs font-bold max-w-[85px] sm:max-w-[110px] truncate hidden sm:inline ${
-            isScrolled ? 'text-zinc-800' : 'text-white'
-          }`}
-        >
+        <span className="text-xs font-bold text-zinc-900 max-w-[80px] truncate hidden lg:inline">
           {user.full_name?.split(' ')[0] || 'Member'}
         </span>
         <ChevronDown
           size={13}
-          className={`transition-transform duration-200 ${
-            isScrolled ? 'text-zinc-400 group-hover:text-zinc-700' : 'text-white/80 group-hover:text-white'
-          } ${dropdownOpen ? 'rotate-180' : ''}`}
+          className={`text-zinc-500 transition-transform duration-200 hidden sm:inline ${
+            dropdownOpen ? 'rotate-180' : ''
+          }`}
         />
       </button>
 

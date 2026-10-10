@@ -159,3 +159,32 @@ export const WOMEN_MEGA_MENU: MegaMenuData = {
     category: 'all',
   },
 };
+
+export interface GenderTab {
+  label: string;
+  value: string;
+  highlight?: boolean;
+}
+
+export const GENDER_TABS: GenderTab[] = [
+  { label: 'SEMUA', value: 'all' },
+  { label: 'PRIA', value: 'pria' },
+  { label: 'WANITA', value: 'wanita' },
+  { label: 'LIMITED OFFER 🔥', value: 'sale', highlight: true },
+];
+
+export interface NavbarProps {
+  categories: import('@/lib/types').Category[];
+  selectedCategory: string;
+  onSelectCategory: (slug: string) => void;
+  selectedGender: string;
+  onSelectGender: (gender: string) => void;
+  searchQuery: string;
+  onSearchChange: (query: string) => void;
+  cartCount: number;
+  onOpenCart: () => void;
+  wishlistCount: number;
+  onOpenWishlist: () => void;
+  onOpenInfoModal: (type: import('@/components/InformationModals').ModalType) => void;
+  onSelectSort?: (sortBy: string) => void;
+}
