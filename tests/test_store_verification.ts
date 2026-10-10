@@ -446,8 +446,19 @@ async function runTests() {
   // Whitespace Grid: gap-x-4 gap-y-8 sm:gap-x-6 sm:gap-y-12
   assert.ok(pageCode.includes('gap-x-4 gap-y-8 sm:gap-x-6 sm:gap-y-12'), 'Grid katalog di app/page.tsx wajib menggunakan whitespace lapang gap-x-4 gap-y-8 sm:gap-x-6 sm:gap-y-12');
   
-  // 3.7 Forensik Desain Navbar & Mega Menu Editorial (Anti-Bilingual Clutter & Visual Excellence)
-  const navbarCode = fs.readFileSync(path.resolve(process.cwd(), 'components/Navbar.tsx'), 'utf-8');
+  // 3.7 Forensik Desain Navbar & Mega Menu Editorial (Modular Architecture & Visual Excellence)
+  const navbarFiles = [
+    'components/Navbar.tsx',
+    'components/navbar/SideNavDrawer.tsx',
+    'components/navbar/CategoryPillBar.tsx',
+    'components/navbar/UserAccountMenu.tsx',
+    'components/navbar/AnnouncementTicker.tsx',
+    'lib/constants/navigation.ts'
+  ];
+  const navbarCode = navbarFiles
+    .filter(f => fs.existsSync(path.resolve(process.cwd(), f)))
+    .map(f => fs.readFileSync(path.resolve(process.cwd(), f), 'utf-8'))
+    .join('\n');
   assert.ok(!navbarCode.includes('(MEN)'), 'Navbar dilarang memuat teks dwibahasa canggung PRIA (MEN)');
   assert.ok(!navbarCode.includes('(WOMEN)'), 'Navbar dilarang memuat teks dwibahasa canggung WANITA (WOMEN)');
   assert.ok(!navbarCode.includes('// TOPS'), 'Mega Menu dilarang memuat artefak kode programmer // TOPS');
@@ -457,7 +468,7 @@ async function runTests() {
   assert.ok(navbarCode.includes('Apa yang Anda cari?'), 'Pencarian wajib menggunakan copy Uniqlo LifeWear yang ramah');
   assert.ok(navbarCode.includes('rounded-full'), 'Pencarian desktop wajib menggunakan bentuk kapsul pill rounded-full');
   assert.ok(navbarCode.includes('LOOKBOOK 2026'), 'Mega Menu wajib memiliki kartu visual editorial lookbook bermodel nyata');
-  console.log('  ✓ Forensik Desain 1:1 Uniqlo LifeWear terverifikasi (Zero-Clutter, No-Border, Whitespace Lapang, Editorial Visual Mega Menu)');
+  console.log('  ✓ Forensik Desain 1:1 Uniqlo LifeWear terverifikasi (Modular Clean Code, No-Border, Whitespace Lapang, Editorial Visual)');
 
   console.log('✓ Lapis 3 PASSED: Zero-crash fallback dan forensik integritas 100% aman.\n');
 
