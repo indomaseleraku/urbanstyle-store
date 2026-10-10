@@ -7,14 +7,12 @@ import { StaffUser, StaffRole } from '@/lib/types';
 
 interface StaffTabProps {
   staffList: StaffUser[];
-  isOwner?: boolean;
   onToggleStatus: (staffId: string) => Promise<void>;
   onCreateStaff: (staffPayload: any) => Promise<void>;
 }
 
 export const StaffTab: React.FC<StaffTabProps> = ({
   staffList,
-  isOwner,
   onToggleStatus,
   onCreateStaff,
 }) => {

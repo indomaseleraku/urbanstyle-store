@@ -4,18 +4,15 @@
 import React from 'react';
 import { X, ShieldCheck, Truck, Sparkles, HelpCircle, CheckCircle2, RotateCcw } from 'lucide-react';
 
-export type ModalType = 'return' | 'shipping' | 'lifewear' | 'help' | 'faq' | 'material' | null;
+export type ModalType = 'return' | 'shipping' | 'lifewear' | 'help' | null;
 
 interface InfoModalProps {
-  type?: ModalType;
-  activeModal?: ModalType;
+  type: ModalType;
   onClose: () => void;
-  onOpenSizeChart?: () => void;
 }
 
-export default function InformationModals({ type, activeModal, onClose }: InfoModalProps) {
-  const currentType = type ?? activeModal;
-  if (!currentType) return null;
+export default function InformationModals({ type, onClose }: InfoModalProps) {
+  if (!type) return null;
 
   return (
     <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 overflow-y-auto animate-in fade-in duration-200">
@@ -24,23 +21,20 @@ export default function InformationModals({ type, activeModal, onClose }: InfoMo
         {/* Header */}
         <div className="p-4 sm:p-5 border-b border-zinc-200 flex items-center justify-between bg-zinc-50">
           <div className="flex items-center gap-2.5">
-            {currentType === 'return' && <RotateCcw className="text-[#E60012]" size={20} />}
-            {currentType === 'shipping' && <Truck className="text-[#E60012]" size={20} />}
-            {currentType === 'lifewear' && <Sparkles className="text-[#E60012]" size={20} />}
-            {(currentType === 'help' || currentType === 'faq') && <HelpCircle className="text-[#E60012]" size={20} />}
-            {currentType === 'material' && <ShieldCheck className="text-[#E60012]" size={20} />}
+            {type === 'return' && <RotateCcw className="text-[#E60012]" size={20} />}
+            {type === 'shipping' && <Truck className="text-[#E60012]" size={20} />}
+            {type === 'lifewear' && <Sparkles className="text-[#E60012]" size={20} />}
+            {type === 'help' && <HelpCircle className="text-[#E60012]" size={20} />}
             
             <div>
               <span className="text-[10px] font-bold text-[#E60012] uppercase tracking-widest">
                 INFORMASI RESMI
               </span>
               <h2 className="text-sm sm:text-base font-black uppercase tracking-tight text-zinc-950">
-                {currentType === 'return' && 'Kebijakan Pengembalian & Garansi 30 Hari'}
-                {currentType === 'shipping' && 'Panduan Pengiriman & Bebas Ongkir'}
-                {currentType === 'lifewear' && 'Filosofi Desain LifeWear'}
-                {currentType === 'help' && 'Layanan Pelanggan & Info Sistem'}
-                {currentType === 'faq' && 'Pertanyaan Umum (FAQ)'}
-                {currentType === 'material' && 'Inovasi Material & Teknologi Tekstil'}
+                {type === 'return' && 'Kebijakan Pengembalian & Garansi 30 Hari'}
+                {type === 'shipping' && 'Panduan Pengiriman & Bebas Ongkir'}
+                {type === 'lifewear' && 'Filosofi Desain LifeWear'}
+                {type === 'help' && 'Layanan Pelanggan & Info Sistem'}
               </h2>
             </div>
           </div>
@@ -55,7 +49,7 @@ export default function InformationModals({ type, activeModal, onClose }: InfoMo
         {/* Content Body */}
         <div className="p-5 sm:p-6 text-xs text-zinc-700 space-y-4">
           
-          {currentType === 'return' && (
+          {type === 'return' && (
             <>
               <p className="text-sm font-bold text-zinc-900">
                 Garansi Kenyamanan: Tukar Ukuran atau Pengembalian Dana Penuh dalam 30 Hari
@@ -80,7 +74,7 @@ export default function InformationModals({ type, activeModal, onClose }: InfoMo
             </>
           )}
 
-          {currentType === 'shipping' && (
+          {type === 'shipping' && (
             <>
               <p className="text-sm font-bold text-zinc-900">
                 Ketentuan Pengiriman & Bebas Biaya Kirim Seluruh Indonesia
@@ -105,7 +99,7 @@ export default function InformationModals({ type, activeModal, onClose }: InfoMo
             </>
           )}
 
-          {currentType === 'lifewear' && (
+          {type === 'lifewear' && (
             <>
               <div className="space-y-3 leading-relaxed">
                 <p className="text-sm font-bold text-zinc-900 uppercase tracking-tight">
@@ -125,7 +119,7 @@ export default function InformationModals({ type, activeModal, onClose }: InfoMo
             </>
           )}
 
-          {currentType === 'help' && (
+          {type === 'help' && (
             <>
               <p className="text-sm font-bold text-zinc-900">
                 Pusat Bantuan & Layanan Informasi Sistem E-Commerce
@@ -144,42 +138,9 @@ export default function InformationModals({ type, activeModal, onClose }: InfoMo
                   <p className="text-[11px] text-zinc-600 font-mono">kimy.eka@unpam.ac.id / support@urbanstyle.store</p>
                 </div>
               </div>
-            </>
-          )}
-
-          {currentType === 'faq' && (
-            <>
-              <p className="text-sm font-bold text-zinc-900">
-                Pertanyaan yang Sering Diajukan (FAQ)
+              <p className="text-[11px] text-zinc-500">
+                Untuk keperluan demonstrasi dosen, semua transaksi QRIS dapat disimulasikan secara instan melalui tombol demo pada nota faktur.
               </p>
-              <div className="space-y-2.5 bg-zinc-50 p-4 border border-zinc-200 text-xs">
-                <div>
-                  <strong className="text-zinc-900">Bagaimana cara verifikasi pembayaran QRIS?</strong>
-                  <p className="text-zinc-600">Sistem memverifikasi secara real-time via webhook & polling mutasi per detik.</p>
-                </div>
-                <div>
-                  <strong className="text-zinc-900">Berapa lama batas waktu reservasi stok di keranjang?</strong>
-                  <p className="text-zinc-600">Stok diamankan selama 10 menit setelah checkout dimulai.</p>
-                </div>
-              </div>
-            </>
-          )}
-
-          {currentType === 'material' && (
-            <>
-              <p className="text-sm font-bold text-zinc-900">
-                Inovasi Tekstil & Panduan Perawatan Kain
-              </p>
-              <div className="space-y-2.5 bg-zinc-50 p-4 border border-zinc-200 text-xs">
-                <div>
-                  <strong className="text-zinc-900">AIRism Micro-Fiber:</strong>
-                  <p className="text-zinc-600">Menyerap keringat seketika, melepas hawa panas, dan menjaga kesejukan kulit di iklim tropis.</p>
-                </div>
-                <div>
-                  <strong className="text-zinc-900">Heavyweight Cotton 280 GSM:</strong>
-                  <p className="text-zinc-600">Rajutan benang kompak padat dengan tekstur berbobot tegap yang tidak mudah melar.</p>
-                </div>
-              </div>
             </>
           )}
 

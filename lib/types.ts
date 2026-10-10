@@ -79,7 +79,6 @@ export interface Product {
   id: number;
   category_id: number;
   category_name?: string;
-  category_slug?: string;
   name: string;
   slug: string;
   gender: 'pria' | 'wanita' | 'unisex';
@@ -148,7 +147,6 @@ export interface TrackingEvent {
   description: string;
   timestamp: string;
   is_completed: boolean;
-  location?: string;
 }
 
 export interface Order {

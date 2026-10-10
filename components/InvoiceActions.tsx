@@ -21,7 +21,7 @@ export function InvoicePrintButton() {
   );
 }
 
-export function InvoicePaymentButton({ orderNumber, currentStatus = 'Menunggu Pembayaran' }: { orderNumber: string; currentStatus?: string }) {
+export function InvoicePaymentButton({ orderNumber, currentStatus }: { orderNumber: string; currentStatus: string }) {
   const [status, setStatus] = useState(currentStatus);
   const [loading, setLoading] = useState(false);
 

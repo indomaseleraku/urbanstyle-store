@@ -172,15 +172,15 @@ export default function ProductCard({
         <div className="flex items-baseline gap-1.5 flex-wrap pt-0.5">
           {hasDiscount ? (
             <>
-              <span className="text-[#E60012] font-mono font-bold text-sm sm:text-base tabular-nums">
+              <span className="text-[#E60012] font-mono font-bold text-sm sm:text-base">
                 Rp {product.price.toLocaleString('id-ID')}
               </span>
-              <span className="text-zinc-400 line-through text-xs font-mono tabular-nums">
+              <span className="text-zinc-400 line-through text-xs font-mono">
                 Rp {product.original_price?.toLocaleString('id-ID')}
               </span>
             </>
           ) : (
-            <span className="text-zinc-950 font-mono font-bold text-sm sm:text-base tabular-nums">
+            <span className="text-zinc-950 font-mono font-bold text-sm sm:text-base">
               Rp {product.price.toLocaleString('id-ID')}
             </span>
           )}

@@ -2,7 +2,7 @@
 'use client';
 
 import React from 'react';
-import { motion } from 'framer-motion';
+import { Sparkles } from 'lucide-react';
 
 interface CategoryTile {
   id: string;
@@ -71,12 +71,13 @@ export default function CategoryBubbles({
   };
 
   return (
-    <section className="w-full bg-[#FAFAFA] border-b border-zinc-200 py-6 sm:py-8 overflow-hidden font-sans">
+    <section className="w-full bg-[#FAFAFA] border-b border-zinc-200 py-6 sm:py-8 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
         {/* Section Header */}
         <div className="flex items-center justify-between mb-5">
           <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 bg-[#E60012] rounded-none" />
+            <span className="w-2.5 h-2.5 bg-[#E60012]" />
             <h3 className="text-xs sm:text-sm font-black uppercase tracking-wider text-zinc-950">
               Kategori Cerita LifeWear
             </h3>
@@ -89,46 +90,47 @@ export default function CategoryBubbles({
           </span>
         </div>
 
-        {/* Modular Sharp Story Tiles (Zero Radius rounded-none) */}
-        <div className="flex items-center justify-start sm:justify-center gap-4 sm:gap-6 overflow-x-auto no-scrollbar py-2 px-1 -mx-4 sm:mx-0 snap-x">
+        {/* Circular Story Bubbles Container (Swipeable on Mobile, Centered on Desktop) */}
+        <div className="flex items-center justify-start sm:justify-center gap-5 sm:gap-8 md:gap-10 overflow-x-auto no-scrollbar py-2 px-2 -mx-4 sm:mx-0 snap-x">
           {CATEGORY_TILES.map((cat) => {
             const isActive = selectedCategory === cat.slug;
             return (
-              <motion.button
-                whileTap={{ scale: 0.96 }}
+              <button
                 key={cat.id}
                 type="button"
                 onClick={() => handleClick(cat.slug)}
-                className="group flex-shrink-0 flex flex-col items-center focus:outline-none snap-start cursor-pointer"
+                className="group flex-shrink-0 flex flex-col items-center focus:outline-none snap-start cursor-pointer transition-transform"
               >
-                {/* 3:4 or 1:1 Square Frame with Zero Radius */}
+                {/* 1:1 Circular Avatar with Thin Border / Red Ring */}
                 <div
-                  className={`relative w-20 h-24 sm:w-24 sm:h-28 border-2 transition-all duration-300 rounded-none bg-[#F6F6F6] overflow-hidden ${
+                  className={`relative w-20 h-20 sm:w-24 sm:h-24 md:w-26 md:h-26 rounded-full p-1 border-2 transition-all duration-300 ${
                     isActive
-                      ? 'border-[#E60012] ring-2 ring-[#E60012]/30 scale-105 shadow-sm'
+                      ? 'border-[#E60012] ring-4 ring-[#E60012]/20 scale-105 shadow-md'
                       : cat.isSpecial
                       ? 'border-red-400 hover:border-[#E60012] hover:scale-105'
                       : 'border-zinc-200 hover:border-zinc-950 hover:scale-105'
                   }`}
                 >
-                  <img
-                    src={cat.imageUrl}
-                    alt={cat.name}
-                    className="w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-500 rounded-none"
-                    loading="lazy"
-                  />
+                  <div className="w-full h-full rounded-full overflow-hidden bg-zinc-100">
+                    <img
+                      src={cat.imageUrl}
+                      alt={cat.name}
+                      className="w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-500"
+                      loading="lazy"
+                    />
+                  </div>
 
                   {cat.isSpecial && (
-                    <span className="absolute top-1 right-1 bg-[#E60012] text-white text-[8px] font-black uppercase tracking-widest px-1 py-0.5 rounded-none shadow-xs">
+                    <span className="absolute -top-1 -right-1 bg-[#E60012] text-white text-[8px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded-full shadow-xs">
                       HOT
                     </span>
                   )}
                 </div>
 
-                {/* Text Label Below Tile */}
-                <div className="text-center mt-2 max-w-[105px] sm:max-w-[125px] px-1">
+                {/* Text Label Below Circle */}
+                <div className="text-center mt-2.5 max-w-[105px] sm:max-w-[125px] px-1">
                   <h4
-                    className={`text-[11px] sm:text-xs font-black uppercase tracking-tight leading-tight transition-colors ${
+                    className={`text-xs font-black uppercase tracking-tight leading-tight transition-colors ${
                       isActive
                         ? 'text-[#E60012]'
                         : 'text-zinc-900 group-hover:text-[#E60012]'
@@ -136,14 +138,15 @@ export default function CategoryBubbles({
                   >
                     {cat.name}
                   </h4>
-                  <p className="text-[9px] sm:text-[10px] text-zinc-500 font-medium truncate mt-0.5">
+                  <p className="text-[10px] text-zinc-500 font-medium truncate mt-0.5">
                     {cat.tagline}
                   </p>
                 </div>
-              </motion.button>
+              </button>
             );
           })}
         </div>
+
       </div>
     </section>
   );

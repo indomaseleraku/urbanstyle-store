@@ -46,11 +46,10 @@ const SLIDES: Slide[] = [
 ];
 
 interface LookbookSliderProps {
-  onSelectCategory?: (slug: string) => void;
-  onShopNow?: () => void;
+  onSelectCategory: (slug: string) => void;
 }
 
-export default function LookbookSlider({ onSelectCategory, onShopNow }: LookbookSliderProps) {
+export default function LookbookSlider({ onSelectCategory }: LookbookSliderProps) {
   const [currentIdx, setCurrentIdx] = useState(0);
 
   useEffect(() => {
@@ -108,10 +107,7 @@ export default function LookbookSlider({ onSelectCategory, onShopNow }: Lookbook
             {/* CTA Button */}
             <div className="pt-2">
               <button
-                onClick={() => {
-                  if (onSelectCategory) onSelectCategory(slide.categorySlug);
-                  if (onShopNow) onShopNow();
-                }}
+                onClick={() => onSelectCategory(slide.categorySlug)}
                 className="inline-flex items-center gap-2.5 px-6 py-3 bg-white text-zinc-950 hover:bg-[#E60012] hover:text-white text-xs font-black uppercase tracking-wider transition-all shadow-lg group"
               >
                 <span>{slide.ctaText}</span>

@@ -11,7 +11,6 @@ interface AdminSidebarProps {
   onSelectTab: (tab: AdminTab) => void;
   isOwner: boolean;
   isGudang: boolean;
-  isKasir?: boolean;
 }
 
 export const AdminSidebar: React.FC<AdminSidebarProps> = ({

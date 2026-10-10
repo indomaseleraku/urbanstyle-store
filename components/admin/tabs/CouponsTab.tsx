@@ -7,15 +7,13 @@ import { Coupon } from '@/lib/types';
 
 interface CouponsTabProps {
   coupons: Coupon[];
-  isOwner?: boolean;
   onToggleStatus: (couponId: number) => Promise<void>;
-  onDeleteCoupon: (couponId: number, code?: string) => Promise<void>;
+  onDeleteCoupon: (couponId: number, code: string) => Promise<void>;
   onCreateCoupon: (couponPayload: any) => Promise<void>;
 }
 
 export const CouponsTab: React.FC<CouponsTabProps> = ({
   coupons,
-  isOwner,
   onToggleStatus,
   onDeleteCoupon,
   onCreateCoupon,

@@ -444,13 +444,7 @@ async function runTests() {
   assert.ok(productCardCode.includes('Quick View'), 'ProductCard wajib memiliki trigger Quick View');
 
   // Whitespace Grid: gap-x-4 gap-y-8 sm:gap-x-6 sm:gap-y-12
-  const productGridCode = fs.existsSync(path.resolve(process.cwd(), 'components/home/ProductGrid.tsx'))
-    ? fs.readFileSync(path.resolve(process.cwd(), 'components/home/ProductGrid.tsx'), 'utf-8')
-    : '';
-  assert.ok(
-    pageCode.includes('gap-x-4 gap-y-8 sm:gap-x-6 sm:gap-y-12') || productGridCode.includes('gap-x-4 gap-y-8 sm:gap-x-6 sm:gap-y-12'),
-    'Grid katalog di app/page.tsx wajib menggunakan whitespace lapang gap-x-4 gap-y-8 sm:gap-x-6 sm:gap-y-12'
-  );
+  assert.ok(pageCode.includes('gap-x-4 gap-y-8 sm:gap-x-6 sm:gap-y-12'), 'Grid katalog di app/page.tsx wajib menggunakan whitespace lapang gap-x-4 gap-y-8 sm:gap-x-6 sm:gap-y-12');
   
   // 3.7 Forensik Desain Navbar & Mega Menu Editorial (Modular Architecture & Visual Excellence)
   const navbarFiles = [

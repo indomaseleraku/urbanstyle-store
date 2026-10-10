@@ -8,18 +8,16 @@ import { SizeMeasurement } from '@/lib/types';
 interface SizeChartModalProps {
   isOpen: boolean;
   onClose: () => void;
-  productName?: string;
+  productName: string;
   categoryName?: string;
-  categorySlug?: string;
   measurements?: SizeMeasurement[];
 }
 
 export default function SizeChartModal({
   isOpen,
   onClose,
-  productName = 'Koleksi Busana LifeWear',
+  productName,
   categoryName,
-  categorySlug,
   measurements,
 }: SizeChartModalProps) {
   const [activeTab, setActiveTab] = useState<'cm' | 'panduan'>('cm');
