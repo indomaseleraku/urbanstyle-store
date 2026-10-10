@@ -234,9 +234,9 @@ export default function Navbar({
           {/* Gender Navigation Segment Tabs (SEMUA, PRIA, WANITA, SALE) */}
           <nav ref={tabsRef} className="hidden md:flex items-center gap-1">
             {[
-              { label: 'SEMUA KOLEKSI', value: 'all' },
-              { label: 'PRIA (MEN)', value: 'pria', hasMegaMenu: true },
-              { label: 'WANITA (WOMEN)', value: 'wanita', hasMegaMenu: true },
+              { label: 'SEMUA', value: 'all' },
+              { label: 'PRIA', value: 'pria', hasMegaMenu: true },
+              { label: 'WANITA', value: 'wanita', hasMegaMenu: true },
               { label: 'LIMITED OFFER 🔥', value: 'sale', highlight: true },
             ].map((tab) => {
               const isActive = selectedGender === tab.value;
@@ -265,11 +265,15 @@ export default function Navbar({
                     className={`px-3 py-2 text-xs font-black tracking-wider uppercase transition-all relative flex items-center gap-1 cursor-pointer ${
                       isActive || isMegaActive
                         ? tab.highlight 
-                          ? 'text-[#E60012]' 
-                          : isScrolled ? 'text-zinc-950 font-black' : 'text-white font-black' 
                         : tab.highlight 
                           ? 'text-[#E60012]/90 hover:text-[#E60012]' 
-                          : isScrolled ? 'text-zinc-500 hover:text-zinc-900' : 'text-white/80 hover:text-white'
+                          : isScrolled ? 'text-zinc-600 hover:text-zinc-950' : 'text-white/80 hover:text-white'
+                    } ${
+                      isActive || isMegaActive
+                        ? tab.highlight 
+                          ? 'text-[#E60012]' 
+                          : isScrolled ? 'text-zinc-950 font-black' : 'text-white font-black'
+                        : ''
                     }`}
                   >
                     <span>{tab.label}</span>
@@ -288,28 +292,29 @@ export default function Navbar({
           {/* Right Action Icons (Search, Auth, Wishlist, Cart) */}
           <div className="flex items-center gap-1.5 sm:gap-3">
             
-            {/* Search Input Trigger */}
-            <div className="relative hidden xl:block w-52">
-              <Search className={`absolute left-3 top-1/2 -translate-y-1/2 transition-colors ${
+            {/* Search Input Trigger (Signature Uniqlo Pill Capsule) */}
+            <div className="relative hidden xl:block w-60 focus-within:w-72 transition-all duration-300">
+              <Search className={`absolute left-3.5 top-1/2 -translate-y-1/2 transition-colors pointer-events-none ${
                 isScrolled ? 'text-zinc-400' : 'text-white/70'
-              }`} size={15} />
+              }`} size={14} />
               <input
                 type="text"
-                placeholder="Cari pakaian..."
+                placeholder="Apa yang Anda cari?"
                 value={searchQuery}
                 onChange={(e) => onSearchChange(e.target.value)}
-                className={`w-full pl-9 pr-3 py-1.5 text-base md:text-xs font-medium rounded-none bg-transparent transition-all ${
+                className={`w-full pl-9 pr-8 py-1.5 text-xs font-medium rounded-full transition-all ${
                   isScrolled
-                    ? 'border border-zinc-300 text-zinc-900 placeholder-zinc-500 focus:outline-none focus:border-zinc-950'
-                    : 'border border-white/30 text-white placeholder-white/70 focus:outline-none focus:border-white'
+                    ? 'bg-zinc-100 border border-zinc-200 text-zinc-900 placeholder-zinc-400 focus:outline-none focus:bg-white focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900'
+                    : 'bg-white/15 border border-white/30 text-white placeholder-white/70 backdrop-blur-xs focus:outline-none focus:bg-white focus:text-zinc-900 focus:placeholder-zinc-400'
                 }`}
               />
               {searchQuery && (
                 <button
                   onClick={() => onSearchChange('')}
-                  className={`absolute right-2 top-1/2 -translate-y-1/2 transition-colors ${
-                    isScrolled ? 'text-zinc-400 hover:text-zinc-700' : 'text-white/70 hover:text-white'
+                  className={`absolute right-3 top-1/2 -translate-y-1/2 transition-colors cursor-pointer ${
+                    isScrolled ? 'text-zinc-400 hover:text-zinc-900' : 'text-white/70 hover:text-white'
                   }`}
+                  title="Hapus pencarian"
                 >
                   <X size={12} />
                 </button>
@@ -489,33 +494,33 @@ export default function Navbar({
       {activeMegaMenu && (
         <div
           ref={megaMenuRef}
-          className="hidden md:block absolute top-full left-0 right-0 bg-white border-b border-zinc-200 shadow-xl z-50 animate-in slide-in-from-top-2 duration-200 text-zinc-950"
+          className="hidden md:block absolute top-full left-0 right-0 bg-white border-b border-zinc-200 shadow-2xl z-50 animate-in slide-in-from-top-2 duration-200 text-zinc-950"
         >
-          <div className="max-w-7xl mx-auto px-6 sm:px-8 py-8">
+          <div className="max-w-7xl mx-auto px-6 sm:px-8 py-7">
             {/* Header info strip in Mega Menu */}
             <div className="flex items-center justify-between border-b border-zinc-100 pb-4 mb-6">
               <div className="flex items-center gap-3">
-                <span className="w-2.5 h-2.5 bg-[#E60012]" />
-                <h3 className="text-sm font-black uppercase tracking-widest text-zinc-950">
-                  KOLEKSI {activeMegaMenu === 'pria' ? 'PRIA (MEN)' : 'WANITA (WOMEN)'}
+                <span className="w-3 h-3 bg-[#E60012] shrink-0" />
+                <h3 className="text-sm font-black uppercase tracking-widest text-zinc-950 flex items-center gap-2">
+                  <span>KOLEKSI {activeMegaMenu === 'pria' ? 'PRIA' : 'WANITA'}</span>
                 </h3>
-                <span className="text-[10px] text-zinc-400 font-mono tracking-wider">
-                  // LIFEWEAR CATALOG
+                <span className="text-[11px] text-zinc-400 font-medium tracking-wide hidden sm:inline">
+                  • {activeMegaMenu === 'pria' ? 'Siluet Esensial & Busana Harian Pria' : 'Kenyamanan Elegan & Esensial Busana Wanita'}
                 </span>
               </div>
               <div className="flex items-center gap-4">
                 <button
                   type="button"
                   onClick={() => handleSubCategoryClick(activeMegaMenu, 'all')}
-                  className="text-xs font-bold text-zinc-500 hover:text-[#E60012] transition-colors flex items-center gap-1 cursor-pointer"
+                  className="text-xs font-bold text-zinc-600 hover:text-[#E60012] transition-colors flex items-center gap-1.5 cursor-pointer group"
                 >
-                  <span>Lihat Semua Koleksi {activeMegaMenu === 'pria' ? 'Pria' : 'Wanita'}</span>
-                  <span>→</span>
+                  <span className="group-hover:underline">Lihat Semua Koleksi {activeMegaMenu === 'pria' ? 'Pria' : 'Wanita'}</span>
+                  <span className="transition-transform group-hover:translate-x-0.5">→</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => setActiveMegaMenu(null)}
-                  className="p-1 text-zinc-400 hover:text-zinc-900 hover:bg-zinc-100 transition-colors cursor-pointer"
+                  className="p-1.5 text-zinc-400 hover:text-zinc-900 hover:bg-zinc-100 transition-colors cursor-pointer"
                   title="Tutup Menu Sub-kategori"
                   aria-label="Tutup Menu"
                 >
@@ -524,112 +529,135 @@ export default function Navbar({
               </div>
             </div>
 
-            {/* 3 Columns Grid */}
-            <div className="grid grid-cols-3 gap-8">
-              {/* Kolom 1 (Atasan) */}
-              <div className="space-y-4">
-                <div className="border-b border-zinc-100 pb-2">
-                  <h4 className="text-xs font-black uppercase tracking-wider text-zinc-400">
-                    ATASAN // TOPS
+            {/* 4 Columns Grid: 3 Category Columns + 1 Rich Editorial Visual Card */}
+            <div className="grid grid-cols-12 gap-7">
+              {/* Kolom 1: ATASAN (3 cols) */}
+              <div className="col-span-3 space-y-3.5 border-r border-zinc-100 pr-5">
+                <div className="border-b border-zinc-200 pb-2 flex items-baseline justify-between">
+                  <h4 className="text-xs font-black uppercase tracking-wider text-zinc-900">
+                    ATASAN
                   </h4>
+                  <span className="text-[10px] text-zinc-400 font-medium">Tops</span>
                 </div>
-                <div className="space-y-2">
+                <div className="space-y-1.5">
                   <button
                     type="button"
                     onClick={() => handleSubCategoryClick(activeMegaMenu, 'kemeja')}
-                    className="w-full text-left group cursor-pointer block p-2.5 -mx-2.5 hover:bg-zinc-50 transition-colors"
+                    className="w-full text-left group cursor-pointer block p-2.5 rounded-none hover:bg-zinc-50 transition-colors border-l-2 border-transparent hover:border-[#E60012]"
                   >
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-black uppercase tracking-tight text-zinc-900 group-hover:text-[#E60012] transition-colors">
-                        Kemeja & Flannel
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-black uppercase tracking-tight text-zinc-900 group-hover:text-[#E60012] transition-colors">
+                          Kemeja & Flannel
+                        </span>
+                        <span className="text-[9px] font-bold bg-zinc-100 text-zinc-600 px-1.5 py-0.2">
+                          Populer
+                        </span>
+                      </div>
                       <span className="text-zinc-400 group-hover:text-[#E60012] group-hover:translate-x-0.5 transition-all text-xs">
                         →
                       </span>
                     </div>
-                    <p className="text-[11px] text-zinc-500 mt-0.5 font-medium">
-                      Double-brushed katun halus & siluet kasual kampus/kerja
+                    <p className="text-[11px] text-zinc-500 mt-1 leading-relaxed">
+                      Katun halus double-brushed & siluet santai harian
                     </p>
                   </button>
 
                   <button
                     type="button"
                     onClick={() => handleSubCategoryClick(activeMegaMenu, 'kaos')}
-                    className="w-full text-left group cursor-pointer block p-2.5 -mx-2.5 hover:bg-zinc-50 transition-colors"
+                    className="w-full text-left group cursor-pointer block p-2.5 rounded-none hover:bg-zinc-50 transition-colors border-l-2 border-transparent hover:border-[#E60012]"
                   >
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-black uppercase tracking-tight text-zinc-900 group-hover:text-[#E60012] transition-colors">
-                        Kaos & AIRism
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-black uppercase tracking-tight text-zinc-900 group-hover:text-[#E60012] transition-colors">
+                          Kaos & AIRism
+                        </span>
+                        <span className="text-[9px] font-bold bg-sky-50 text-sky-700 px-1.5 py-0.2 border border-sky-100">
+                          AIRism
+                        </span>
+                      </div>
                       <span className="text-zinc-400 group-hover:text-[#E60012] group-hover:translate-x-0.5 transition-all text-xs">
                         →
                       </span>
                     </div>
-                    <p className="text-[11px] text-zinc-500 mt-0.5 font-medium">
-                      Katun tebal 280 GSM & serat sejuk teknologi AIRism
+                    <p className="text-[11px] text-zinc-500 mt-1 leading-relaxed">
+                      Katun tebal 280 GSM & serat sejuk teknologi Jepang
                     </p>
                   </button>
                 </div>
               </div>
 
-              {/* Kolom 2 (Bawahan & Luaran) */}
-              <div className="space-y-4">
-                <div className="border-b border-zinc-100 pb-2">
-                  <h4 className="text-xs font-black uppercase tracking-wider text-zinc-400">
-                    BAWAHAN & LUARAN // BOTTOMS & OUTER
+              {/* Kolom 2: BAWAHAN & LUARAN (3 cols) */}
+              <div className="col-span-3 space-y-3.5 border-r border-zinc-100 pr-5">
+                <div className="border-b border-zinc-200 pb-2 flex items-baseline justify-between">
+                  <h4 className="text-xs font-black uppercase tracking-wider text-zinc-900">
+                    BAWAHAN & LUARAN
                   </h4>
+                  <span className="text-[10px] text-zinc-400 font-medium">Bottoms & Outer</span>
                 </div>
-                <div className="space-y-2">
+                <div className="space-y-1.5">
                   <button
                     type="button"
                     onClick={() => handleSubCategoryClick(activeMegaMenu, 'celana')}
-                    className="w-full text-left group cursor-pointer block p-2.5 -mx-2.5 hover:bg-zinc-50 transition-colors"
+                    className="w-full text-left group cursor-pointer block p-2.5 rounded-none hover:bg-zinc-50 transition-colors border-l-2 border-transparent hover:border-[#E60012]"
                   >
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-black uppercase tracking-tight text-zinc-900 group-hover:text-[#E60012] transition-colors">
-                        Celana Chino & Ankle
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-black uppercase tracking-tight text-zinc-900 group-hover:text-[#E60012] transition-colors">
+                          Celana Chino & Ankle
+                        </span>
+                        <span className="text-[9px] font-bold bg-zinc-100 text-zinc-600 px-1.5 py-0.2">
+                          Stretch
+                        </span>
+                      </div>
                       <span className="text-zinc-400 group-hover:text-[#E60012] group-hover:translate-x-0.5 transition-all text-xs">
                         →
                       </span>
                     </div>
-                    <p className="text-[11px] text-zinc-500 mt-0.5 font-medium">
-                      Ultra Stretch fleksibel untuk kenyamanan dinamis
+                    <p className="text-[11px] text-zinc-500 mt-1 leading-relaxed">
+                      Peregangan 360° fleksibel untuk mobilitas bebas
                     </p>
                   </button>
 
                   <button
                     type="button"
                     onClick={() => handleSubCategoryClick(activeMegaMenu, 'jaket')}
-                    className="w-full text-left group cursor-pointer block p-2.5 -mx-2.5 hover:bg-zinc-50 transition-colors"
+                    className="w-full text-left group cursor-pointer block p-2.5 rounded-none hover:bg-zinc-50 transition-colors border-l-2 border-transparent hover:border-[#E60012]"
                   >
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-black uppercase tracking-tight text-zinc-900 group-hover:text-[#E60012] transition-colors">
-                        Jaket & Outerwear
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-black uppercase tracking-tight text-zinc-900 group-hover:text-[#E60012] transition-colors">
+                          Jaket & Outerwear
+                        </span>
+                        <span className="text-[9px] font-bold bg-amber-50 text-amber-700 px-1.5 py-0.2 border border-amber-100">
+                          UV Cut
+                        </span>
+                      </div>
                       <span className="text-zinc-400 group-hover:text-[#E60012] group-hover:translate-x-0.5 transition-all text-xs">
                         →
                       </span>
                     </div>
-                    <p className="text-[11px] text-zinc-500 mt-0.5 font-medium">
-                      Parka proteksi UV saku lipat & hoodie katun murni
+                    <p className="text-[11px] text-zinc-500 mt-1 leading-relaxed">
+                      Parka saku proteksi UV & hoodie kasual segala cuaca
                     </p>
                   </button>
                 </div>
               </div>
 
-              {/* Kolom 3 (Sorotan) */}
-              <div className="space-y-4">
-                <div className="border-b border-zinc-100 pb-2">
-                  <h4 className="text-xs font-black uppercase tracking-wider text-zinc-400">
-                    SOROTAN // HIGHLIGHTS
+              {/* Kolom 3: SOROTAN & PROMOSI (3 cols) */}
+              <div className="col-span-3 space-y-3.5 border-r border-zinc-100 pr-5">
+                <div className="border-b border-zinc-200 pb-2 flex items-baseline justify-between">
+                  <h4 className="text-xs font-black uppercase tracking-wider text-zinc-900">
+                    KOLEKSI SPESIAL
                   </h4>
+                  <span className="text-[10px] text-zinc-400 font-medium">Special Offers</span>
                 </div>
                 <div className="space-y-2">
                   <button
                     type="button"
                     onClick={() => handleSubCategoryClick(activeMegaMenu, 'sale')}
-                    className="w-full text-left group cursor-pointer block p-2.5 -mx-2.5 hover:bg-red-50/50 transition-colors border border-dashed border-red-200"
+                    className="w-full text-left group cursor-pointer block p-2.5 bg-red-50/50 hover:bg-red-50 transition-colors border border-red-200"
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-1.5">
@@ -642,8 +670,8 @@ export default function Navbar({
                         HEMAT S/D 30%
                       </span>
                     </div>
-                    <p className="text-[11px] text-zinc-500 mt-1 font-medium">
-                      Harga spesial terbatas waktu untuk koleksi pilihan
+                    <p className="text-[11px] text-zinc-600 mt-1 leading-relaxed">
+                      Harga penawaran spesial terbatas waktu untuk produk esensial
                     </p>
                   </button>
 
@@ -653,23 +681,91 @@ export default function Navbar({
                       handleSubCategoryClick(activeMegaMenu, 'all');
                       if (onSelectSort) onSelectSort('newest');
                     }}
-                    className="w-full text-left group cursor-pointer block p-2.5 -mx-2.5 hover:bg-zinc-50 transition-colors"
+                    className="w-full text-left group cursor-pointer block p-2.5 rounded-none hover:bg-zinc-50 transition-colors border-l-2 border-transparent hover:border-[#E60012]"
                   >
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-black uppercase tracking-tight text-zinc-900 group-hover:text-[#E60012] transition-colors">
-                        Koleksi Terbaru
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-black uppercase tracking-tight text-zinc-900 group-hover:text-[#E60012] transition-colors">
+                          Koleksi Terbaru
+                        </span>
+                        <span className="text-[9px] font-bold bg-zinc-950 text-white px-1.5 py-0.2">
+                          New
+                        </span>
+                      </div>
                       <span className="text-zinc-400 group-hover:text-[#E60012] group-hover:translate-x-0.5 transition-all text-xs">
                         →
                       </span>
                     </div>
-                    <p className="text-[11px] text-zinc-500 mt-0.5 font-medium">
-                      Esensial siluet modern LifeWear Tokyo Autumn / Winter 2026
+                    <p className="text-[11px] text-zinc-500 mt-1 leading-relaxed">
+                      Siluet modern LifeWear Tokyo Autumn / Winter 2026
                     </p>
                   </button>
                 </div>
               </div>
+
+              {/* Kolom 4: EDITORIAL VISUAL CARD (3 cols) */}
+              <div className="col-span-3">
+                <div 
+                  onClick={() => handleSubCategoryClick(activeMegaMenu, 'all')}
+                  className="group relative aspect-[3/4] overflow-hidden bg-zinc-100 cursor-pointer border border-zinc-200"
+                >
+                  <img
+                    src={
+                      activeMegaMenu === 'pria'
+                        ? 'https://images.unsplash.com/photo-1617137984095-74e4e5e3613f?auto=format&fit=crop&w=700&q=80'
+                        : 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=700&q=80'
+                    }
+                    alt={activeMegaMenu === 'pria' ? 'Lookbook Pria LifeWear' : 'Lookbook Wanita LifeWear'}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                    loading="lazy"
+                  />
+                  
+                  {/* Top Badge */}
+                  <div className="absolute top-3 left-3">
+                    <span className="bg-[#E60012] text-white text-[9px] font-black uppercase tracking-widest px-2 py-0.5 shadow-xs">
+                      {activeMegaMenu === 'pria' ? 'LOOKBOOK 2026' : 'SPECIAL HIGHLIGHT'}
+                    </span>
+                  </div>
+
+                  {/* Gradient Overlay & Text Content */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent p-4 flex flex-col justify-end text-white">
+                    <span className="text-[9px] font-mono text-zinc-300 uppercase tracking-widest mb-0.5">
+                      {activeMegaMenu === 'pria' ? 'SILUET ESENSIAL TOKYO' : 'SENTUHAN ALAMI & SEJUK'}
+                    </span>
+                    <h5 className="text-sm font-black uppercase tracking-tight leading-snug">
+                      {activeMegaMenu === 'pria' ? 'Koleksi Esensial Pria' : 'Koleksi Esensial Wanita'}
+                    </h5>
+                    <p className="text-[10px] text-zinc-300 mt-1 line-clamp-2 leading-relaxed">
+                      {activeMegaMenu === 'pria' 
+                        ? 'Paduan kemeja flannel dan celana stretch untuk mobilitas harian berkelas.'
+                        : 'Serat sejuk bernapas dengan potongan rileks yang anggun sepanjang hari.'}
+                    </p>
+                    <div className="mt-2.5 inline-flex items-center gap-1 text-[11px] font-bold text-white group-hover:text-[#E60012] transition-colors">
+                      <span>Jelajahi Gaya Lengkap</span>
+                      <span className="transition-transform group-hover:translate-x-1">→</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
             </div>
+
+            {/* Bottom Service Strip in Mega Menu */}
+            <div className="mt-6 pt-4 border-t border-zinc-100 grid grid-cols-3 gap-4 text-[11px]">
+              <div className="flex items-center gap-2.5 text-zinc-600">
+                <Truck size={14} className="text-[#E60012] shrink-0" />
+                <span><strong>Bebas Ongkos Kirim:</strong> Minimum belanja Rp 400.000 ke seluruh Indonesia</span>
+              </div>
+              <div className="flex items-center gap-2.5 text-zinc-600">
+                <RotateCcw size={14} className="text-[#E60012] shrink-0" />
+                <span><strong>Garansi Retur 30 Hari:</strong> Pengembalian mudah tanpa repot</span>
+              </div>
+              <div className="flex items-center gap-2.5 text-zinc-600">
+                <Sparkles size={14} className="text-[#E60012] shrink-0" />
+                <span><strong>Filosofi LifeWear:</strong> Pakaian berkualitas tinggi bernilai tinggi</span>
+              </div>
+            </div>
+
           </div>
         </div>
       )}

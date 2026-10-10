@@ -977,8 +977,8 @@ function HomePageContent() {
               <div className="grid grid-cols-3 gap-1.5">
                 {[
                   { label: 'SEMUA', val: 'all' },
-                  { label: 'PRIA (MEN)', val: 'pria' },
-                  { label: 'WANITA (WOMEN)', val: 'wanita' },
+                  { label: 'PRIA', val: 'pria' },
+                  { label: 'WANITA', val: 'wanita' },
                 ].map((g) => (
                   <button
                     key={g.val}
