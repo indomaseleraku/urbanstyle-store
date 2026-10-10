@@ -42,6 +42,164 @@ interface NavbarProps {
   onSelectSort?: (sortBy: string) => void;
 }
 
+interface MegaMenuLink {
+  label: string;
+  category: string;
+  search?: string;
+  sort?: string;
+  badge?: string;
+  badgeStyle?: 'red' | 'black' | 'gray' | 'blue' | 'yellow';
+}
+
+interface MegaMenuColumn {
+  title: string;
+  enTitle: string;
+  links: MegaMenuLink[];
+}
+
+interface MegaMenuData {
+  genderTitle: string;
+  subtitle: string;
+  columns: MegaMenuColumn[];
+  lookbook: {
+    tag: string;
+    title: string;
+    subtitle: string;
+    desc: string;
+    imageUrl: string;
+    category: string;
+    search?: string;
+  };
+}
+
+const MEN_MEGA_MENU: MegaMenuData = {
+  genderTitle: 'PRIA',
+  subtitle: 'Siluet Esensial & Busana Harian Minimalis Tokyo',
+  columns: [
+    {
+      title: 'ATASAN',
+      enTitle: 'Tops',
+      links: [
+        { label: 'Semua Atasan', category: 'all', search: 'atasan' },
+        { label: 'Kaos & T-Shirt Santai', category: 'kaos', search: '' },
+        { label: 'Kaos AIRism Serat Sejuk', category: 'kaos', search: 'AIRism', badge: 'AIRism', badgeStyle: 'blue' },
+        { label: 'Kemeja Flannel Kotak', category: 'kemeja', search: 'Flannel', badge: 'Populer', badgeStyle: 'gray' },
+        { label: 'Kemeja Kerja & Oxford', category: 'kemeja', search: 'Oxford' },
+        { label: 'Polo Shirt Katun', category: 'kaos', search: 'Polo' },
+        { label: 'Sweatshirt & Hoodie', category: 'jaket', search: 'Hoodie' },
+      ],
+    },
+    {
+      title: 'BAWAHAN',
+      enTitle: 'Bottoms',
+      links: [
+        { label: 'Semua Bawahan', category: 'celana', search: '' },
+        { label: 'Celana Chino & Ankle', category: 'celana', search: 'Chino', badge: 'Stretch', badgeStyle: 'gray' },
+        { label: 'Celana Smart Pants', category: 'celana', search: 'Ankle' },
+        { label: 'Jeans & Selvedge Denim', category: 'celana', search: 'Jeans' },
+        { label: 'Celana Pendek (Shorts)', category: 'celana', search: 'Short' },
+        { label: 'Celana Rileks & Jogger', category: 'celana', search: 'Jogger' },
+        { label: 'Celana Kargo & Utilitas', category: 'celana', search: 'Kargo' },
+      ],
+    },
+    {
+      title: 'LUARAN',
+      enTitle: 'Outerwear',
+      links: [
+        { label: 'Semua Luaran', category: 'jaket', search: '' },
+        { label: 'Parka Saku Proteksi UV', category: 'jaket', search: 'Parka', badge: 'UV Cut', badgeStyle: 'yellow' },
+        { label: 'Jaket Kasual & Workwear', category: 'jaket', search: 'Jaket' },
+        { label: 'Jaket Fleece Hangat', category: 'jaket', search: 'Fleece' },
+        { label: 'Cardigan & Sweater Rajut', category: 'jaket', search: 'Cardigan' },
+        { label: 'Luaran Tahan Air & Angin', category: 'jaket', search: 'Windproof' },
+      ],
+    },
+    {
+      title: 'KOLEKSI KHUSUS',
+      enTitle: 'Featured & Offers',
+      links: [
+        { label: 'Limited Offer (Penawaran Spesial)', category: 'sale', badge: 'LIMITED OFFER', badgeStyle: 'red' },
+        { label: 'Koleksi Terbaru (New Arrivals)', category: 'all', sort: 'newest', badge: 'NEW', badgeStyle: 'black' },
+        { label: 'Best of LifeWear (Paling Dicari)', category: 'all', sort: 'popular', badge: '★ 4.8+', badgeStyle: 'yellow' },
+        { label: 'Filosofi Katun LifeWear', category: 'kemeja' },
+        { label: 'Lihat Semua Produk Pria', category: 'all' },
+      ],
+    },
+  ],
+  lookbook: {
+    tag: 'LOOKBOOK 2026',
+    title: 'Koleksi Esensial Pria',
+    subtitle: 'SILUET ESENSIAL HARIAN',
+    desc: 'Paduan kemeja flannel katun murni double-brushed dan celana chino elastis untuk kenyamanan aktivitas setiap hari.',
+    imageUrl: 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=700&q=80',
+    category: 'all',
+  },
+};
+
+const WOMEN_MEGA_MENU: MegaMenuData = {
+  genderTitle: 'WANITA',
+  subtitle: 'Kenyamanan Anggun & Siluet Esensial Wanita',
+  columns: [
+    {
+      title: 'ATASAN',
+      enTitle: 'Tops',
+      links: [
+        { label: 'Semua Atasan Wanita', category: 'all', search: 'atasan' },
+        { label: 'Kaos Katun Lembut & T-Shirt', category: 'kaos', search: '' },
+        { label: 'Atasan & Kamisol AIRism', category: 'kaos', search: 'AIRism', badge: 'AIRism', badgeStyle: 'blue' },
+        { label: 'Kemeja Flannel & Blus Rileks', category: 'kemeja', search: 'Flannel', badge: 'Populer', badgeStyle: 'gray' },
+        { label: 'Blus Rayon Sutra Sintetis', category: 'kemeja', search: 'Blus' },
+        { label: 'Cardigan & Sweater Rajut', category: 'jaket', search: 'Cardigan' },
+        { label: 'Sweat & Hoodie Santai', category: 'jaket', search: 'Hoodie' },
+      ],
+    },
+    {
+      title: 'BAWAHAN',
+      enTitle: 'Bottoms',
+      links: [
+        { label: 'Semua Bawahan Wanita', category: 'celana', search: '' },
+        { label: 'Celana Ankle & Smart Trousers', category: 'celana', search: 'Ankle', badge: 'Favorit', badgeStyle: 'gray' },
+        { label: 'Celana Lebar (Wide Pants)', category: 'celana', search: 'Wide' },
+        { label: 'Rok Kasual & Lipit (Skirts)', category: 'celana', search: 'Rok' },
+        { label: 'Jeans & Stretch Denim', category: 'celana', search: 'Jeans' },
+        { label: 'Celana Rileks & Loungewear', category: 'celana', search: 'Rileks' },
+        { label: 'Celana Pendek Santai', category: 'celana', search: 'Short' },
+      ],
+    },
+    {
+      title: 'LUARAN',
+      enTitle: 'Outerwear',
+      links: [
+        { label: 'Semua Luaran Wanita', category: 'jaket', search: '' },
+        { label: 'Parka Saku UV Protection', category: 'jaket', search: 'Parka', badge: 'UV Cut', badgeStyle: 'yellow' },
+        { label: 'Jaket Kasual & Windproof', category: 'jaket', search: 'Jaket' },
+        { label: 'Cardigan Rajut Ringan', category: 'jaket', search: 'Cardigan' },
+        { label: 'Jaket Fleece Hangat Lembut', category: 'jaket', search: 'Fleece' },
+        { label: 'Blazer Kasual Santai', category: 'jaket', search: 'Blazer' },
+      ],
+    },
+    {
+      title: 'KOLEKSI KHUSUS',
+      enTitle: 'Featured & Offers',
+      links: [
+        { label: 'Limited Offer (Penawaran Spesial)', category: 'sale', badge: 'LIMITED OFFER', badgeStyle: 'red' },
+        { label: 'Koleksi Terbaru (New Arrivals)', category: 'all', sort: 'newest', badge: 'NEW', badgeStyle: 'black' },
+        { label: 'Best of LifeWear Wanita', category: 'all', sort: 'popular', badge: '★ 4.8+', badgeStyle: 'yellow' },
+        { label: 'Sentuhan Alami & Sejuk', category: 'kaos', search: 'AIRism' },
+        { label: 'Lihat Semua Produk Wanita', category: 'all' },
+      ],
+    },
+  ],
+  lookbook: {
+    tag: 'LOOKBOOK 2026',
+    title: 'Kenyamanan Anggun & Bersih',
+    subtitle: 'SILUET MENGALIR & SEJUK',
+    desc: 'Sentuhan serat alami bernapas dengan potongan santai yang anggun untuk mobilitas sepanjang hari.',
+    imageUrl: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=700&q=80',
+    category: 'all',
+  },
+};
+
 export default function Navbar({
   categories,
   selectedCategory,
@@ -88,21 +246,34 @@ export default function Navbar({
   const megaMenuRef = useRef<HTMLDivElement>(null);
   const tabsRef = useRef<HTMLElement>(null);
 
-  const handleSubCategoryClick = (gender: string, categorySlug: string) => {
+  const handleSubCategoryClick = (
+    gender: string,
+    categorySlug: string,
+    keyword?: string,
+    sortByParam?: string
+  ) => {
     onSelectGender(gender);
     onSelectCategory(categorySlug);
-    setActiveMegaMenu(null);
-    if (categorySlug === 'sale') {
-      const el = document.getElementById('limited-offer');
-      if (el) el.scrollIntoView({ behavior: 'smooth' });
-      else {
-        const catEl = document.getElementById('katalog');
-        if (catEl) catEl.scrollIntoView({ behavior: 'smooth' });
-      }
-    } else {
-      const el = document.getElementById('katalog');
-      if (el) el.scrollIntoView({ behavior: 'smooth' });
+    if (keyword !== undefined) {
+      onSearchChange(keyword);
     }
+    if (sortByParam && onSelectSort) {
+      onSelectSort(sortByParam);
+    }
+    setActiveMegaMenu(null);
+    setTimeout(() => {
+      if (categorySlug === 'sale') {
+        const el = document.getElementById('limited-offer');
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+        else {
+          const catEl = document.getElementById('katalog');
+          if (catEl) catEl.scrollIntoView({ behavior: 'smooth' });
+        }
+      } else {
+        const el = document.getElementById('katalog');
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+      }
+    }, 50);
   };
 
   // Tutup dropdown & mega menu saat klik di luar
@@ -490,283 +661,270 @@ export default function Navbar({
         </div>
       </div>
 
-      {/* 3. Desktop Mega Menu Dropdown */}
+      {/* 3. Desktop Mega Menu Dropdown (1:1 Uniqlo LifeWear Minimalist Directory) */}
       {activeMegaMenu && (
         <div
           ref={megaMenuRef}
           className="hidden md:block absolute top-full left-0 right-0 bg-white border-b border-zinc-200 shadow-2xl z-50 animate-in slide-in-from-top-2 duration-200 text-zinc-950"
         >
-          <div className="max-w-7xl mx-auto px-6 sm:px-8 py-7">
-            {/* Header info strip in Mega Menu */}
-            <div className="flex items-center justify-between border-b border-zinc-100 pb-4 mb-6">
-              <div className="flex items-center gap-3">
-                <span className="w-3 h-3 bg-[#E60012] shrink-0" />
-                <h3 className="text-sm font-black uppercase tracking-widest text-zinc-950 flex items-center gap-2">
-                  <span>KOLEKSI {activeMegaMenu === 'pria' ? 'PRIA' : 'WANITA'}</span>
-                </h3>
-                <span className="text-[11px] text-zinc-400 font-medium tracking-wide hidden sm:inline">
-                  • {activeMegaMenu === 'pria' ? 'Siluet Esensial & Busana Harian Pria' : 'Kenyamanan Elegan & Esensial Busana Wanita'}
-                </span>
-              </div>
-              <div className="flex items-center gap-4">
-                <button
-                  type="button"
-                  onClick={() => handleSubCategoryClick(activeMegaMenu, 'all')}
-                  className="text-xs font-bold text-zinc-600 hover:text-[#E60012] transition-colors flex items-center gap-1.5 cursor-pointer group"
-                >
-                  <span className="group-hover:underline">Lihat Semua Koleksi {activeMegaMenu === 'pria' ? 'Pria' : 'Wanita'}</span>
-                  <span className="transition-transform group-hover:translate-x-0.5">→</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setActiveMegaMenu(null)}
-                  className="p-1.5 text-zinc-400 hover:text-zinc-900 hover:bg-zinc-100 transition-colors cursor-pointer"
-                  title="Tutup Menu Sub-kategori"
-                  aria-label="Tutup Menu"
-                >
-                  <X size={16} />
-                </button>
-              </div>
-            </div>
-
-            {/* 4 Columns Grid: 3 Category Columns + 1 Rich Editorial Visual Card */}
-            <div className="grid grid-cols-12 gap-7">
-              {/* Kolom 1: ATASAN (3 cols) */}
-              <div className="col-span-3 space-y-3.5 border-r border-zinc-100 pr-5">
-                <div className="border-b border-zinc-200 pb-2 flex items-baseline justify-between">
-                  <h4 className="text-xs font-black uppercase tracking-wider text-zinc-900">
-                    ATASAN
-                  </h4>
-                  <span className="text-[10px] text-zinc-400 font-medium">Tops</span>
-                </div>
-                <div className="space-y-1.5">
-                  <button
-                    type="button"
-                    onClick={() => handleSubCategoryClick(activeMegaMenu, 'kemeja')}
-                    className="w-full text-left group cursor-pointer block p-2.5 rounded-none hover:bg-zinc-50 transition-colors border-l-2 border-transparent hover:border-[#E60012]"
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs font-black uppercase tracking-tight text-zinc-900 group-hover:text-[#E60012] transition-colors">
-                          Kemeja & Flannel
-                        </span>
-                        <span className="text-[9px] font-bold bg-zinc-100 text-zinc-600 px-1.5 py-0.2">
-                          Populer
-                        </span>
-                      </div>
-                      <span className="text-zinc-400 group-hover:text-[#E60012] group-hover:translate-x-0.5 transition-all text-xs">
-                        →
-                      </span>
-                    </div>
-                    <p className="text-[11px] text-zinc-500 mt-1 leading-relaxed">
-                      Katun halus double-brushed & siluet santai harian
-                    </p>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => handleSubCategoryClick(activeMegaMenu, 'kaos')}
-                    className="w-full text-left group cursor-pointer block p-2.5 rounded-none hover:bg-zinc-50 transition-colors border-l-2 border-transparent hover:border-[#E60012]"
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs font-black uppercase tracking-tight text-zinc-900 group-hover:text-[#E60012] transition-colors">
-                          Kaos & AIRism
-                        </span>
-                        <span className="text-[9px] font-bold bg-sky-50 text-sky-700 px-1.5 py-0.2 border border-sky-100">
-                          AIRism
-                        </span>
-                      </div>
-                      <span className="text-zinc-400 group-hover:text-[#E60012] group-hover:translate-x-0.5 transition-all text-xs">
-                        →
-                      </span>
-                    </div>
-                    <p className="text-[11px] text-zinc-500 mt-1 leading-relaxed">
-                      Katun tebal 280 GSM & serat sejuk teknologi Jepang
-                    </p>
-                  </button>
-                </div>
-              </div>
-
-              {/* Kolom 2: BAWAHAN & LUARAN (3 cols) */}
-              <div className="col-span-3 space-y-3.5 border-r border-zinc-100 pr-5">
-                <div className="border-b border-zinc-200 pb-2 flex items-baseline justify-between">
-                  <h4 className="text-xs font-black uppercase tracking-wider text-zinc-900">
-                    BAWAHAN & LUARAN
-                  </h4>
-                  <span className="text-[10px] text-zinc-400 font-medium">Bottoms & Outer</span>
-                </div>
-                <div className="space-y-1.5">
-                  <button
-                    type="button"
-                    onClick={() => handleSubCategoryClick(activeMegaMenu, 'celana')}
-                    className="w-full text-left group cursor-pointer block p-2.5 rounded-none hover:bg-zinc-50 transition-colors border-l-2 border-transparent hover:border-[#E60012]"
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs font-black uppercase tracking-tight text-zinc-900 group-hover:text-[#E60012] transition-colors">
-                          Celana Chino & Ankle
-                        </span>
-                        <span className="text-[9px] font-bold bg-zinc-100 text-zinc-600 px-1.5 py-0.2">
-                          Stretch
-                        </span>
-                      </div>
-                      <span className="text-zinc-400 group-hover:text-[#E60012] group-hover:translate-x-0.5 transition-all text-xs">
-                        →
-                      </span>
-                    </div>
-                    <p className="text-[11px] text-zinc-500 mt-1 leading-relaxed">
-                      Peregangan 360° fleksibel untuk mobilitas bebas
-                    </p>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => handleSubCategoryClick(activeMegaMenu, 'jaket')}
-                    className="w-full text-left group cursor-pointer block p-2.5 rounded-none hover:bg-zinc-50 transition-colors border-l-2 border-transparent hover:border-[#E60012]"
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs font-black uppercase tracking-tight text-zinc-900 group-hover:text-[#E60012] transition-colors">
-                          Jaket & Outerwear
-                        </span>
-                        <span className="text-[9px] font-bold bg-amber-50 text-amber-700 px-1.5 py-0.2 border border-amber-100">
-                          UV Cut
-                        </span>
-                      </div>
-                      <span className="text-zinc-400 group-hover:text-[#E60012] group-hover:translate-x-0.5 transition-all text-xs">
-                        →
-                      </span>
-                    </div>
-                    <p className="text-[11px] text-zinc-500 mt-1 leading-relaxed">
-                      Parka saku proteksi UV & hoodie kasual segala cuaca
-                    </p>
-                  </button>
-                </div>
-              </div>
-
-              {/* Kolom 3: SOROTAN & PROMOSI (3 cols) */}
-              <div className="col-span-3 space-y-3.5 border-r border-zinc-100 pr-5">
-                <div className="border-b border-zinc-200 pb-2 flex items-baseline justify-between">
-                  <h4 className="text-xs font-black uppercase tracking-wider text-zinc-900">
-                    KOLEKSI SPESIAL
-                  </h4>
-                  <span className="text-[10px] text-zinc-400 font-medium">Special Offers</span>
-                </div>
-                <div className="space-y-2">
-                  <button
-                    type="button"
-                    onClick={() => handleSubCategoryClick(activeMegaMenu, 'sale')}
-                    className="w-full text-left group cursor-pointer block p-2.5 bg-red-50/50 hover:bg-red-50 transition-colors border border-red-200"
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-1.5">
-                        <span className="text-xs font-black uppercase tracking-tight text-[#E60012]">
-                          Limited Offer {activeMegaMenu === 'pria' ? 'Pria' : 'Wanita'}
-                        </span>
-                        <span>🔥</span>
-                      </div>
-                      <span className="bg-[#E60012] text-white text-[9px] font-black uppercase px-1.5 py-0.5">
-                        HEMAT S/D 30%
-                      </span>
-                    </div>
-                    <p className="text-[11px] text-zinc-600 mt-1 leading-relaxed">
-                      Harga penawaran spesial terbatas waktu untuk produk esensial
-                    </p>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => {
-                      handleSubCategoryClick(activeMegaMenu, 'all');
-                      if (onSelectSort) onSelectSort('newest');
-                    }}
-                    className="w-full text-left group cursor-pointer block p-2.5 rounded-none hover:bg-zinc-50 transition-colors border-l-2 border-transparent hover:border-[#E60012]"
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs font-black uppercase tracking-tight text-zinc-900 group-hover:text-[#E60012] transition-colors">
-                          Koleksi Terbaru
-                        </span>
-                        <span className="text-[9px] font-bold bg-zinc-950 text-white px-1.5 py-0.2">
-                          New
-                        </span>
-                      </div>
-                      <span className="text-zinc-400 group-hover:text-[#E60012] group-hover:translate-x-0.5 transition-all text-xs">
-                        →
-                      </span>
-                    </div>
-                    <p className="text-[11px] text-zinc-500 mt-1 leading-relaxed">
-                      Siluet modern LifeWear Tokyo Autumn / Winter 2026
-                    </p>
-                  </button>
-                </div>
-              </div>
-
-              {/* Kolom 4: EDITORIAL VISUAL CARD (3 cols) */}
-              <div className="col-span-3">
-                <div 
-                  onClick={() => handleSubCategoryClick(activeMegaMenu, 'all')}
-                  className="group relative aspect-[3/4] overflow-hidden bg-zinc-100 cursor-pointer border border-zinc-200"
-                >
-                  <img
-                    src={
-                      activeMegaMenu === 'pria'
-                        ? 'https://images.unsplash.com/photo-1617137984095-74e4e5e3613f?auto=format&fit=crop&w=700&q=80'
-                        : 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=700&q=80'
-                    }
-                    alt={activeMegaMenu === 'pria' ? 'Lookbook Pria LifeWear' : 'Lookbook Wanita LifeWear'}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                    loading="lazy"
-                  />
-                  
-                  {/* Top Badge */}
-                  <div className="absolute top-3 left-3">
-                    <span className="bg-[#E60012] text-white text-[9px] font-black uppercase tracking-widest px-2 py-0.5 shadow-xs">
-                      {activeMegaMenu === 'pria' ? 'LOOKBOOK 2026' : 'SPECIAL HIGHLIGHT'}
+          {(() => {
+            const currentMenuData = activeMegaMenu === 'pria' ? MEN_MEGA_MENU : WOMEN_MEGA_MENU;
+            return (
+              <div className="max-w-7xl mx-auto px-6 sm:px-8 py-7">
+                {/* Header info strip in Mega Menu */}
+                <div className="flex items-center justify-between border-b border-zinc-200 pb-3.5 mb-6">
+                  <div className="flex items-center gap-2.5">
+                    <span className="w-3.5 h-3.5 bg-[#E60012] shrink-0" />
+                    <h3 className="text-sm font-black uppercase tracking-wider text-zinc-950">
+                      KOLEKSI {currentMenuData.genderTitle}
+                    </h3>
+                    <span className="text-xs text-zinc-400 font-medium hidden sm:inline">
+                      • {currentMenuData.subtitle}
                     </span>
                   </div>
+                  <div className="flex items-center gap-5">
+                    <button
+                      type="button"
+                      onClick={() => handleSubCategoryClick(activeMegaMenu, 'all')}
+                      className="text-xs font-black text-zinc-900 hover:text-[#E60012] transition-colors flex items-center gap-1 group cursor-pointer"
+                    >
+                      <span>Lihat Semua Koleksi {activeMegaMenu === 'pria' ? 'Pria' : 'Wanita'}</span>
+                      <span className="group-hover:translate-x-1 transition-transform">→</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setActiveMegaMenu(null)}
+                      className="p-1.5 text-zinc-400 hover:text-zinc-950 hover:bg-zinc-100 transition-colors cursor-pointer"
+                      title="Tutup Menu Sub-kategori"
+                      aria-label="Tutup Menu"
+                    >
+                      <X size={16} />
+                    </button>
+                  </div>
+                </div>
 
-                  {/* Gradient Overlay & Text Content */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent p-4 flex flex-col justify-end text-white">
-                    <span className="text-[9px] font-mono text-zinc-300 uppercase tracking-widest mb-0.5">
-                      {activeMegaMenu === 'pria' ? 'SILUET ESENSIAL TOKYO' : 'SENTUHAN ALAMI & SEJUK'}
-                    </span>
-                    <h5 className="text-sm font-black uppercase tracking-tight leading-snug">
-                      {activeMegaMenu === 'pria' ? 'Koleksi Esensial Pria' : 'Koleksi Esensial Wanita'}
-                    </h5>
-                    <p className="text-[10px] text-zinc-300 mt-1 line-clamp-2 leading-relaxed">
-                      {activeMegaMenu === 'pria' 
-                        ? 'Paduan kemeja flannel dan celana stretch untuk mobilitas harian berkelas.'
-                        : 'Serat sejuk bernapas dengan potongan rileks yang anggun sepanjang hari.'}
-                    </p>
-                    <div className="mt-2.5 inline-flex items-center gap-1 text-[11px] font-bold text-white group-hover:text-[#E60012] transition-colors">
-                      <span>Jelajahi Gaya Lengkap</span>
-                      <span className="transition-transform group-hover:translate-x-1">→</span>
+                {/* 5-Column Grid: 4 Clean Category Directories + 1 Rich Editorial Visual Card */}
+                <div className="grid grid-cols-12 gap-6 lg:gap-8">
+                  {/* Kolom 1: ATASAN (2 cols) */}
+                  <div className="col-span-12 sm:col-span-6 lg:col-span-2 space-y-3 border-r border-zinc-100 pr-4">
+                    <div className="pb-2 border-b-2 border-zinc-950 flex items-baseline justify-between">
+                      <h4 className="text-xs font-black uppercase tracking-wider text-zinc-950">
+                        {currentMenuData.columns[0].title}
+                      </h4>
+                      <span className="text-[10px] text-zinc-400 font-mono uppercase">
+                        {currentMenuData.columns[0].enTitle}
+                      </span>
+                    </div>
+                    <ul className="space-y-0.5">
+                      {currentMenuData.columns[0].links.map((item, idx) => (
+                        <li key={idx}>
+                          <button
+                            type="button"
+                            onClick={() => handleSubCategoryClick(activeMegaMenu, item.category, item.search, item.sort)}
+                            className="w-full text-left py-1 text-xs text-zinc-600 hover:text-[#E60012] transition-colors flex items-center justify-between group cursor-pointer"
+                          >
+                            <span className="group-hover:translate-x-1 transition-transform inline-flex items-center gap-1.5 truncate">
+                              <span className="w-1 h-1 bg-zinc-300 group-hover:bg-[#E60012] rounded-full transition-colors shrink-0" />
+                              <span className="font-normal group-hover:font-medium">{item.label}</span>
+                            </span>
+                            {item.badge && (
+                              <span className={`text-[8px] font-black uppercase tracking-wider px-1.5 py-0.2 rounded-none shrink-0 ${
+                                item.badgeStyle === 'blue' ? 'bg-sky-50 text-sky-700 border border-sky-100' :
+                                item.badgeStyle === 'gray' ? 'bg-zinc-100 text-zinc-600' :
+                                'bg-zinc-100 text-zinc-600'
+                              }`}>
+                                {item.badge}
+                              </span>
+                            )}
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  {/* Kolom 2: BAWAHAN (2 cols) */}
+                  <div className="col-span-12 sm:col-span-6 lg:col-span-2 space-y-3 border-r border-zinc-100 pr-4">
+                    <div className="pb-2 border-b-2 border-zinc-950 flex items-baseline justify-between">
+                      <h4 className="text-xs font-black uppercase tracking-wider text-zinc-950">
+                        {currentMenuData.columns[1].title}
+                      </h4>
+                      <span className="text-[10px] text-zinc-400 font-mono uppercase">
+                        {currentMenuData.columns[1].enTitle}
+                      </span>
+                    </div>
+                    <ul className="space-y-0.5">
+                      {currentMenuData.columns[1].links.map((item, idx) => (
+                        <li key={idx}>
+                          <button
+                            type="button"
+                            onClick={() => handleSubCategoryClick(activeMegaMenu, item.category, item.search, item.sort)}
+                            className="w-full text-left py-1 text-xs text-zinc-600 hover:text-[#E60012] transition-colors flex items-center justify-between group cursor-pointer"
+                          >
+                            <span className="group-hover:translate-x-1 transition-transform inline-flex items-center gap-1.5 truncate">
+                              <span className="w-1 h-1 bg-zinc-300 group-hover:bg-[#E60012] rounded-full transition-colors shrink-0" />
+                              <span className="font-normal group-hover:font-medium">{item.label}</span>
+                            </span>
+                            {item.badge && (
+                              <span className="text-[8px] font-black uppercase tracking-wider px-1.5 py-0.2 rounded-none shrink-0 bg-zinc-100 text-zinc-600">
+                                {item.badge}
+                              </span>
+                            )}
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  {/* Kolom 3: LUARAN (2 cols) */}
+                  <div className="col-span-12 sm:col-span-6 lg:col-span-2 space-y-3 border-r border-zinc-100 pr-4">
+                    <div className="pb-2 border-b-2 border-zinc-950 flex items-baseline justify-between">
+                      <h4 className="text-xs font-black uppercase tracking-wider text-zinc-950">
+                        {currentMenuData.columns[2].title}
+                      </h4>
+                      <span className="text-[10px] text-zinc-400 font-mono uppercase">
+                        {currentMenuData.columns[2].enTitle}
+                      </span>
+                    </div>
+                    <ul className="space-y-0.5">
+                      {currentMenuData.columns[2].links.map((item, idx) => (
+                        <li key={idx}>
+                          <button
+                            type="button"
+                            onClick={() => handleSubCategoryClick(activeMegaMenu, item.category, item.search, item.sort)}
+                            className="w-full text-left py-1 text-xs text-zinc-600 hover:text-[#E60012] transition-colors flex items-center justify-between group cursor-pointer"
+                          >
+                            <span className="group-hover:translate-x-1 transition-transform inline-flex items-center gap-1.5 truncate">
+                              <span className="w-1 h-1 bg-zinc-300 group-hover:bg-[#E60012] rounded-full transition-colors shrink-0" />
+                              <span className="font-normal group-hover:font-medium">{item.label}</span>
+                            </span>
+                            {item.badge && (
+                              <span className="text-[8px] font-black uppercase tracking-wider px-1.5 py-0.2 rounded-none shrink-0 bg-amber-50 text-amber-800 border border-amber-200">
+                                {item.badge}
+                              </span>
+                            )}
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  {/* Kolom 4: KOLEKSI KHUSUS (3 cols) */}
+                  <div className="col-span-12 sm:col-span-6 lg:col-span-3 space-y-3 border-r border-zinc-100 pr-4">
+                    <div className="pb-2 border-b-2 border-zinc-950 flex items-baseline justify-between">
+                      <h4 className="text-xs font-black uppercase tracking-wider text-zinc-950">
+                        {currentMenuData.columns[3].title}
+                      </h4>
+                      <span className="text-[10px] text-zinc-400 font-mono uppercase">
+                        {currentMenuData.columns[3].enTitle}
+                      </span>
+                    </div>
+                    <ul className="space-y-0.5">
+                      {currentMenuData.columns[3].links.map((item, idx) => (
+                        <li key={idx}>
+                          <button
+                            type="button"
+                            onClick={() => handleSubCategoryClick(activeMegaMenu, item.category, item.search, item.sort)}
+                            className="w-full text-left py-1 text-xs text-zinc-600 hover:text-[#E60012] transition-colors flex items-center justify-between group cursor-pointer"
+                          >
+                            <span className="group-hover:translate-x-1 transition-transform inline-flex items-center gap-1.5 truncate">
+                              <span className="w-1 h-1 bg-zinc-300 group-hover:bg-[#E60012] rounded-full transition-colors shrink-0" />
+                              <span className="font-normal group-hover:font-medium">{item.label}</span>
+                            </span>
+                            {item.badge && (
+                              <span className={`text-[8px] font-black uppercase tracking-wider px-1.5 py-0.2 rounded-none shrink-0 ${
+                                item.badgeStyle === 'red' ? 'bg-[#E60012] text-white' :
+                                item.badgeStyle === 'black' ? 'bg-zinc-950 text-white' :
+                                item.badgeStyle === 'yellow' ? 'bg-amber-100 text-amber-900' :
+                                'bg-zinc-100 text-zinc-600'
+                              }`}>
+                                {item.badge}
+                              </span>
+                            )}
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+
+                    {/* Clean Highlight Card: Limited Offer Uniqlo Style */}
+                    <div className="pt-2">
+                      <button
+                        type="button"
+                        onClick={() => handleSubCategoryClick(activeMegaMenu, 'sale')}
+                        className="w-full text-left p-2.5 bg-zinc-50 hover:bg-zinc-900 text-zinc-950 hover:text-white transition-all border border-zinc-200 group cursor-pointer"
+                      >
+                        <div className="flex items-center justify-between">
+                          <span className="text-[10px] font-black uppercase tracking-wider">
+                            LIMITED OFFER {activeMegaMenu === 'pria' ? 'PRIA' : 'WANITA'}
+                          </span>
+                          <span className="text-[9px] font-black uppercase px-1.5 py-0.5 bg-[#E60012] text-white">
+                            HEMAT S/D 30%
+                          </span>
+                        </div>
+                        <p className="text-[10px] text-zinc-500 group-hover:text-zinc-300 mt-1 leading-snug">
+                          Penawaran terbatas produk esensial LifeWear berkualitas tinggi.
+                        </p>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Kolom 5: EDITORIAL VISUAL CARD (3 cols) */}
+                  <div className="col-span-12 lg:col-span-3">
+                    <div 
+                      onClick={() => handleSubCategoryClick(activeMegaMenu, currentMenuData.lookbook.category, currentMenuData.lookbook.search)}
+                      className="group relative aspect-[3/4] overflow-hidden bg-zinc-100 cursor-pointer border border-zinc-200 shadow-xs"
+                    >
+                      <img
+                        src={currentMenuData.lookbook.imageUrl}
+                        alt={currentMenuData.lookbook.title}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                        loading="lazy"
+                      />
+                      
+                      {/* Top Badge */}
+                      <div className="absolute top-2.5 left-2.5 z-10">
+                        <span className="bg-[#E60012] text-white text-[9px] font-black uppercase tracking-widest px-2 py-0.5 shadow-xs">
+                          {currentMenuData.lookbook.tag}
+                        </span>
+                      </div>
+
+                      {/* Gradient Overlay & Text Content */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent p-4 flex flex-col justify-end text-white">
+                        <span className="text-[9px] font-mono text-zinc-300 uppercase tracking-widest mb-0.5">
+                          {currentMenuData.lookbook.subtitle}
+                        </span>
+                        <h5 className="text-sm font-black uppercase tracking-tight leading-snug">
+                          {currentMenuData.lookbook.title}
+                        </h5>
+                        <p className="text-[10px] text-zinc-300 mt-1 line-clamp-2 leading-relaxed">
+                          {currentMenuData.lookbook.desc}
+                        </p>
+                        <div className="mt-2.5 inline-flex items-center gap-1 text-[11px] font-bold text-white group-hover:text-[#E60012] transition-colors">
+                          <span>Jelajahi Gaya Lengkap</span>
+                          <span className="transition-transform group-hover:translate-x-1">→</span>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
 
-            </div>
-
-            {/* Bottom Service Strip in Mega Menu */}
-            <div className="mt-6 pt-4 border-t border-zinc-100 grid grid-cols-3 gap-4 text-[11px]">
-              <div className="flex items-center gap-2.5 text-zinc-600">
-                <Truck size={14} className="text-[#E60012] shrink-0" />
-                <span><strong>Bebas Ongkos Kirim:</strong> Minimum belanja Rp 400.000 ke seluruh Indonesia</span>
+                {/* Bottom Service Strip in Mega Menu */}
+                <div className="mt-6 pt-3.5 border-t border-zinc-100 flex items-center justify-between text-[11px] text-zinc-500 flex-wrap gap-4">
+                  <div className="flex items-center gap-2">
+                    <Truck size={14} className="text-[#E60012] shrink-0" />
+                    <span><strong>Bebas Ongkos Kirim:</strong> Min. belanja Rp 400.000 ke seluruh Indonesia</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <RotateCcw size={14} className="text-[#E60012] shrink-0" />
+                    <span><strong>Garansi Retur 30 Hari:</strong> Pengembalian mudah tanpa repot</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Sparkles size={14} className="text-[#E60012] shrink-0" />
+                    <span><strong>Filosofi LifeWear:</strong> Pakaian esensial fungsional & bernilai tinggi</span>
+                  </div>
+                </div>
               </div>
-              <div className="flex items-center gap-2.5 text-zinc-600">
-                <RotateCcw size={14} className="text-[#E60012] shrink-0" />
-                <span><strong>Garansi Retur 30 Hari:</strong> Pengembalian mudah tanpa repot</span>
-              </div>
-              <div className="flex items-center gap-2.5 text-zinc-600">
-                <Sparkles size={14} className="text-[#E60012] shrink-0" />
-                <span><strong>Filosofi LifeWear:</strong> Pakaian berkualitas tinggi bernilai tinggi</span>
-              </div>
-            </div>
-
-          </div>
+            );
+          })()}
         </div>
       )}
 
