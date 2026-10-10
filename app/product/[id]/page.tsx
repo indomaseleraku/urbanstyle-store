@@ -9,6 +9,8 @@ import { dataStore } from '@/lib/store';
 import { getOptimizedImageUrl } from '@/lib/utils';
 import Navbar from '@/components/Navbar';
 import SizeChartModal from '@/components/SizeChartModal';
+import SmartSizePredictorModal from '@/components/SmartSizePredictorModal';
+import FabricMacroZoom, { WeatherTechBadge } from '@/components/FabricMacroZoom';
 import WishlistDrawer from '@/components/WishlistDrawer';
 import CartDrawer from '@/components/CartDrawer';
 import CheckoutModal from '@/components/CheckoutModal';
@@ -47,6 +49,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
   const [quantity, setQuantity] = useState(1);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [isSizeChartOpen, setIsSizeChartOpen] = useState(false);
+  const [isSmartPredictorOpen, setIsSmartPredictorOpen] = useState(false);
   const [addedNotice, setAddedNotice] = useState(false);
   const [openAccordion, setOpenAccordion] = useState<string | null>('desc');
 
@@ -225,16 +228,17 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
         {/* Product Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
           
-          {/* Gallery Column (UI-02: Sticky Split View) */}
+          {/* Gallery Column (UI-02: Sticky Split View with FR-34 Fabric Macro Zoom) */}
           <div className="lg:col-span-7 space-y-4">
-            <div className="relative aspect-[3/4] bg-[#F6F6F6] border border-zinc-200 overflow-hidden rounded-none">
-              <img
-                src={getOptimizedImageUrl(mainDisplayImage, 900, 80)}
-                alt={product.name}
-                className="w-full h-full object-cover object-center"
+            <div className="relative">
+              <FabricMacroZoom
+                imageUrl={mainDisplayImage}
+                altText={product.name}
+                fabricDetails={product.fabric_details}
+                categoryName={product.category_name}
               />
 
-              <div className="absolute top-4 left-4 flex flex-col gap-1.5 items-start">
+              <div className="absolute top-4 left-4 flex flex-col gap-1.5 items-start z-10 pointer-events-none">
                 {product.is_new && (
                   <span className="bg-[#111111] text-white text-[9px] font-black uppercase tracking-widest px-3 py-1 rounded-none shadow-xs">
                     NEW ARRIVAL
@@ -250,7 +254,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
               <button
                 type="button"
                 onClick={handleToggleWishlist}
-                className={`absolute top-4 right-4 p-3 border transition-all rounded-none ${
+                className={`absolute top-4 right-4 z-10 p-3 border transition-all rounded-none ${
                   isWishlisted
                     ? 'bg-[#E60012] border-[#E60012] text-white'
                     : 'bg-white/95 border-zinc-300 text-zinc-700 hover:text-[#E60012]'
@@ -387,14 +391,25 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
             <div className="space-y-2 pt-2 border-t border-zinc-200">
               <div className="flex justify-between items-center text-xs">
                 <span className="font-bold uppercase text-zinc-700">Pilih Ukuran:</span>
-                <button
-                  type="button"
-                  onClick={() => setIsSizeChartOpen(true)}
-                  className="text-[#E60012] hover:underline font-bold flex items-center gap-1 text-[11px] uppercase"
-                >
-                  <Ruler size={13} />
-                  <span>Panduan Ukuran (cm)</span>
-                </button>
+                <div className="flex items-center gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setIsSmartPredictorOpen(true)}
+                    className="text-zinc-950 hover:text-[#E60012] font-bold flex items-center gap-1 text-[11px] uppercase tracking-wider cursor-pointer"
+                    title="Hitung ukuran ideal berdasarkan TB & BB"
+                  >
+                    <Sparkles size={12} className="text-[#E60012]" />
+                    <span>Kalkulator TB/BB</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setIsSizeChartOpen(true)}
+                    className="text-[#E60012] hover:underline font-bold flex items-center gap-1 text-[11px] uppercase cursor-pointer"
+                  >
+                    <Ruler size={13} />
+                    <span>Panduan (cm)</span>
+                  </button>
+                </div>
               </div>
 
               <div className="grid grid-cols-4 gap-2">
@@ -810,6 +825,15 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
         productName={product.name}
         categoryName={product.category_name}
         measurements={product.size_measurements}
+      />
+
+      {/* Smart Size & Fit Predictor Modal (FR-30) */}
+      <SmartSizePredictorModal
+        isOpen={isSmartPredictorOpen}
+        onClose={() => setIsSmartPredictorOpen(false)}
+        productName={product.name}
+        categoryName={product.category_name}
+        onApplySize={(sz) => setSelectedSize(sz)}
       />
 
       <WishlistDrawer

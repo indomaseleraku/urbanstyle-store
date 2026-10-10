@@ -8,7 +8,9 @@ import LookbookSlider from '@/components/LookbookSlider';
 import CategoryBubbles from '@/components/CategoryBubbles';
 import LifeWearStorySection from '@/components/LifeWearStorySection';
 import MemberLoyaltyBanner from '@/components/MemberLoyaltyBanner';
+import CapsuleWardrobeBuilder from '@/components/CapsuleWardrobeBuilder';
 import ProductCard from '@/components/ProductCard';
+import ProductCardSkeleton from '@/components/ProductCardSkeleton';
 import ProductDetailModal from '@/components/ProductDetailModal';
 import SizeChartModal from '@/components/SizeChartModal';
 import WishlistDrawer from '@/components/WishlistDrawer';
@@ -191,6 +193,41 @@ function HomePageContent() {
     setCartItems([{ product, selected_size: size, selected_color: colorName, quantity }]);
     setSelectedProductForDetail(null);
     setIsCheckoutOpen(true);
+  };
+
+  // Handle Bundling 3-Piece Capsule Wardrobe (FR-31)
+  const handleBundleAddToCart = (
+    bundleItems: { product: Product; size: string; colorName: string; quantity: number }[]
+  ) => {
+    setCartItems((prev) => {
+      let updated = [...prev];
+      for (const item of bundleItems) {
+        const existingIdx = updated.findIndex(
+          (it) => it.product.id === item.product.id && it.selected_size === item.size && it.selected_color === item.colorName
+        );
+        if (existingIdx !== -1) {
+          const newQty = updated[existingIdx].quantity + item.quantity;
+          if (newQty <= item.product.stock) {
+            updated[existingIdx].quantity = newQty;
+          }
+        } else {
+          updated.push({
+            product: item.product,
+            selected_size: item.size,
+            selected_color: item.colorName,
+            quantity: item.quantity,
+          });
+        }
+      }
+      return updated;
+    });
+
+    setToast({
+      visible: true,
+      productName: '3-Piece Capsule OOTD Set (Hemat 15%)',
+      colorName: 'LifeWear Set',
+      size: 'Bundling',
+    });
   };
 
   // Update Cart Qty
@@ -474,7 +511,14 @@ function HomePageContent() {
               </div>
             </section>
 
-            {/* 2g. BENEFIT MEMBER: KARTU DIGITAL BARCODE & VOUCHER RP 50.000 (PRD SECTION 8) */}
+            {/* 2g. Capsule Wardrobe Outfit Builder Studio (PRD FR-31) */}
+            <CapsuleWardrobeBuilder
+              products={products}
+              onAddBundleToCart={handleBundleAddToCart}
+              onOpenProductDetail={(p) => setSelectedProductForDetail(p)}
+            />
+
+            {/* 2h. BENEFIT MEMBER: KARTU DIGITAL BARCODE & VOUCHER RP 50.000 (PRD SECTION 8) */}
             <MemberLoyaltyBanner 
               user={user} 
               onOpenAuthModal={openAuthModal} 
@@ -628,14 +672,8 @@ function HomePageContent() {
 
           {/* Product Grid */}
           {isLoading ? (
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-4 md:gap-6 py-12">
-              {[...Array(8)].map((_, i) => (
-                <div key={i} className="space-y-3 animate-pulse">
-                  <div className="aspect-[3/4] bg-zinc-200" />
-                  <div className="h-4 bg-zinc-200 w-3/4" />
-                  <div className="h-4 bg-zinc-200 w-1/2" />
-                </div>
-              ))}
+            <div className="py-6">
+              <ProductCardSkeleton count={8} />
             </div>
           ) : products.length === 0 ? (
             <div className="py-20 text-center space-y-4 max-w-md mx-auto">

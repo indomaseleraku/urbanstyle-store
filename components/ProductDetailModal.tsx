@@ -21,6 +21,8 @@ import {
   MessageSquarePlus
 } from 'lucide-react';
 import SizeChartModal from './SizeChartModal';
+import SmartSizePredictorModal from './SmartSizePredictorModal';
+import { WeatherTechBadge } from './FabricMacroZoom';
 import { getOptimizedImageUrl } from '@/lib/utils';
 import { ModalType } from './InformationModals';
 
@@ -49,6 +51,7 @@ export default function ProductDetailModal({
   const [selectedSize, setSelectedSize] = useState('M');
   const [quantity, setQuantity] = useState(1);
   const [isSizeChartOpen, setIsSizeChartOpen] = useState(false);
+  const [isSmartPredictorOpen, setIsSmartPredictorOpen] = useState(false);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [addedNotice, setAddedNotice] = useState(false);
 
@@ -377,14 +380,25 @@ export default function ProductDetailModal({
               <div className="space-y-2 pt-2 border-t border-zinc-200">
                 <div className="flex justify-between items-center text-xs">
                   <span className="font-bold uppercase tracking-wider text-zinc-700">Pilih Ukuran:</span>
-                  <button
-                    type="button"
-                    onClick={() => setIsSizeChartOpen(true)}
-                    className="text-[#E60012] hover:underline font-bold flex items-center gap-1 text-[11px] uppercase tracking-wider"
-                  >
-                    <Ruler size={13} />
-                    <span>Panduan Ukuran (cm)</span>
-                  </button>
+                  <div className="flex items-center gap-3">
+                    <button
+                      type="button"
+                      onClick={() => setIsSmartPredictorOpen(true)}
+                      className="text-zinc-900 hover:text-[#E60012] font-bold flex items-center gap-1 text-[11px] uppercase tracking-wider cursor-pointer"
+                      title="Hitung ukuran ideal berdasarkan TB & BB"
+                    >
+                      <Sparkles size={13} className="text-[#E60012]" />
+                      <span>Kalkulator TB/BB</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setIsSizeChartOpen(true)}
+                      className="text-[#E60012] hover:underline font-bold flex items-center gap-1 text-[11px] uppercase tracking-wider cursor-pointer"
+                    >
+                      <Ruler size={13} />
+                      <span>Panduan (cm)</span>
+                    </button>
+                  </div>
                 </div>
 
                 <div className="grid grid-cols-4 gap-2">
@@ -635,6 +649,15 @@ export default function ProductDetailModal({
         productName={product.name}
         categoryName={product.category_name}
         measurements={product.size_measurements}
+      />
+
+      {/* Smart Size & Fit Predictor Modal (FR-30) */}
+      <SmartSizePredictorModal
+        isOpen={isSmartPredictorOpen}
+        onClose={() => setIsSmartPredictorOpen(false)}
+        productName={product.name}
+        categoryName={product.category_name}
+        onApplySize={(sz) => setSelectedSize(sz)}
       />
 
     </div>
