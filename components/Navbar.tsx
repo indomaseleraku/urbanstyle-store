@@ -216,7 +216,8 @@ export default function Navbar({
   onSelectSort,
 }: NavbarProps) {
   const { user, isAuthenticated, isAdmin, openAuthModal, logout } = useAuth();
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [sideDrawerOpen, setSideDrawerOpen] = useState(false);
+  const [drawerGender, setDrawerGender] = useState<'pria' | 'wanita'>('pria');
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -242,9 +243,39 @@ export default function Navbar({
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const [activeMegaMenu, setActiveMegaMenu] = useState<'pria' | 'wanita' | null>(null);
-  const megaMenuRef = useRef<HTMLDivElement>(null);
-  const tabsRef = useRef<HTMLElement>(null);
+  // Sync drawer gender dengan gender yang sedang aktif
+  useEffect(() => {
+    if (selectedGender === 'wanita') {
+      setDrawerGender('wanita');
+    } else if (selectedGender === 'pria') {
+      setDrawerGender('pria');
+    }
+  }, [selectedGender]);
+
+  // Lock body scroll saat side drawer terbuka
+  useEffect(() => {
+    if (sideDrawerOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [sideDrawerOpen]);
+
+  // Handle escape key
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setSideDrawerOpen(false);
+        setUserDropdownOpen(false);
+        setIsSearchOpen(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   const handleSubCategoryClick = (
     gender: string,
@@ -260,15 +291,11 @@ export default function Navbar({
     if (sortByParam && onSelectSort) {
       onSelectSort(sortByParam);
     }
-    setActiveMegaMenu(null);
+    setSideDrawerOpen(false);
     setTimeout(() => {
       if (categorySlug === 'sale') {
-        const el = document.getElementById('limited-offer');
+        const el = document.getElementById('limited-offer') || document.getElementById('katalog');
         if (el) el.scrollIntoView({ behavior: 'smooth' });
-        else {
-          const catEl = document.getElementById('katalog');
-          if (catEl) catEl.scrollIntoView({ behavior: 'smooth' });
-        }
       } else {
         const el = document.getElementById('katalog');
         if (el) el.scrollIntoView({ behavior: 'smooth' });
@@ -276,20 +303,12 @@ export default function Navbar({
     }, 50);
   };
 
-  // Tutup dropdown & mega menu saat klik di luar
+  // Tutup dropdown user saat klik di luar
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as Node;
       if (dropdownRef.current && !dropdownRef.current.contains(target)) {
         setUserDropdownOpen(false);
-      }
-      if (
-        megaMenuRef.current && 
-        !megaMenuRef.current.contains(target) &&
-        tabsRef.current &&
-        !tabsRef.current.contains(target)
-      ) {
-        setActiveMegaMenu(null);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -364,36 +383,44 @@ export default function Navbar({
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 sm:h-20 gap-4">
           
-          {/* Brand Logo (Uniqlo Dual Box Style: Latin US + Japanese Katakana) */}
-          <div className="flex items-center gap-4 sm:gap-6">
+          {/* Brand Logo & Menu Trigger (Uniqlo Dual Box Style: Latin US + Japanese Katakana) */}
+          <div className="flex items-center gap-3 sm:gap-5">
             <button 
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className={`lg:hidden p-2 focus:outline-none transition-colors ${
-                isScrolled ? 'text-zinc-700 hover:text-black' : 'text-white hover:text-white/80'
+              onClick={() => {
+                setDrawerGender(selectedGender === 'wanita' ? 'wanita' : 'pria');
+                setSideDrawerOpen(true);
+              }}
+              className={`px-2 sm:px-2.5 py-1.5 flex items-center gap-1.5 focus:outline-none transition-colors border cursor-pointer ${
+                isScrolled 
+                  ? 'text-zinc-900 border-zinc-300 hover:border-black bg-zinc-50' 
+                  : 'text-white border-white/40 hover:border-white bg-black/20'
               }`}
+              title="Buka Menu Kategori Lengkap"
+              aria-label="Buka Menu"
             >
-              {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
+              <Menu size={18} />
+              <span className="text-[11px] font-black tracking-widest uppercase hidden sm:inline">MENU</span>
             </button>
 
             <Link href="/" className="flex items-center gap-2 group">
               <div className="flex items-center gap-1">
                 {/* Box 1: English */}
-                <div className="w-9 h-9 sm:w-10 sm:h-10 bg-[#E60012] text-white font-black text-sm sm:text-base tracking-tighter flex items-center justify-center shadow-xs">
+                <div className="w-8 h-8 sm:w-9 sm:h-9 bg-[#E60012] text-white font-black text-xs sm:text-sm tracking-tighter flex items-center justify-center shadow-xs">
                   US
                 </div>
                 {/* Box 2: Japanese Katakana */}
-                <div className="w-9 h-9 sm:w-10 sm:h-10 bg-[#E60012] text-white font-black text-[10px] tracking-tight flex items-center justify-center leading-none text-center shadow-xs font-sans">
+                <div className="w-8 h-8 sm:w-9 sm:h-9 bg-[#E60012] text-white font-black text-[9px] sm:text-[10px] tracking-tight flex items-center justify-center leading-none text-center shadow-xs font-sans">
                   アー<br/>バン
                 </div>
               </div>
 
               <div className="flex flex-col ml-1">
-                <span className={`font-black text-lg sm:text-xl tracking-tight uppercase group-hover:text-[#E60012] transition-colors ${
+                <span className={`font-black text-base sm:text-lg tracking-tight uppercase group-hover:text-[#E60012] transition-colors ${
                   isScrolled ? 'text-zinc-950' : 'text-white'
                 }`}>
                   UrbanStyle
                 </span>
-                <span className={`text-[9px] font-bold tracking-[0.25em] uppercase -mt-1 transition-colors ${
+                <span className={`text-[8px] sm:text-[9px] font-bold tracking-[0.25em] uppercase -mt-1 transition-colors ${
                   isScrolled ? 'text-zinc-400' : 'text-white/80'
                 }`}>
                   LifeWear Tokyo
@@ -402,60 +429,48 @@ export default function Navbar({
             </Link>
           </div>
 
-          {/* Gender Navigation Segment Tabs (SEMUA, PRIA, WANITA, SALE) */}
-          <nav ref={tabsRef} className="hidden md:flex items-center gap-1">
+          {/* Gender Navigation Segment Tabs (Direct Filter: SEMUA, PRIA, WANITA, LIMITED OFFER) */}
+          <nav className="hidden md:flex items-center gap-1">
             {[
               { label: 'SEMUA', value: 'all' },
-              { label: 'PRIA', value: 'pria', hasMegaMenu: true },
-              { label: 'WANITA', value: 'wanita', hasMegaMenu: true },
+              { label: 'PRIA', value: 'pria' },
+              { label: 'WANITA', value: 'wanita' },
               { label: 'LIMITED OFFER 🔥', value: 'sale', highlight: true },
             ].map((tab) => {
               const isActive = selectedGender === tab.value;
-              const isMegaActive = activeMegaMenu === tab.value;
               return (
-                <div
+                <button
                   key={tab.value}
-                  className="relative"
+                  onClick={() => {
+                    onSelectGender(tab.value);
+                    onSelectCategory('all');
+                    if (tab.value === 'sale') {
+                      setTimeout(() => {
+                        const el = document.getElementById('limited-offer') || document.getElementById('katalog');
+                        if (el) el.scrollIntoView({ behavior: 'smooth' });
+                      }, 50);
+                    } else {
+                      setTimeout(() => {
+                        const el = document.getElementById('katalog');
+                        if (el) el.scrollIntoView({ behavior: 'smooth' });
+                      }, 50);
+                    }
+                  }}
+                  className={`px-3 py-2 text-xs font-black tracking-wider uppercase transition-all relative flex items-center cursor-pointer ${
+                    isActive
+                      ? tab.highlight 
+                        ? 'text-[#E60012]' 
+                        : isScrolled ? 'text-zinc-950 font-black' : 'text-white font-black'
+                      : tab.highlight 
+                        ? 'text-[#E60012]/90 hover:text-[#E60012]' 
+                        : isScrolled ? 'text-zinc-600 hover:text-zinc-950' : 'text-white/80 hover:text-white'
+                  }`}
                 >
-                  <button
-                    onClick={() => {
-                      onSelectGender(tab.value);
-                      onSelectCategory('all');
-                      if (tab.hasMegaMenu) {
-                        setActiveMegaMenu((prev) => (prev === tab.value ? null : (tab.value as 'pria' | 'wanita')));
-                      } else {
-                        setActiveMegaMenu(null);
-                        if (tab.value === 'sale') {
-                          setTimeout(() => {
-                            const el = document.getElementById('limited-offer') || document.getElementById('katalog');
-                            if (el) el.scrollIntoView({ behavior: 'smooth' });
-                          }, 50);
-                        }
-                      }
-                    }}
-                    className={`px-3 py-2 text-xs font-black tracking-wider uppercase transition-all relative flex items-center gap-1 cursor-pointer ${
-                      isActive || isMegaActive
-                        ? tab.highlight 
-                        : tab.highlight 
-                          ? 'text-[#E60012]/90 hover:text-[#E60012]' 
-                          : isScrolled ? 'text-zinc-600 hover:text-zinc-950' : 'text-white/80 hover:text-white'
-                    } ${
-                      isActive || isMegaActive
-                        ? tab.highlight 
-                          ? 'text-[#E60012]' 
-                          : isScrolled ? 'text-zinc-950 font-black' : 'text-white font-black'
-                        : ''
-                    }`}
-                  >
-                    <span>{tab.label}</span>
-                    {tab.hasMegaMenu && (
-                      <ChevronDown size={11} className={`transition-transform duration-200 ${isMegaActive ? 'rotate-180' : ''}`} />
-                    )}
-                    {(isActive || isMegaActive) && (
-                      <span className="absolute bottom-0 left-3 right-3 h-[2.5px] bg-[#E60012]" />
-                    )}
-                  </button>
-                </div>
+                  <span>{tab.label}</span>
+                  {isActive && (
+                    <span className="absolute bottom-0 left-3 right-3 h-[2.5px] bg-[#E60012]" />
+                  )}
+                </button>
               );
             })}
           </nav>
@@ -661,307 +676,80 @@ export default function Navbar({
         </div>
       </div>
 
-      {/* 3. Desktop Mega Menu Dropdown (1:1 Uniqlo LifeWear Minimalist Directory) */}
-      {activeMegaMenu && (
-        <div
-          ref={megaMenuRef}
-          className="hidden md:block absolute top-full left-0 right-0 bg-white border-b border-zinc-200 shadow-2xl z-50 animate-in slide-in-from-top-2 duration-200 text-zinc-950"
-        >
-          {(() => {
-            const currentMenuData = activeMegaMenu === 'pria' ? MEN_MEGA_MENU : WOMEN_MEGA_MENU;
-            return (
-              <div className="max-w-7xl mx-auto px-6 sm:px-8 py-7">
-                {/* Header info strip in Mega Menu */}
-                <div className="flex items-center justify-between border-b border-zinc-200 pb-3.5 mb-6">
-                  <div className="flex items-center gap-2.5">
-                    <span className="w-3.5 h-3.5 bg-[#E60012] shrink-0" />
-                    <h3 className="text-sm font-black uppercase tracking-wider text-zinc-950">
-                      KOLEKSI {currentMenuData.genderTitle}
-                    </h3>
-                    <span className="text-xs text-zinc-400 font-medium hidden sm:inline">
-                      • {currentMenuData.subtitle}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-5">
+      {/* Horizontal Category Pill Bar (Uniqlo 1:1 Sub-Nav) */}
+        <div className={`w-full transition-all border-t ${
+          isScrolled
+            ? 'bg-white/95 backdrop-blur-md border-zinc-200 shadow-xs'
+            : selectedGender !== 'all'
+              ? 'bg-zinc-950/90 backdrop-blur-md border-white/10'
+              : 'hidden'
+        }`}>
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex items-center overflow-x-auto no-scrollbar gap-2 py-2">
+              {(() => {
+                let pills: { name: string; slug: string }[] = [];
+                if (selectedGender === 'pria') {
+                  pills = [
+                    { name: 'Semua Pria', slug: 'all' },
+                    { name: 'Kemeja & Flannel', slug: 'kemeja' },
+                    { name: 'Kaos & AIRism', slug: 'kaos' },
+                    { name: 'Celana Chino & Ankle', slug: 'celana' },
+                    { name: 'Jaket & Outerwear', slug: 'jaket' },
+                    { name: 'Limited Offer 🔥', slug: 'sale' },
+                  ];
+                } else if (selectedGender === 'wanita') {
+                  pills = [
+                    { name: 'Semua Wanita', slug: 'all' },
+                    { name: 'Kemeja & Blus', slug: 'kemeja' },
+                    { name: 'Kaos & AIRism', slug: 'kaos' },
+                    { name: 'Celana & Bawahan', slug: 'celana' },
+                    { name: 'Jaket & Outerwear', slug: 'jaket' },
+                    { name: 'Limited Offer 🔥', slug: 'sale' },
+                  ];
+                } else {
+                  pills = [
+                    { name: 'Semua Koleksi', slug: 'all' },
+                    { name: 'Kemeja & Flannel', slug: 'kemeja' },
+                    { name: 'Kaos & AIRism', slug: 'kaos' },
+                    { name: 'Celana Chino & Ankle', slug: 'celana' },
+                    { name: 'Jaket & Outerwear', slug: 'jaket' },
+                    { name: 'Limited Offer 🔥', slug: 'sale' },
+                  ];
+                }
+
+                return pills.map((pill) => {
+                  const isActive = selectedCategory === pill.slug;
+                  return (
                     <button
+                      key={pill.slug}
                       type="button"
-                      onClick={() => handleSubCategoryClick(activeMegaMenu, 'all')}
-                      className="text-xs font-black text-zinc-900 hover:text-[#E60012] transition-colors flex items-center gap-1 group cursor-pointer"
+                      onClick={() => {
+                        onSelectCategory(pill.slug);
+                        if (pill.slug === 'sale') {
+                          const el = document.getElementById('limited-offer') || document.getElementById('katalog');
+                          if (el) el.scrollIntoView({ behavior: 'smooth' });
+                        } else {
+                          const el = document.getElementById('katalog');
+                          if (el) el.scrollIntoView({ behavior: 'smooth' });
+                        }
+                      }}
+                      className={`whitespace-nowrap px-3.5 py-1 text-xs font-bold uppercase tracking-wider transition-colors shrink-0 cursor-pointer ${
+                        isActive
+                          ? 'bg-zinc-950 text-white'
+                          : isScrolled
+                            ? 'bg-zinc-100 hover:bg-zinc-200 text-zinc-700'
+                            : 'bg-white/15 hover:bg-white/25 text-white'
+                      }`}
                     >
-                      <span>Lihat Semua Koleksi {activeMegaMenu === 'pria' ? 'Pria' : 'Wanita'}</span>
-                      <span className="group-hover:translate-x-1 transition-transform">→</span>
+                      {pill.name}
                     </button>
-                    <button
-                      type="button"
-                      onClick={() => setActiveMegaMenu(null)}
-                      className="p-1.5 text-zinc-400 hover:text-zinc-950 hover:bg-zinc-100 transition-colors cursor-pointer"
-                      title="Tutup Menu Sub-kategori"
-                      aria-label="Tutup Menu"
-                    >
-                      <X size={16} />
-                    </button>
-                  </div>
-                </div>
-
-                {/* 5-Column Grid: 4 Clean Category Directories + 1 Rich Editorial Visual Card */}
-                <div className="grid grid-cols-12 gap-6 lg:gap-8">
-                  {/* Kolom 1: ATASAN (2 cols) */}
-                  <div className="col-span-12 sm:col-span-6 lg:col-span-2 space-y-3 border-r border-zinc-100 pr-4">
-                    <div className="pb-2 border-b-2 border-zinc-950 flex items-baseline justify-between">
-                      <h4 className="text-xs font-black uppercase tracking-wider text-zinc-950">
-                        {currentMenuData.columns[0].title}
-                      </h4>
-                      <span className="text-[10px] text-zinc-400 font-mono uppercase">
-                        {currentMenuData.columns[0].enTitle}
-                      </span>
-                    </div>
-                    <ul className="space-y-0.5">
-                      {currentMenuData.columns[0].links.map((item, idx) => (
-                        <li key={idx}>
-                          <button
-                            type="button"
-                            onClick={() => handleSubCategoryClick(activeMegaMenu, item.category, item.search, item.sort)}
-                            className="w-full text-left py-1 text-xs text-zinc-600 hover:text-[#E60012] transition-colors flex items-center justify-between group cursor-pointer"
-                          >
-                            <span className="group-hover:translate-x-1 transition-transform inline-flex items-center gap-1.5 truncate">
-                              <span className="w-1 h-1 bg-zinc-300 group-hover:bg-[#E60012] rounded-full transition-colors shrink-0" />
-                              <span className="font-normal group-hover:font-medium">{item.label}</span>
-                            </span>
-                            {item.badge && (
-                              <span className={`text-[8px] font-black uppercase tracking-wider px-1.5 py-0.2 rounded-none shrink-0 ${
-                                item.badgeStyle === 'blue' ? 'bg-sky-50 text-sky-700 border border-sky-100' :
-                                item.badgeStyle === 'gray' ? 'bg-zinc-100 text-zinc-600' :
-                                'bg-zinc-100 text-zinc-600'
-                              }`}>
-                                {item.badge}
-                              </span>
-                            )}
-                          </button>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  {/* Kolom 2: BAWAHAN (2 cols) */}
-                  <div className="col-span-12 sm:col-span-6 lg:col-span-2 space-y-3 border-r border-zinc-100 pr-4">
-                    <div className="pb-2 border-b-2 border-zinc-950 flex items-baseline justify-between">
-                      <h4 className="text-xs font-black uppercase tracking-wider text-zinc-950">
-                        {currentMenuData.columns[1].title}
-                      </h4>
-                      <span className="text-[10px] text-zinc-400 font-mono uppercase">
-                        {currentMenuData.columns[1].enTitle}
-                      </span>
-                    </div>
-                    <ul className="space-y-0.5">
-                      {currentMenuData.columns[1].links.map((item, idx) => (
-                        <li key={idx}>
-                          <button
-                            type="button"
-                            onClick={() => handleSubCategoryClick(activeMegaMenu, item.category, item.search, item.sort)}
-                            className="w-full text-left py-1 text-xs text-zinc-600 hover:text-[#E60012] transition-colors flex items-center justify-between group cursor-pointer"
-                          >
-                            <span className="group-hover:translate-x-1 transition-transform inline-flex items-center gap-1.5 truncate">
-                              <span className="w-1 h-1 bg-zinc-300 group-hover:bg-[#E60012] rounded-full transition-colors shrink-0" />
-                              <span className="font-normal group-hover:font-medium">{item.label}</span>
-                            </span>
-                            {item.badge && (
-                              <span className="text-[8px] font-black uppercase tracking-wider px-1.5 py-0.2 rounded-none shrink-0 bg-zinc-100 text-zinc-600">
-                                {item.badge}
-                              </span>
-                            )}
-                          </button>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  {/* Kolom 3: LUARAN (2 cols) */}
-                  <div className="col-span-12 sm:col-span-6 lg:col-span-2 space-y-3 border-r border-zinc-100 pr-4">
-                    <div className="pb-2 border-b-2 border-zinc-950 flex items-baseline justify-between">
-                      <h4 className="text-xs font-black uppercase tracking-wider text-zinc-950">
-                        {currentMenuData.columns[2].title}
-                      </h4>
-                      <span className="text-[10px] text-zinc-400 font-mono uppercase">
-                        {currentMenuData.columns[2].enTitle}
-                      </span>
-                    </div>
-                    <ul className="space-y-0.5">
-                      {currentMenuData.columns[2].links.map((item, idx) => (
-                        <li key={idx}>
-                          <button
-                            type="button"
-                            onClick={() => handleSubCategoryClick(activeMegaMenu, item.category, item.search, item.sort)}
-                            className="w-full text-left py-1 text-xs text-zinc-600 hover:text-[#E60012] transition-colors flex items-center justify-between group cursor-pointer"
-                          >
-                            <span className="group-hover:translate-x-1 transition-transform inline-flex items-center gap-1.5 truncate">
-                              <span className="w-1 h-1 bg-zinc-300 group-hover:bg-[#E60012] rounded-full transition-colors shrink-0" />
-                              <span className="font-normal group-hover:font-medium">{item.label}</span>
-                            </span>
-                            {item.badge && (
-                              <span className="text-[8px] font-black uppercase tracking-wider px-1.5 py-0.2 rounded-none shrink-0 bg-amber-50 text-amber-800 border border-amber-200">
-                                {item.badge}
-                              </span>
-                            )}
-                          </button>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  {/* Kolom 4: KOLEKSI KHUSUS (3 cols) */}
-                  <div className="col-span-12 sm:col-span-6 lg:col-span-3 space-y-3 border-r border-zinc-100 pr-4">
-                    <div className="pb-2 border-b-2 border-zinc-950 flex items-baseline justify-between">
-                      <h4 className="text-xs font-black uppercase tracking-wider text-zinc-950">
-                        {currentMenuData.columns[3].title}
-                      </h4>
-                      <span className="text-[10px] text-zinc-400 font-mono uppercase">
-                        {currentMenuData.columns[3].enTitle}
-                      </span>
-                    </div>
-                    <ul className="space-y-0.5">
-                      {currentMenuData.columns[3].links.map((item, idx) => (
-                        <li key={idx}>
-                          <button
-                            type="button"
-                            onClick={() => handleSubCategoryClick(activeMegaMenu, item.category, item.search, item.sort)}
-                            className="w-full text-left py-1 text-xs text-zinc-600 hover:text-[#E60012] transition-colors flex items-center justify-between group cursor-pointer"
-                          >
-                            <span className="group-hover:translate-x-1 transition-transform inline-flex items-center gap-1.5 truncate">
-                              <span className="w-1 h-1 bg-zinc-300 group-hover:bg-[#E60012] rounded-full transition-colors shrink-0" />
-                              <span className="font-normal group-hover:font-medium">{item.label}</span>
-                            </span>
-                            {item.badge && (
-                              <span className={`text-[8px] font-black uppercase tracking-wider px-1.5 py-0.2 rounded-none shrink-0 ${
-                                item.badgeStyle === 'red' ? 'bg-[#E60012] text-white' :
-                                item.badgeStyle === 'black' ? 'bg-zinc-950 text-white' :
-                                item.badgeStyle === 'yellow' ? 'bg-amber-100 text-amber-900' :
-                                'bg-zinc-100 text-zinc-600'
-                              }`}>
-                                {item.badge}
-                              </span>
-                            )}
-                          </button>
-                        </li>
-                      ))}
-                    </ul>
-
-                    {/* Clean Highlight Card: Limited Offer Uniqlo Style */}
-                    <div className="pt-2">
-                      <button
-                        type="button"
-                        onClick={() => handleSubCategoryClick(activeMegaMenu, 'sale')}
-                        className="w-full text-left p-2.5 bg-zinc-50 hover:bg-zinc-900 text-zinc-950 hover:text-white transition-all border border-zinc-200 group cursor-pointer"
-                      >
-                        <div className="flex items-center justify-between">
-                          <span className="text-[10px] font-black uppercase tracking-wider">
-                            LIMITED OFFER {activeMegaMenu === 'pria' ? 'PRIA' : 'WANITA'}
-                          </span>
-                          <span className="text-[9px] font-black uppercase px-1.5 py-0.5 bg-[#E60012] text-white">
-                            HEMAT S/D 30%
-                          </span>
-                        </div>
-                        <p className="text-[10px] text-zinc-500 group-hover:text-zinc-300 mt-1 leading-snug">
-                          Penawaran terbatas produk esensial LifeWear berkualitas tinggi.
-                        </p>
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Kolom 5: EDITORIAL VISUAL CARD (3 cols) */}
-                  <div className="col-span-12 lg:col-span-3">
-                    <div 
-                      onClick={() => handleSubCategoryClick(activeMegaMenu, currentMenuData.lookbook.category, currentMenuData.lookbook.search)}
-                      className="group relative aspect-[3/4] overflow-hidden bg-zinc-100 cursor-pointer border border-zinc-200 shadow-xs"
-                    >
-                      <img
-                        src={currentMenuData.lookbook.imageUrl}
-                        alt={currentMenuData.lookbook.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                        loading="lazy"
-                      />
-                      
-                      {/* Top Badge */}
-                      <div className="absolute top-2.5 left-2.5 z-10">
-                        <span className="bg-[#E60012] text-white text-[9px] font-black uppercase tracking-widest px-2 py-0.5 shadow-xs">
-                          {currentMenuData.lookbook.tag}
-                        </span>
-                      </div>
-
-                      {/* Gradient Overlay & Text Content */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent p-4 flex flex-col justify-end text-white">
-                        <span className="text-[9px] font-mono text-zinc-300 uppercase tracking-widest mb-0.5">
-                          {currentMenuData.lookbook.subtitle}
-                        </span>
-                        <h5 className="text-sm font-black uppercase tracking-tight leading-snug">
-                          {currentMenuData.lookbook.title}
-                        </h5>
-                        <p className="text-[10px] text-zinc-300 mt-1 line-clamp-2 leading-relaxed">
-                          {currentMenuData.lookbook.desc}
-                        </p>
-                        <div className="mt-2.5 inline-flex items-center gap-1 text-[11px] font-bold text-white group-hover:text-[#E60012] transition-colors">
-                          <span>Jelajahi Gaya Lengkap</span>
-                          <span className="transition-transform group-hover:translate-x-1">→</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Bottom Service Strip in Mega Menu */}
-                <div className="mt-6 pt-3.5 border-t border-zinc-100 flex items-center justify-between text-[11px] text-zinc-500 flex-wrap gap-4">
-                  <div className="flex items-center gap-2">
-                    <Truck size={14} className="text-[#E60012] shrink-0" />
-                    <span><strong>Bebas Ongkos Kirim:</strong> Min. belanja Rp 400.000 ke seluruh Indonesia</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <RotateCcw size={14} className="text-[#E60012] shrink-0" />
-                    <span><strong>Garansi Retur 30 Hari:</strong> Pengembalian mudah tanpa repot</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Sparkles size={14} className="text-[#E60012] shrink-0" />
-                    <span><strong>Filosofi LifeWear:</strong> Pakaian esensial fungsional & bernilai tinggi</span>
-                  </div>
-                </div>
-              </div>
-            );
-          })()}
-        </div>
-      )}
-
-      {/* Mobile Sub-Category Strip (md:hidden) saat tab PRIA atau WANITA aktif */}
-      {(selectedGender === 'pria' || selectedGender === 'wanita') && (
-        <div className="md:hidden w-full bg-zinc-50 border-b border-zinc-200 animate-in slide-in-from-top-1 duration-150">
-          <div className="flex items-center overflow-x-auto no-scrollbar gap-2 px-3 py-2">
-            {[
-              { name: `Semua ${selectedGender === 'pria' ? 'Pria' : 'Wanita'}`, slug: 'all' },
-              { name: 'Kemeja & Flannel', slug: 'kemeja' },
-              { name: 'Kaos & AIRism', slug: 'kaos' },
-              { name: 'Celana Chino', slug: 'celana' },
-              { name: 'Jaket & Outerwear', slug: 'jaket' },
-            ].map((sub) => {
-              const isActive = selectedCategory === sub.slug;
-              return (
-                <button
-                  key={sub.slug}
-                  type="button"
-                  onClick={() => {
-                    onSelectCategory(sub.slug);
-                    const el = document.getElementById('katalog');
-                    if (el) el.scrollIntoView({ behavior: 'smooth' });
-                  }}
-                  className={`whitespace-nowrap px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider transition-colors rounded-none shrink-0 ${
-                    isActive
-                      ? 'bg-zinc-950 text-white'
-                      : 'bg-white text-zinc-700 border border-zinc-200 hover:border-zinc-400'
-                  }`}
-                >
-                  {sub.name}
-                </button>
-              );
-            })}
+                  );
+                });
+              })()}
+            </div>
           </div>
         </div>
-      )}
+
       {isSearchOpen && (
         <div className="p-4 bg-zinc-100 border-b border-zinc-300 xl:hidden space-y-3 animate-in slide-in-from-top-2">
           <div className="relative">
@@ -1002,88 +790,206 @@ export default function Navbar({
         </div>
       )}
 
-      {/* 5. Mobile Drawer Menu */}
-      {mobileMenuOpen && (
-        <div className="lg:hidden bg-white border-b border-zinc-300 p-5 space-y-4">
-          <div className="space-y-1">
-            <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">Pilih Koleksi:</p>
-            <div className="grid grid-cols-3 gap-2">
+      </header>
+
+    {/* Side Navigation Drawer Overlay (1:1 Uniqlo Indonesia Directory) */}
+    {sideDrawerOpen && (
+      <div className="fixed inset-0 z-50 overflow-hidden">
+        {/* Backdrop */}
+        <div 
+          onClick={() => setSideDrawerOpen(false)}
+          className="fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity duration-300 animate-in fade-in"
+        />
+
+        {/* Drawer Panel */}
+        <aside className="fixed inset-y-0 left-0 max-w-md w-full bg-white shadow-2xl z-50 flex flex-col justify-between overflow-y-auto animate-in slide-in-from-left duration-300">
+          <div>
+            {/* Top Header of Drawer */}
+            <div className="p-4 sm:p-5 border-b border-zinc-200 flex items-center justify-between bg-white sticky top-0 z-10">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 bg-[#E60012] text-white font-black text-xs tracking-tighter flex items-center justify-center">
+                  US
+                </div>
+                <div className="w-8 h-8 bg-[#E60012] text-white font-black text-[9px] tracking-tight flex items-center justify-center leading-none text-center font-sans">
+                  アー<br/>バン
+                </div>
+                <div className="ml-1">
+                  <span className="font-black text-sm uppercase tracking-tight block text-zinc-950">URBANSTYLE</span>
+                  <span className="text-[8px] font-bold tracking-[0.2em] uppercase text-zinc-400 block -mt-1">LIFEWEAR DIRECTORY</span>
+                </div>
+              </div>
+
               <button
-                onClick={() => { 
-                  onSelectGender('all'); 
-                  setMobileMenuOpen(false); 
-                  const el = document.getElementById('katalog');
-                  if (el) el.scrollIntoView({ behavior: 'smooth' });
-                }}
-                className={`p-2 text-xs font-bold uppercase text-center border ${
-                  selectedGender === 'all' ? 'bg-zinc-950 text-white' : 'border-zinc-300'
-                }`}
+                onClick={() => setSideDrawerOpen(false)}
+                className="p-2 text-zinc-400 hover:text-zinc-950 hover:bg-zinc-100 transition-colors cursor-pointer"
+                title="Tutup Menu"
+                aria-label="Tutup Menu"
               >
-                Semua
+                <X size={20} />
               </button>
-              <button
-                onClick={() => { 
-                  onSelectGender('pria'); 
-                  setMobileMenuOpen(false); 
-                  const el = document.getElementById('katalog');
-                  if (el) el.scrollIntoView({ behavior: 'smooth' });
-                }}
-                className={`p-2 text-xs font-bold uppercase text-center border ${
-                  selectedGender === 'pria' ? 'bg-zinc-950 text-white' : 'border-zinc-300'
-                }`}
-              >
-                Pria
-              </button>
-              <button
-                onClick={() => { 
-                  onSelectGender('wanita'); 
-                  setMobileMenuOpen(false); 
-                  const el = document.getElementById('katalog');
-                  if (el) el.scrollIntoView({ behavior: 'smooth' });
-                }}
-                className={`p-2 text-xs font-bold uppercase text-center border ${
-                  selectedGender === 'wanita' ? 'bg-zinc-950 text-white' : 'border-zinc-300'
-                }`}
-              >
-                Wanita
-              </button>
+            </div>
+
+            {/* Gender Segmented Switcher inside Drawer */}
+            <div className="p-4 bg-zinc-50 border-b border-zinc-200">
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  onClick={() => setDrawerGender('pria')}
+                  className={`py-2 text-xs font-black uppercase tracking-wider transition-all text-center cursor-pointer ${
+                    drawerGender === 'pria'
+                      ? 'bg-zinc-950 text-white shadow-xs'
+                      : 'bg-white text-zinc-600 border border-zinc-200 hover:border-zinc-400'
+                  }`}
+                >
+                  PRIA
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setDrawerGender('wanita')}
+                  className={`py-2 text-xs font-black uppercase tracking-wider transition-all text-center cursor-pointer ${
+                    drawerGender === 'wanita'
+                      ? 'bg-zinc-950 text-white shadow-xs'
+                      : 'bg-white text-zinc-600 border border-zinc-200 hover:border-zinc-400'
+                  }`}
+                >
+                  WANITA
+                </button>
+              </div>
+            </div>
+
+            {/* Category Directory Tree */}
+            <div className="p-4 sm:p-5 space-y-6">
+              {(() => {
+                const menuData = drawerGender === 'pria' ? MEN_MEGA_MENU : WOMEN_MEGA_MENU;
+                return (
+                  <>
+                    {menuData.columns.map((col, colIdx) => (
+                      <div key={colIdx} className="space-y-2">
+                        <div className="pb-1.5 border-b border-zinc-950 flex items-baseline justify-between">
+                          <h4 className="text-xs font-black uppercase tracking-wider text-zinc-950">
+                            {col.title}
+                          </h4>
+                          <span className="text-[10px] text-zinc-400 font-mono uppercase">
+                            {col.enTitle}
+                          </span>
+                        </div>
+                        <ul className="divide-y divide-zinc-100">
+                          {col.links.map((link, linkIdx) => (
+                            <li key={linkIdx}>
+                              <button
+                                type="button"
+                                onClick={() => handleSubCategoryClick(drawerGender, link.category, link.search, link.sort)}
+                                className="w-full text-left py-2 text-xs text-zinc-700 hover:text-[#E60012] transition-colors flex items-center justify-between group cursor-pointer"
+                              >
+                                <span className="inline-flex items-center gap-2 truncate">
+                                  <span className="w-1.5 h-1.5 bg-zinc-300 group-hover:bg-[#E60012] rounded-full transition-colors shrink-0" />
+                                  <span className="font-medium group-hover:translate-x-0.5 transition-transform">{link.label}</span>
+                                </span>
+                                {link.badge && (
+                                  <span className={`text-[8px] font-black uppercase tracking-wider px-1.5 py-0.5 shrink-0 ${
+                                    link.badgeStyle === 'red' ? 'bg-[#E60012] text-white' :
+                                    link.badgeStyle === 'blue' ? 'bg-sky-50 text-sky-700 border border-sky-100' :
+                                    link.badgeStyle === 'yellow' ? 'bg-amber-100 text-amber-900' :
+                                    link.badgeStyle === 'black' ? 'bg-zinc-950 text-white' :
+                                    'bg-zinc-100 text-zinc-600'
+                                  }`}>
+                                    {link.badge}
+                                  </span>
+                                )}
+                              </button>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ))}
+
+                    {/* Lookbook 2026 Visual Editorial Card */}
+                    <div className="pt-2">
+                      <div
+                        onClick={() => handleSubCategoryClick(drawerGender, menuData.lookbook.category, menuData.lookbook.search)}
+                        className="group relative aspect-[16/9] sm:aspect-[4/3] overflow-hidden bg-zinc-100 cursor-pointer border border-zinc-200 shadow-xs"
+                      >
+                        <img
+                          src={menuData.lookbook.imageUrl}
+                          alt={menuData.lookbook.title}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                          loading="lazy"
+                        />
+                        <div className="absolute top-2.5 left-2.5 z-10">
+                          <span className="bg-[#E60012] text-white text-[9px] font-black uppercase tracking-widest px-2 py-0.5 shadow-xs">
+                            {menuData.lookbook.tag}
+                          </span>
+                        </div>
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-transparent p-4 flex flex-col justify-end text-white">
+                          <span className="text-[9px] font-mono text-zinc-300 uppercase tracking-widest mb-0.5">
+                            {menuData.lookbook.subtitle}
+                          </span>
+                          <h5 className="text-sm font-black uppercase tracking-tight leading-snug">
+                            {menuData.lookbook.title}
+                          </h5>
+                          <p className="text-[10px] text-zinc-300 mt-1 line-clamp-2 leading-relaxed">
+                            {menuData.lookbook.desc}
+                          </p>
+                          <div className="mt-2 inline-flex items-center gap-1 text-[10px] font-bold text-white group-hover:text-[#E60012] transition-colors">
+                            <span>Jelajahi Gaya Lengkap</span>
+                            <span className="transition-transform group-hover:translate-x-1">→</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </>
+                );
+              })()}
             </div>
           </div>
 
-          <div className="pt-3 border-t border-zinc-200 space-y-2 text-xs font-bold uppercase">
-            <button
-              onClick={() => { onOpenInfoModal('shipping'); setMobileMenuOpen(false); }}
-              className="w-full text-left py-2 text-zinc-700 hover:text-black flex items-center justify-between"
-            >
-              <span>Panduan Pengiriman & Bebas Ongkir</span>
-              <span>→</span>
-            </button>
-            <button
-              onClick={() => { onOpenInfoModal('return'); setMobileMenuOpen(false); }}
-              className="w-full text-left py-2 text-zinc-700 hover:text-black flex items-center justify-between"
-            >
-              <span>Kebijakan Pengembalian 30 Hari</span>
-              <span>→</span>
-            </button>
-            <button
-              onClick={() => { onOpenInfoModal('lifewear'); setMobileMenuOpen(false); }}
-              className="w-full text-left py-2 text-zinc-700 hover:text-black flex items-center justify-between"
-            >
-              <span>Tentang Filosofi LifeWear</span>
-              <span>→</span>
-            </button>
-            <button
-              onClick={() => { onOpenInfoModal('help'); setMobileMenuOpen(false); }}
-              className="w-full text-left py-2 text-zinc-700 hover:text-black flex items-center justify-between"
-            >
-              <span>Bantuan & Info Proyek UNPAM</span>
-              <span>→</span>
-            </button>
-          </div>
-        </div>
-      )}
+          {/* Customer Service Strip & Guarantees at Bottom of Drawer */}
+          <div className="p-4 sm:p-5 border-t border-zinc-200 bg-zinc-50 space-y-3">
+            <div className="text-[11px] text-zinc-600 space-y-2">
+              <div className="flex items-center gap-2">
+                <Truck size={14} className="text-[#E60012] shrink-0" />
+                <span><strong>Bebas Ongkos Kirim:</strong> Min. belanja Rp 400.000</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <RotateCcw size={14} className="text-[#E60012] shrink-0" />
+                <span><strong>Garansi Retur 30 Hari:</strong> Pengembalian mudah</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Sparkles size={14} className="text-[#E60012] shrink-0" />
+                <span><strong>Filosofi LifeWear:</strong> Kualitas busana harian esensial</span>
+              </div>
+            </div>
 
-    </header>
+            <div className="pt-2 border-t border-zinc-200 grid grid-cols-2 gap-2 text-[10px] font-bold uppercase">
+              <button
+                onClick={() => { onOpenInfoModal('shipping'); setSideDrawerOpen(false); }}
+                className="py-1.5 px-2 text-left bg-white border border-zinc-200 hover:border-zinc-950 text-zinc-700 cursor-pointer"
+              >
+                Panduan Ongkir →
+              </button>
+              <button
+                onClick={() => { onOpenInfoModal('return'); setSideDrawerOpen(false); }}
+                className="py-1.5 px-2 text-left bg-white border border-zinc-200 hover:border-zinc-950 text-zinc-700 cursor-pointer"
+              >
+                Kebijakan Retur →
+              </button>
+              <button
+                onClick={() => { onOpenInfoModal('lifewear'); setSideDrawerOpen(false); }}
+                className="py-1.5 px-2 text-left bg-white border border-zinc-200 hover:border-zinc-950 text-zinc-700 cursor-pointer"
+              >
+                Filosofi LifeWear →
+              </button>
+              <button
+                onClick={() => { onOpenInfoModal('help'); setSideDrawerOpen(false); }}
+                className="py-1.5 px-2 text-left bg-white border border-zinc-200 hover:border-zinc-950 text-zinc-700 cursor-pointer"
+              >
+                Bantuan & Kontak →
+              </button>
+            </div>
+          </div>
+        </aside>
+      </div>
+    )}
     </>
   );
 }
