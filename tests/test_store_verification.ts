@@ -427,6 +427,26 @@ async function runTests() {
   assert.equal(standardVectorCRC, '29B1', 'Standar Vektor CRC-16 CCITT "123456789" wajib menghasilkan 29B1');
   console.log('  ✓ Forensik Algoritma CRC-16/CCITT-FALSE terverifikasi matematis (Vektor Uji = 0x29B1)');
 
+  // 3.6 Forensik Visual & Kepatuhan PRD V6.0 Section 7.1 (ProductCard & Grid Whitespace)
+  const fs = await import('node:fs');
+  const path = await import('node:path');
+  const productCardCode = fs.readFileSync(path.resolve(process.cwd(), 'components/ProductCard.tsx'), 'utf-8');
+  const pageCode = fs.readFileSync(path.resolve(process.cwd(), 'app/page.tsx'), 'utf-8');
+
+  // Strict Do-Nots: tidak ada tombol ukuran, add to cart, badge stok berjejal, border luar
+  assert.ok(!productCardCode.includes('Masuk Tas'), 'ProductCard dilarang memuat tombol Masuk Tas / Add to cart');
+  assert.ok(!productCardCode.includes('product.sizes.map'), 'ProductCard dilarang memuat tombol pemilihan ukuran');
+  assert.ok(!productCardCode.includes('border-zinc-200'), 'ProductCard dilarang memiliki border-itis luar');
+  assert.ok(productCardCode.includes('aspect-[3/4]'), 'ProductCard wajib berasio majalah 3:4 portrait');
+  assert.ok(productCardCode.includes('bg-[#F6F6F6]'), 'ProductCard wajib berlatar abu-abu muda #F6F6F6');
+  assert.ok(productCardCode.includes('border-none bg-transparent'), 'ProductCard wajib border-none bg-transparent');
+  assert.ok(productCardCode.includes('rounded-full'), 'ProductCard wajib memiliki swatch lingkaran mini');
+  assert.ok(productCardCode.includes('Quick View'), 'ProductCard wajib memiliki trigger Quick View');
+
+  // Whitespace Grid: gap-x-4 gap-y-8 sm:gap-x-6 sm:gap-y-12
+  assert.ok(pageCode.includes('gap-x-4 gap-y-8 sm:gap-x-6 sm:gap-y-12'), 'Grid katalog di app/page.tsx wajib menggunakan whitespace lapang gap-x-4 gap-y-8 sm:gap-x-6 sm:gap-y-12');
+  console.log('  ✓ Forensik Desain 1:1 Uniqlo LifeWear terverifikasi (Zero-Clutter, No-Border, Whitespace Lapang)');
+
   console.log('✓ Lapis 3 PASSED: Zero-crash fallback dan forensik integritas 100% aman.\n');
 
   // =========================================================================

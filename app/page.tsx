@@ -354,7 +354,7 @@ function HomePageContent() {
                   </button>
                 </div>
 
-                <div className="grid grid-cols-2 gap-2.5 sm:gap-4 md:grid-cols-4">
+                <div className="grid grid-cols-2 gap-x-4 gap-y-8 sm:gap-x-6 sm:gap-y-12 md:grid-cols-4">
                   {limitedOfferProducts.map((prod) => (
                     <ProductCard
                       key={prod.id}
@@ -412,7 +412,7 @@ function HomePageContent() {
                   </button>
                 </div>
 
-                <div className="grid grid-cols-2 gap-2.5 sm:gap-4 md:grid-cols-4">
+                <div className="grid grid-cols-2 gap-x-4 gap-y-8 sm:gap-x-6 sm:gap-y-12 md:grid-cols-4">
                   {bestOfLifeWearProducts.map((prod) => (
                     <ProductCard
                       key={prod.id}
@@ -662,7 +662,7 @@ function HomePageContent() {
             </div>
           ) : (
             <>
-              <div className="grid grid-cols-2 gap-2.5 sm:gap-4 md:grid-cols-3 lg:grid-cols-4">
+              <div className="grid grid-cols-2 gap-x-4 gap-y-8 sm:gap-x-6 sm:gap-y-12 md:grid-cols-3 lg:grid-cols-4">
                 {products.slice(0, visibleCount).map((prod) => (
                   <ProductCard
                     key={prod.id}
