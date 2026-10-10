@@ -1,19 +1,20 @@
 ---
 title: "PRD: urbanstyle-store"
 date: 2026-10-10
-tags: [prd, website, urbanstyle-store]
+tags: [prd, website, urbanstyle-store, lifewear, ecommerce, sim]
 project_slug: urbanstyle-store
-status: Production-Synchronized (V5.3)
+status: Production-Synchronized (V6.0 Flagship Evolution)
 folder: c:\project\websites\urbanstyle-store
 ---
 
-# 📜 PRODUCT REQUIREMENT DOCUMENT (PRD) V5.3
+# 📜 PRODUCT REQUIREMENT DOCUMENT (PRD) V6.0
 # UrbanStyle Store — Flagship LifeWear E-Commerce Engine & Autonomous Payment Core
+
 **Proyek:** UrbanStyle Store (Codename: *Kuro-Commerce Engine*)  
 **Pemilik Proyek:** Kimy Eka Ardiansyah (Teknik Informatika, Universitas Pamulang)  
 **Dokumen:** `PRD.md` (Master Product Requirement Document)  
 **Target Milestone:** Ujian Akhir Semester (UAS), Publikasi Jurnal Komputer JIUP, & Komersialisasi White-Label Distro Fashion Lokal  
-**Status:** Approved & Production-Aligned (V5.3)  
+**Status:** Approved & Production-Aligned (V6.0 Flagship Evolution)  
 
 ---
 
@@ -24,9 +25,13 @@ folder: c:\project\websites\urbanstyle-store
 1. **Digital Editorial Flagship Experience:** Menghadirkan ritme visual majalah gaya hidup, edukasi kenyamanan teknologi tekstil (AIRism, Heavyweight Cotton, Double-Brushed Flannel), katalog kurasi dewasa (Pria, Wanita, Unisex), dan ergonomi sentuhan satu jempol (*mobile thumb zone*).
 2. **In-House Zero-Fee Payment Engine:** Pemrosesan pembayaran transfer bank mandiri berbasis kode unik 3 digit acak dan generator QRIS Dinamis standar **EMVCo & CRC-16** mandiri (0% potongan fee pihak ketiga, 100% dana langsung masuk ke rekening/dompet merchant).
 3. **Autonomous Mobile Notification Gateway (PaymentGatewayin):** Aplikasi native Android khusus listener notifikasi perbankan & e-wallet merchant (GoBiz, BRImo, DANA, ShopeePay, Bank Jago, SeaBank) yang secara otonom mendeteksi mutasi dan menembak webhook ke server cloud (`/api/webhooks/payment`) untuk melunaskan pesanan detik itu juga tanpa perlu MacroDroid atau timer simulasi palsu.
-4. **Pemisahan Pintu Autentikasi & Multi-Role RBAC:** Isolasi 100% antara portal pelanggan publik (`/login`) dan portal staf internal (`/admin/login`), dilengkapi modul penambahan karyawan bertingkat (Owner, Staf Gudang, Staf Kasir) berproteksi session token HMAC.
-5. **Atomic Inventory & Flexible Restock Control:** Kendali stok varian anti-overselling dengan input restok fleksibel tanpa batasan kelipatan kaku, didukung tombol jalan pintas cepat `[+1], [+5], [+10], [+50]`.
-6. **Sistem Pengambilan Keputusan (DSS) Pareto:** Analitik **Decision Support System (DSS)** berbasis distribusi omzet Pareto 80/20 & klasifikasi ABC siap cetak laporan eksekutif A4.
+4. **Autonomous WhatsApp CRM Bot (@whiskeysockets/baileys):** Microservice perpesanan transaksional mandiri pada port 3001 yang mengirimkan invoice tagihan otomatis, notifikasi pelunasan seketika, dan pelacakan nomor resi langsung ke WhatsApp pembeli secara non-blocking.
+5. **Pemisahan Pintu Autentikasi & Multi-Role RBAC:** Isolasi 100% antara portal pelanggan publik (`/login`) dan portal staf internal (`/admin/login`), dilengkapi modul penambahan karyawan bertingkat (Owner, Staf Gudang, Staf Kasir) berproteksi session token HMAC.
+6. **SKU-Level Granular Inventory & Flexible Restock Control:** Kendali stok multi-varian anti-overselling pada tingkat kombinasi warna dan ukuran secara relasional, didukung tombol jalan pintas cepat `[+1], [+5], [+10], [+50]`.
+7. **Sistem Pengambilan Keputusan (DSS) Pareto:** Analitik **Decision Support System (DSS)** berbasis distribusi omzet Pareto 80/20 & klasifikasi ABC siap cetak laporan eksekutif A4.
+8. **Smart Size & Fit Predictor AI/Heuristic:** Kalkulator ukuran berbasis Tinggi Badan (TB) dan Berat Badan (BB) yang mengeliminasi keraguan ukuran pembeli fashion online.
+9. **Interactive Capsule Wardrobe Outfit Builder:** Studio padu padan interaktif atasan, bawahan, dan luaran dengan paket diskon bundling 1-klik.
+10. **Omnichannel Click & Collect:** Pilihan pengiriman Rp 0 ambil di toko fisik distro Pamulang dilengkapi QR Pass pengambilan barang.
 
 ---
 
@@ -64,38 +69,51 @@ Halaman utama dirancang dengan ritme visual editorial bertingkat agar mengelimin
 
 ---
 
-## 3. 🗄️ Arsitektur Basis Data (PostgreSQL Supabase ERD)
+## 3. 🗄️ Arsitektur Basis Data Relasional (PostgreSQL Supabase ERD V6.0)
 
 ```
-┌──────────────────┐       ┌──────────────────────┐       ┌───────────────────┐
-│     products     │1    N │   product_variants   │1    N │    order_items    │
-├──────────────────┤───────├──────────────────────┤───────├───────────────────┤
-│ id (UUID, PK)    │       │ id (UUID, PK)        │       │ id (UUID, PK)     │
-│ name             │       │ product_id (FK)      │       │ order_id (FK)     │
-│ slug (UNIQUE)    │       │ color_name           │       │ variant_id (FK)   │
-│ category_id      │       │ color_hex            │       │ qty (INT)         │
-│ base_price       │       │ size (S,M,L,XL,XXL)  │       │ price_at_purchase │
-│ weight_grams     │       │ sku (UNIQUE)         │       │ subtotal          │
-│ description      │       │ stock (INT)          │       └───────────────────┘
-│ images (JSONB)   │       │ is_active (BOOLEAN)  │                 │ N
-└──────────────────┘       └──────────────────────┘                 │
-                                                                    │ 1
-┌──────────────────┐       ┌──────────────────────┐       ┌───────────────────┐
-│      users       │1    N │   user_addresses     │       │      orders       │
-├──────────────────┤───────├──────────────────────┤       ├───────────────────┤
-│ id (UUID, PK)    │       │ id (UUID, PK)        │       │ id (UUID, PK)     │
-│ full_name        │       │ user_id (FK)         │       │ order_number      │
-│ phone_number     │       │ province             │       │ user_id (FK, Null)│
-│ email (UNIQUE)   │       │ city                 │       │ subtotal          │
-│ password_hash    │       │ district             │       │ shipping_cost     │
-│ role             │       │ postal_code          │       │ unique_code (INT) │
-│ (customer/owner/ │       │ address_line         │       │ grand_total       │
-│  gudang/kasir)   │       └──────────────────────┘       │ payment_method    │
-│ is_active (BOOL) │                                      │ payment_status    │
-└──────────────────┘                                      │ payment_proof_url │
-                                                          │ tracking_number   │
-                                                          │ expires_at (TS)   │
-                                                          └───────────────────┘
+┌────────────────────────┐       ┌────────────────────────┐       ┌────────────────────────┐
+│        products        │1    N │    product_variants    │1    N │      order_items       │
+├────────────────────────┤───────├────────────────────────┤───────├────────────────────────┤
+│ id (BIGINT, PK)        │       │ id (BIGINT, PK)        │       │ id (BIGINT, PK)        │
+│ name (VARCHAR)         │       │ product_id (FK)        │       │ order_id (FK)          │
+│ slug (VARCHAR, UNIQUE) │       │ color_name (VARCHAR)   │       │ variant_id (FK)        │
+│ category_id (FK)       │       │ color_hex (VARCHAR)    │       │ qty (INT)              │
+│ base_price (NUMERIC)   │       │ size (S,M,L,XL,XXL)    │       │ price_at_purchase      │
+│ weight_grams (INT)     │       │ sku (VARCHAR, UNIQUE)  │       │ subtotal (NUMERIC)     │
+│ description (TEXT)     │       │ stock (INT)            │       └────────────────────────┘
+│ fabric_details (TEXT)  │       │ is_active (BOOLEAN)    │                    │ N
+│ care_instructions (TXT)│       └────────────────────────┘                    │
+│ images (JSONB)         │                                                     │ 1
+└────────────────────────┘                                        ┌────────────────────────┐
+                                                                  │         orders         │
+┌────────────────────────┐       ┌────────────────────────┐       ├────────────────────────┤
+│     user_profiles      │1    N │     user_addresses     │       │ id (BIGINT, PK)        │
+├────────────────────────┤───────├────────────────────────┤       │ order_number (VARCHAR) │
+│ id (VARCHAR, PK)       │       │ id (VARCHAR, PK)       │       │ user_id (FK, Nullable) │
+│ full_name (VARCHAR)    │       │ user_id (FK)           │       │ subtotal (NUMERIC)     │
+│ phone_number (VARCHAR) │       │ recipient_name         │       │ shipping_cost (NUMERIC)│
+│ email (VARCHAR, UNIQUE)│       │ phone (VARCHAR)        │       │ unique_code (INT)      │
+│ role (customer/staff)  │       │ province (VARCHAR)     │       │ grand_total (NUMERIC)  │
+│ staff_role (owner/     │       │ city (VARCHAR)         │       │ payment_method         │
+│  gudang/kasir)         │       │ address_line (TEXT)    │       │ payment_status         │
+│ preferred_size         │       │ is_default (BOOLEAN)   │       │ delivery_type (kurir/  │
+└────────────────────────┘       └────────────────────────┘       │   pickup_store)        │
+                                                                  │ tracking_number        │
+┌────────────────────────┐       ┌────────────────────────┐       │ expires_at (TIMESTAMP) │
+│        coupons         │       │     order_returns      │       └────────────────────────┘
+├────────────────────────┤       ├────────────────────────┤                    │ 1
+│ id (BIGINT, PK)        │       │ id (BIGINT, PK)        │                    │
+│ code (VARCHAR, UNIQUE) │       │ order_id (FK)          │                    │ N
+│ discount_type (fix/pct)│       │ user_id (FK)           │       ┌────────────────────────┐
+│ discount_value         │       │ reason (TEXT)          │       │   cart_reservations    │
+│ min_purchase           │       │ photo_evidence_url     │       ├────────────────────────┤
+│ is_active (BOOLEAN)    │       │ return_type (tukar_    │       │ id (BIGINT, PK)        │
+│ used_count (INT)       │       │   size / refund)       │       │ variant_id (FK)        │
+└────────────────────────┘       │ status (pending/       │       │ session_token (VARCHAR)│
+                                 │   approved/rejected)   │       │ qty (INT)              │
+                                 └────────────────────────┘       │ expires_at (TIMESTAMP) │
+                                                                  └────────────────────────┘
 ```
 
 ---
@@ -121,15 +139,15 @@ Halaman utama dirancang dengan ritme visual editorial bertingkat agar mengelimin
 * **FR-07 (Visual Coret Ukuran Habis):** Varian ukuran yang memiliki `stock <= 0` pada kombinasi warna aktif otomatis diberi garis coret diagonal 45° (*strikethrough slash*) dan dinonaktifkan.
 * **FR-08 (Modal Panduan Ukuran Kanji 尺):** Tabel dimensi fisik dalam satuan sentimeter (cm) yang beradaptasi dinamis antara tipe pakaian atasan (*Chest, Length, Sleeve*) dan bawahan (*Waist, Hip, Length*).
 * **FR-09 (StyleHint Outfit Recommendation):** Modul rekomendasi 4 produk pelengkap di bawah ulasan untuk inspirasi padu padan gaya (*mix-and-match*).
-* **FR-10 (Mobile Sticky Action Bar):** Bar melayang di bagian bawah layar ponsel yang memuat preview varian warna, ukuran terpilih, harga, dan tombol *+ Tas Belanja* / *Beli Sekarang*.
+* **FR-10 (Mobile Sticky Action Bar):** Bar melayang di bagian bawah layar ponsel (56px) yang memuat preview varian warna, ukuran terpilih, harga, dan tombol tebal *+ Tas Belanja* / *Beli Sekarang* di zona jempol tunggal.
 
 ### 4.3. Tas Belanja, Logistik & In-House Zero-Fee Payment Engine
 * **FR-11 (Tas Belanja Drawer & Vouchers):**
   * Drawer samping kanan dengan bilah progres gratis ongkir tajam `rounded-none` (target Rp 400.000).
   * Mesin diskon 1-klik untuk voucher nominal (`URBANWELCOME50` - Rp 50.000), persentase (`LIFEWEAR10` - 10%), dan subsidi ongkir (`BEBASONGKIR` - Rp 15.000).
 * **FR-12 (Logistik Domestik Cerdas & Fail-Safe):**
-  * Kalkulasi tarif kurir domestik riil (J&T, JNE, SiCepat) berbasis kecamatan pengirim toko ke kecamatan tujuan pembeli serta akumulasi berat gramatur barang.
-  * Mekanisme *Fail-Safe Flat Rate*: jika API kurir mengalami gangguan/timeout > 3 detik, sistem otomatis beralih ke tarif cadangan standar (Jabodetabek: Rp 12.000, Luar Jabodetabek: Rp 22.000) tanpa memutus alur checkout pembeli.
+  * Kalkulasi tarif kurir domestik riil berbasis bobot akumulasi gramatur barang (`weight_grams`) dikalikan jarak kota toko fisik (Pamulang, Tangerang Selatan) ke alamat pembeli.
+  * Mekanisme *Fail-Safe Flat Rate*: jika API kurir mengalami timeout > 3 detik, sistem otomatis beralih ke tarif cadangan standar (Jabodetabek: Rp 12.000, Luar Jabodetabek: Rp 22.000) tanpa memutus alur checkout.
 * **FR-13 (Mesin Transfer Bank Kode Unik 3 Digit):**
   * Saat pembeli memilih metode Transfer Bank (BCA, Mandiri, BRI, BNI), sistem menghasilkan bilangan acak 3 digit ($001 \le \text{kode} \le 999$).
   * Total tagihan dikunci:
@@ -145,7 +163,7 @@ Halaman utama dirancang dengan ritme visual editorial bertingkat agar mengelimin
   * **Verifikasi Otomatis Webhook:** Endpoint resmi `/api/webhooks/payment` menerima sinyal mutasi terenkripsi dari aplikasi native Android **`PaymentGatewayin`** (menangkap notifikasi GoPay Merchant/GoBiz, BRImo, DANA Bisnis, ShopeePay, Bank Jago, SeaBank, BCA, Mandiri). Jika mutasi masuk bernilai cocok dengan `grand_total` pesanan yang *pending*, status otomatis berubah menjadi `DIBAYAR` (`PAID`) seketika secara otonom.
   * **Verifikasi Manual Fallback:** Formulir upload bukti transfer dan pelunasan manual oleh kasir di dasbor admin SIM tetap tersedia sebagai cadangan jika jaringan ponsel merchant mengalami kendala.
 * **FR-16 (Pengurangan Stok Atomik PostgreSQL RPC):**
-  * Pemotongan kuantitas stok dijalankan via transaksi atomik database (`UPDATE products SET stock = stock - qty WHERE id = product_id AND stock >= qty`).
+  * Pemotongan kuantitas stok dijalankan via transaksi atomik database (`UPDATE product_variants SET stock = stock - qty WHERE id = variant_id AND stock >= qty`).
   * Mencegah insiden *race condition* atau penjualan melebihi kapasitas (*overselling*).
 
 ### 4.4. Autonomous WhatsApp CRM Bot (@whiskeysockets/baileys)
@@ -191,29 +209,58 @@ Halaman utama dirancang dengan ritme visual editorial bertingkat agar mengelimin
 
 ---
 
-## 5. ⚙️ Spesifikasi Non-Fungsional & Kualitas Rekayasa
+### 4.8. Inovasi Unggulan Retail LifeWear & Logistik Lanjutan (V6.0 Flagship Evolution)
 
-* **NFR-01 (Framework & Runtime):** Next.js 16.3.8 berbasis React 19, compiler Turbopack, dan Tailwind CSS v4 dengan utility sudut tegas `rounded-none`.
+* **FR-30 (Smart Size & Fit Predictor AI/Heuristic):**
+  * Widget interaktif pada PDP: pembeli memasukkan Tinggi Badan (cm) dan Berat Badan (kg) serta memilih preferensi fit (*Slim*, *Regular*, *Oversized*).
+  * Algoritma menghitung rasio BMI dan distribusi ukuran untuk merekomendasikan ukuran ideal secara presisi: *"Rekomendasi Terbaik: Size L (Kecocokan 94%)"*.
+  * Pilihan ukuran pada selector PDP otomatis tersinkronisasi dengan hasil rekomendasi.
+* **FR-31 (Interactive Capsule Wardrobe Outfit Builder):**
+  * Kanvas padu padan split-screen interaktif (Atasan + Bawahan + Outerwear) di mana pembeli dapat menukar varian pakaian secara real-time.
+  * Kalkulasi total harga diskon bundling otomatis (*Hemat 15%*) dan tombol 1-klik *Beli 1 Paket OOTD*.
+* **FR-32 (Cart Reservation Countdown Timer & Auto-Release Worker):**
+  * Saat varian dengan stok kritis ($< 5$ unit) dimasukkan ke keranjang, sistem mengunci stok sementara selama **10:00 menit** dengan timer mundur aktif.
+  * Worker terjadwal (Edge Cron) yang berjalan setiap 5 menit untuk memeriksa pesanan transfer bank yang melewati batas kedaluwarsa 2 jam: otomatis mengubah status menjadi `Dibatalkan` dan mengembalikan kuantitas stok varian ke inventaris.
+* **FR-33 (Omnichannel Click & Collect Flagship Store Pamulang):**
+  * Opsi metode pengiriman Rp 0: *"Ambil Langsung di Flagship Store Pamulang (Tangerang Selatan)"*.
+  * Nota faktur otomatis menerbitkan barcode / QR Pass pengambilan barang digital.
+  * Admin scanner kasir toko fisik untuk verifikasi serah-terima barang instan tanpa biaya kirim.
+* **FR-34 (Fabric Texture Macro Zoom & Weather Tech Badges):**
+  * Kaca pembesar makro resolusi tinggi pada galeri foto PDP untuk inspeksi detail tekstur tenunan tekstil (AIRism mikropori, katun 280 GSM, double-brushed flannel).
+  * Badge kecocokan iklim: *"Optimal untuk Cuaca Tropis 28°C - 35°C"* atau *"Optimal untuk Suhu Dingin Ber-AC"*.
+* **FR-35 (Modul Klaim Retur & Tukar Ukuran Garansi 30 Hari):**
+  * Alur mandiri bagi pembeli di portal `/account/orders` untuk mengajukan penukaran ukuran atau pengembalian barang dalam 30 hari sejak barang diterima.
+  * Formulir upload foto bukti kondisi pakaian dan pemilihan ukuran pengganti yang langsung masuk ke tab review admin kasir/gudang.
+* **FR-36 (Outbound Dispatcher WhatsApp Baileys Microservice):**
+  * Dispatcher HTTP/WebSocket asinkron pada `orderService.ts` dan `settlementService.ts` yang secara nyata menembak microservice WhatsApp port 3001 saat pesanan dibuat, diverifikasi lunas, dan nomor resi diterbitkan.
+
+---
+
+## 5. ⚙️ Spesifikasi Non-Fungsional & Kualitas Rekayasa (Anti-AI Feel & Performance)
+
+* **NFR-01 (Framework & Runtime):** Next.js 16 berbasis React 19, compiler Turbopack, dan Tailwind CSS v4 dengan utility sudut tegas `rounded-none`.
 * **NFR-02 (Backend & Database):** PostgreSQL Supabase Cloud dengan dukungan RLS (*Row Level Security*) dan fallback lokal in-memory untuk menjamin **Zero-Crash**.
 * **NFR-03 (WhatsApp Communication Service):** Node.js Microservice terpisah menggunakan library `@whiskeysockets/baileys` yang berjalan di port 3001 dengan arsitektur non-blocking async.
 * **NFR-04 (Algoritma Kriptografi & Checksum):**
   * Checksum generator Dynamic QRIS menggunakan polinomial CRC-16 standar CCITT-FALSE ($X^{16} + X^{12} + X^5 + 1$, Inisial: `0xFFFF`).
 * **NFR-05 (Performance & Core Web Vitals):** LCP (*Largest Contentful Paint*) < 1.5 detik, gambar produk dioptimasi format WebP melalui Unsplash Image CDN / Supabase Storage.
-* **NFR-06 (Automated Testing & Stability):** Suite pengujian 3 lapis (Happy Path Checkout, Adversarial Invalid Transfers, Zero-Crash Mocking) wajib mencapai kelulusan **100% PASS**.
+* **NFR-06 (Automated Testing & Stability):** Suite pengujian komprehensif wajib mencapai kelulusan **100% PASS** di semua skenario transaksi, mutasi webhook, dan boundary conditions.
+* **NFR-07 (Shimmer Skeleton Loader 1:1):** Seluruh spinner bundar generik dieliminasi; wajib menggunakan shimmer skeleton loader dengan rasio potret 3:4 yang proporsinya 1:1 dengan kontur kartu produk untuk menjamin **Zero Cumulative Layout Shift (CLS)**.
+* **NFR-08 (Smooth Variant Crossfade):** Pergantian foto produk saat swatch warna diklik wajib menggunakan transisi crossfade kehalusan opacity 150ms tanpa kedipan (*flicker-free*).
+* **NFR-09 (Tactile & Micro-Scale Feedback):** Seluruh tombol aksi utama (`+ Masuk ke Tas Belanja`, Salin Rekening, Voucher) wajib dilengkapi interaksi sentuhan mikro `active:scale-[0.98]` dan respons ikonik instan.
+* **NFR-10 (Mobile Thumb Ergonomics):** Tombol aksi pembelian di layar ponsel wajib memiliki tinggi minimal 48px dan berada dalam jangkauan satu jempol (*ergonomic thumb zone*).
+* **NFR-11 (Standar Aksesibilitas WCAG AAA):** Teks keterangan mikro berukuran 9-10px wajib memiliki rasio kontras warna minimal 4.5:1 terhadap latar belakang putih agar tetap terbaca jelas di bawah terik matahari luar ruangan.
 
 ---
 
-## 6. 🗓️ Matriks Kesiapan UAS & Pengujian Sidang Akademik
+## 6. 🗓️ Roadmap Eksekusi & Matriks Kesiapan
 
-| Kriteria Penilaian UAS | Fitur Implementasi di UrbanStyle Store | Bukti Pengujian Sidang | Status |
+| Prioritas | Fase Sprint | Ruang Lingkup Rekayasa | Status |
 | :--- | :--- | :--- | :---: |
-| **Transaction Processing (TPS)** | Keranjang $\rightarrow$ Multi-kurir $\rightarrow$ Transfer Kode Unik / Dynamic QRIS $\rightarrow$ Pemotongan Stok Atomik | Faktur digital terbit, stok varian berkurang real-time di database | ✅ Siap Uji |
-| **Rekayasa Algoritma Mandiri** | In-House Dynamic QRIS EMVCo & CRC-16 Checksum Generator | Scan QRIS via HP dosen langsung menampilkan nominal tagihan pas | ✅ Siap Uji |
-| **Autonomous Microservices** | Bot WhatsApp Mandiri berbasis protokol WebSocket Baileys | Pesan rincian tagihan & resi kurir masuk ke nomor WhatsApp dosen | ✅ Siap Uji |
-| **Sistem Keamanan & RBAC** | Pemisahan `/login` & `/admin/login`, multi-role (Owner, Gudang, Kasir) | Akses halaman keuangan terkunci saat staf gudang mencoba masuk | ✅ Siap Uji |
-| **Decision Support System (DSS)** | Analisis Omzet & Peringkat Produk Terlaris Metode Distribusi Pareto | Dashboard visualisasi grafik kontribusi pendapatan 80/20 | ✅ Siap Uji |
-| **Kemudahan Pengujian Dosen** | Bypass Simulator Mutasi Bank & Dynamic QRIS 1-Klik | Tombol `⚡ Simulasi Bayar Instan` langsung mengubah status PAID | ✅ Siap Uji |
+| **P0 (Critical)** | **Sprint 1: Keutuhan Data & Stabilitas** | • Normalisasi relasional `product_variants` (SKU-level)<br>• Outbound dispatcher ke WhatsApp Baileys port 3001<br>• Edge Cron auto-release pesanan transfer expired 2 jam | Siap Eksekusi |
+| **P1 (High)** | **Sprint 2: UI Organic Polish & Anti-AI** | • Shimmer Skeleton Loader 1:1 pengganti spinner<br>• Smooth crossfade selector warna PDP<br>• Mobile Sticky Thumb Action Bar di PDP<br>• Micro-tactile click feedback (`active:scale-[0.98]`) | Siap Eksekusi |
+| **P2 (Growth)** | **Sprint 3: Inovasi Diferensiasi Retail** | • Smart Size & Fit Predictor (TB/BB + Siluet)<br>• Interactive Capsule Wardrobe Outfit Builder<br>• Omnichannel Click & Collect Store Pamulang<br>• Fabric Macro Texture Zoom & Weather Tech Badges<br>• Modul self-service Klaim Retur Garansi 30 Hari | Siap Eksekusi |
 
 ---
 
-*Dokumen ini merupakan spesifikasi final V5.2 yang sah dan menjadi acuan tunggal seluruh rekayasa kode pada proyek UrbanStyle Store.*
+*Dokumen ini merupakan spesifikasi master V6.0 Flagship Evolution yang sah dan menjadi acuan tunggal seluruh rekayasa kode pada proyek UrbanStyle Store.*
