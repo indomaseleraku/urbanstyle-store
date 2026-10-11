@@ -48,11 +48,17 @@ export async function middleware(request: NextRequest) {
   }
 
   // 2. Proteksi Halaman Portal Akun Member (/account)
+  if (pathname === '/account/login') {
+    if (effectiveUser) {
+      return NextResponse.redirect(new URL('/account/profile', request.url));
+    }
+    return NextResponse.next();
+  }
+
   if (pathname.startsWith('/account')) {
     if (!effectiveUser) {
-      const url = new URL('/', request.url);
-      url.searchParams.set('login', 'required');
-      url.searchParams.set('redirect', '/account');
+      const url = new URL('/account/login', request.url);
+      url.searchParams.set('redirect', pathname);
       return NextResponse.redirect(url);
     }
   }

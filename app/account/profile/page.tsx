@@ -90,7 +90,7 @@ export default function ProfilePage() {
                 NAMA ANGGOTA
               </p>
               <h2 className="text-lg sm:text-xl font-black uppercase tracking-wide text-white font-sans mt-0.5">
-                {user?.full_name || 'KIMY EKA ARDIANSYAH'}
+                {user?.full_name || 'MEMBER LIFEWEAR'}
               </h2>
             </div>
             <div className="sm:text-right">

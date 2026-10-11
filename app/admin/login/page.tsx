@@ -185,7 +185,7 @@ function AdminLoginForm() {
 
       {/* Footer Info */}
       <footer className="border-t border-zinc-900 bg-[#070709] px-4 py-3 text-center text-[10px] font-mono text-zinc-600">
-        UrbanStyle Kuro-Commerce SIM Engine • Hak Cipta © 2026 Kimy Eka Ardiansyah (UNPAM)
+        UrbanStyle Kuro-Commerce SIM Engine • Hak Cipta © 2026 UrbanStyle Tokyo. All rights reserved.
       </footer>
 
     </div>

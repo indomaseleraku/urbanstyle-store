@@ -1,8 +1,8 @@
 // app/page.tsx
 'use client';
 
-import React, { Suspense } from 'react';
-import { useRouter } from 'next/navigation';
+import React, { useEffect, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Navbar from '@/components/Navbar';
 import LookbookSlider from '@/components/LookbookSlider';
 import CategoryBubbles from '@/components/CategoryBubbles';
@@ -19,8 +19,15 @@ import { useAuth } from '@/lib/auth-context';
 
 function HomePageContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { user, openAuthModal } = useAuth();
   const s = useHomeStore();
+
+  useEffect(() => {
+    if (searchParams.get('login') === 'required' || searchParams.get('login') === 'true') {
+      openAuthModal();
+    }
+  }, [searchParams, openAuthModal]);
 
   const scrollToCatalog = () => {
     document.getElementById('katalog')?.scrollIntoView({ behavior: 'smooth' });

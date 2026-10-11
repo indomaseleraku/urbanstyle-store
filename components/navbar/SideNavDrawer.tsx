@@ -2,8 +2,10 @@
 'use client';
 
 import React, { useEffect } from 'react';
-import { X } from 'lucide-react';
+import Link from 'next/link';
+import { X, User, ChevronRight } from 'lucide-react';
 import { MEN_MEGA_MENU, WOMEN_MEGA_MENU } from '@/lib/constants/navigation';
+import { useAuth } from '@/lib/auth-context';
 import { ModalType } from '../InformationModals';
 import SideNavFooter from './SideNavFooter';
 
@@ -29,6 +31,8 @@ export default function SideNavDrawer({
   onSubCategoryClick,
   onOpenInfoModal,
 }: SideNavDrawerProps) {
+  const { user, openAuthModal } = useAuth();
+
   // Lock body scroll when drawer is open
   useEffect(() => {
     if (isOpen) {
@@ -91,6 +95,36 @@ export default function SideNavDrawer({
             >
               <X size={20} />
             </button>
+          </div>
+
+          {/* Member Login / Profile Section inside Drawer */}
+          <div className="px-4 py-2.5 bg-zinc-100 border-b border-zinc-200 flex items-center justify-between text-xs">
+            {user ? (
+              <Link
+                href="/account/profile"
+                onClick={onClose}
+                className="flex items-center gap-2 hover:text-[#E60012] transition-colors w-full justify-between"
+              >
+                <div className="flex items-center gap-2 min-w-0">
+                  <div className="w-6 h-6 rounded-full bg-zinc-950 text-white font-black text-[9px] flex items-center justify-center shrink-0">
+                    {user.full_name?.slice(0, 2).toUpperCase() || 'US'}
+                  </div>
+                  <span className="font-bold text-zinc-900 truncate uppercase text-[11px]">
+                    {user.full_name?.split(' ')[0]} (Akun Saya)
+                  </span>
+                </div>
+                <ChevronRight size={14} className="text-zinc-400 shrink-0" />
+              </Link>
+            ) : (
+              <button
+                type="button"
+                onClick={() => { onClose(); openAuthModal(); }}
+                className="flex items-center gap-2 text-zinc-800 hover:text-[#E60012] font-black uppercase tracking-wider text-[11px] cursor-pointer w-full"
+              >
+                <User size={15} />
+                <span>Masuk ke Akun Member / Daftar</span>
+              </button>
+            )}
           </div>
 
           {/* Gender Segmented Switcher inside Drawer */}
