@@ -8,7 +8,6 @@ import CartDrawer from '@/components/CartDrawer';
 import CheckoutModal from '@/components/CheckoutModal';
 import InformationModals, { ModalType } from '@/components/InformationModals';
 import { AuthModal } from '@/components/AuthModal';
-import StoreAvailabilityModal from './StoreAvailabilityModal';
 
 interface ProductPageModalsProps {
   product: Product;
@@ -34,8 +33,6 @@ interface ProductPageModalsProps {
   onOrderSuccess: () => void;
   activeInfoModal: ModalType;
   onCloseInfoModal: () => void;
-  isStoreModalOpen?: boolean;
-  onCloseStoreModal?: () => void;
   selectedSize?: string;
   currentColor?: string;
 }
@@ -64,8 +61,6 @@ export const ProductPageModals: React.FC<ProductPageModalsProps> = ({
   onOrderSuccess,
   activeInfoModal,
   onCloseInfoModal,
-  isStoreModalOpen = false,
-  onCloseStoreModal = () => {},
   selectedSize = 'M',
   currentColor = 'Standard',
 }) => {
@@ -111,17 +106,6 @@ export const ProductPageModals: React.FC<ProductPageModalsProps> = ({
       <InformationModals type={activeInfoModal} onClose={onCloseInfoModal} />
 
       <AuthModal />
-
-      <StoreAvailabilityModal
-        isOpen={isStoreModalOpen || activeInfoModal === 'stores'}
-        onClose={() => {
-          onCloseStoreModal();
-          if (activeInfoModal === 'stores') onCloseInfoModal();
-        }}
-        productName={product.name}
-        selectedSize={selectedSize}
-        selectedColor={currentColor}
-      />
     </>
   );
 };

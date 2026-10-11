@@ -10,7 +10,6 @@ import { ModalType } from './InformationModals';
 import { ProductModalGallery } from './product/ProductModalGallery';
 import { ProductVariantSelector } from './product/ProductVariantSelector';
 import { ProductAccordionSection } from './product/ProductAccordionSection';
-import StoreAvailabilityModal from './product/StoreAvailabilityModal';
 
 interface ProductDetailModalProps {
   product: Product | null;
@@ -37,7 +36,6 @@ export default function ProductDetailModal({
   const [selectedSize, setSelectedSize] = useState('M');
   const [quantity, setQuantity] = useState(1);
   const [isSizeChartOpen, setIsSizeChartOpen] = useState(false);
-  const [isStoreModalOpen, setIsStoreModalOpen] = useState(false);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [addedNotice, setAddedNotice] = useState(false);
 
@@ -183,7 +181,6 @@ export default function ProductDetailModal({
                 onAddToCart={handleAdd}
                 onBuyNow={handleBuyNow}
                 addedNotice={addedNotice}
-                onOpenStoreAvailability={() => setIsStoreModalOpen(true)}
               />
 
               {/* Accordions (Deskripsi, Bahan, Perawatan, Ulasan) */}
@@ -201,15 +198,6 @@ export default function ProductDetailModal({
         categoryName={product.category_name}
         measurements={product.size_measurements}
         onSelectSize={setSelectedSize}
-      />
-
-      {/* Nested Store Availability Modal */}
-      <StoreAvailabilityModal
-        isOpen={isStoreModalOpen}
-        onClose={() => setIsStoreModalOpen(false)}
-        productName={product.name}
-        selectedSize={selectedSize}
-        selectedColor={currentColor.name}
       />
     </div>
   );

@@ -135,16 +135,6 @@ export default function FooterLinks({ onOpenInfoModal, onOpenSizeChart, onSelect
             <li>
               <button
                 type="button"
-                onClick={() => onOpenInfoModal && onOpenInfoModal('stores')}
-                className="hover:text-white transition-colors cursor-pointer text-left flex items-center gap-1.5 text-zinc-300 font-bold"
-              >
-                <span>📍 Toko Fisik (Click & Collect)</span>
-                <span className="text-[9px] bg-[#E60012] text-white px-1 py-0.2">6 TOKO</span>
-              </button>
-            </li>
-            <li>
-              <button
-                type="button"
                 onClick={() => onOpenInfoModal && onOpenInfoModal('lifewear')}
                 className="hover:text-white transition-colors cursor-pointer text-left"
               >

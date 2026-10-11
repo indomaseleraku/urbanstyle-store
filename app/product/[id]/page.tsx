@@ -109,7 +109,6 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
               onBuyNow={store.handleBuyNow}
               addedNotice={store.addedNotice}
               onOpenInfoModal={(t) => store.setActiveInfoModal(t)}
-              onOpenStoreAvailability={() => store.setIsStoreModalOpen(true)}
             />
 
             <ProductPageAccordions product={product} selectedSize={store.selectedSize} />
@@ -189,8 +188,6 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
         onOrderSuccess={() => store.setCartItems([])}
         activeInfoModal={store.activeInfoModal}
         onCloseInfoModal={() => store.setActiveInfoModal(null)}
-        isStoreModalOpen={store.isStoreModalOpen}
-        onCloseStoreModal={() => store.setIsStoreModalOpen(false)}
         selectedSize={store.selectedSize}
         currentColor={store.currentColor.name}
       />

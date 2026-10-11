@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Product, ColorVariant } from '@/lib/types';
-import { Check, Ruler, ShoppingBag, ArrowRight, Store } from 'lucide-react';
+import { Check, Ruler, ShoppingBag, ArrowRight } from 'lucide-react';
 
 interface ProductVariantSelectorProps {
   product: Product;
@@ -196,17 +196,6 @@ export const ProductVariantSelector: React.FC<ProductVariantSelectorProps> = ({
           <span>BELI SEKARANG (LANGSUNG CHECKOUT)</span>
           <ArrowRight size={14} />
         </button>
-
-        {onOpenStoreAvailability && (
-          <button
-            type="button"
-            onClick={onOpenStoreAvailability}
-            className="w-full py-2.5 text-center text-[11px] font-bold uppercase tracking-wider text-zinc-700 hover:text-black border border-zinc-300 hover:border-black transition-colors flex items-center justify-center gap-1.5 rounded-none cursor-pointer"
-          >
-            <Store size={13} className="text-[#E60012]" />
-            <span>Cek Stok di Toko Fisik (Click & Collect)</span>
-          </button>
-        )}
       </div>
     </div>
   );
