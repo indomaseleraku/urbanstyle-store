@@ -167,10 +167,10 @@ export interface GenderTab {
 }
 
 export const GENDER_TABS: GenderTab[] = [
-  { label: 'SEMUA', value: 'all' },
-  { label: 'PRIA', value: 'pria' },
   { label: 'WANITA', value: 'wanita' },
-  { label: 'LIMITED OFFER 🔥', value: 'sale', highlight: true },
+  { label: 'PRIA', value: 'pria' },
+  { label: 'ANAK', value: 'anak' },
+  { label: 'BAYI', value: 'bayi' },
 ];
 
 export interface NavbarProps {

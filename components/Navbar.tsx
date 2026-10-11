@@ -52,16 +52,9 @@ export default function Navbar({
   };
 
   const handleGenderTabClick = (tabValue: string) => {
-    if (tabValue === 'wanita' || tabValue === 'pria' || tabValue === 'anak' || tabValue === 'bayi') {
-      setVisualMenuGender(tabValue as any);
-      setIsVisualMegaMenuOpen(true);
-    }
+    setVisualMenuGender(tabValue as any);
+    setIsVisualMegaMenuOpen(true);
     onSelectGender(tabValue);
-    onSelectCategory('all');
-    setTimeout(() => {
-      const el = document.getElementById(tabValue === 'sale' ? 'limited-offer' : 'katalog') || document.getElementById('katalog');
-      if (el) el.scrollIntoView({ behavior: 'smooth' });
-    }, 50);
   };
 
   return (
@@ -73,7 +66,7 @@ export default function Navbar({
           <div className="flex items-center justify-between h-16 sm:h-20 gap-3 sm:gap-6 relative">
             
             {/* Left: Dual Box Logo & Department Tabs */}
-            <div className="flex items-center gap-4 sm:gap-6 lg:gap-8 h-full">
+            <div className="flex items-center gap-3 sm:gap-6 lg:gap-8 h-full">
               <Link href="/" className="flex items-center gap-2 group shrink-0" title="UrbanStyle LifeWear">
                 <div className="flex items-center gap-1">
                   <div className="w-8 h-8 sm:w-9 sm:h-9 bg-[#E60012] text-white font-black text-xs sm:text-sm tracking-tighter flex items-center justify-center shadow-xs rounded-none">
@@ -93,24 +86,23 @@ export default function Navbar({
                 </div>
               </Link>
 
-              {/* Department/Gender Tabs (WANITA, PRIA, SEMUA, LIMITED OFFER) */}
-              <nav className="hidden md:flex items-center gap-1 h-full">
+              {/* Department/Gender Tabs (WANITA, PRIA, ANAK, BAYI) */}
+              <nav className="flex items-center gap-1 sm:gap-2 h-full overflow-x-auto">
                 {GENDER_TABS.map((tab) => {
                   const isActive = selectedGender === tab.value;
-                  const label = tab.label.replace(' 🔥', '');
                   return (
                     <button
                       key={tab.value}
                       type="button"
                       onClick={() => handleGenderTabClick(tab.value)}
-                      className={`px-3.5 h-full text-xs font-bold tracking-wider uppercase transition-all relative flex items-center cursor-pointer ${
+                      className={`px-2.5 sm:px-3.5 h-full text-xs sm:text-sm font-bold tracking-wider uppercase transition-all relative flex items-center cursor-pointer ${
                         isActive
-                          ? tab.highlight ? 'text-[#E60012] font-black' : 'text-zinc-950 font-black'
-                          : tab.highlight ? 'text-[#E60012]/80 hover:text-[#E60012]' : 'text-zinc-600 hover:text-zinc-950'
+                          ? 'text-zinc-950 font-black'
+                          : 'text-zinc-600 hover:text-zinc-950'
                       }`}
                     >
-                      <span>{label}</span>
-                      {isActive && <span className="absolute bottom-0 left-0 right-0 h-[2.5px] bg-[#E60012]" />}
+                      <span>{tab.label}</span>
+                      {isActive && <span className="absolute bottom-0 left-0 right-0 h-[3px] bg-zinc-950" />}
                     </button>
                   );
                 })}
