@@ -31,6 +31,11 @@ export default function ProductCard({
     image_url: product.image_url,
   };
 
+  // Dual-Image: Foto kedua dari galeri untuk efek hover model khas Uniqlo
+  const secondaryImage = product.gallery_images && product.gallery_images.length > 1
+    ? product.gallery_images[1]
+    : currentColor.image_url;
+
   const handleWishlist = (e: React.MouseEvent) => {
     e.stopPropagation();
     e.preventDefault();
@@ -40,33 +45,38 @@ export default function ProductCard({
   const handleQuickView = (e: React.MouseEvent) => {
     e.stopPropagation();
     e.preventDefault();
-    if (onOpenDetail) {
-      onOpenDetail(product);
-    }
+    if (onOpenDetail) onOpenDetail(product);
   };
 
   const hasDiscount = Boolean(product.original_price && product.original_price > product.price);
 
   return (
-    <motion.div 
-      initial={{ opacity: 0, y: 10 }}
+    <motion.div
+      initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3, ease: 'easeOut' }}
-      className="group border-none bg-transparent rounded-none flex flex-col relative"
+      transition={{ duration: 0.25, ease: 'easeOut' }}
+      className="group border-none bg-transparent rounded-none flex flex-col relative select-none"
     >
-      
-      {/* A. BLOK GAMBAR (Rasio 3:4 LifeWear Standard) */}
+      {/* 1. FRAME FOTO VERTIKAL 3:4 DUAL-IMAGE CROSSFADE */}
       <div className="relative aspect-[3/4] overflow-hidden bg-[#F6F6F6] rounded-none">
-        <Link href={`/product/${product.id}`} className="block w-full h-full">
+        <Link href={`/product/${product.id}`} className="block w-full h-full relative">
+          {/* Primary Photo */}
           <img
             src={getOptimizedImageUrl(currentColor.image_url, 450, 75)}
             alt={product.name}
-            className="w-full h-full object-cover object-center group-hover:scale-[1.03] transition-transform duration-500 ease-out"
+            className="w-full h-full object-cover object-center transition-opacity duration-500 ease-out group-hover:opacity-0"
+            loading="lazy"
+          />
+          {/* Secondary Photo (Model / Alternate Angle on Hover) */}
+          <img
+            src={getOptimizedImageUrl(secondaryImage, 450, 75)}
+            alt={`${product.name} alternate view`}
+            className="w-full h-full object-cover object-center absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 ease-out"
             loading="lazy"
           />
         </Link>
 
-        {/* Pojok kiri atas: Hanya 1 badge tipis jika ada promo (LIMITED OFFER atau NEW) */}
+        {/* Pojok Kiri Atas: Badge Tipis Uniqlo */}
         {hasDiscount ? (
           <div className="absolute top-2 left-2 z-10 pointer-events-none">
             <span className="bg-[#E60012] text-white text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-none shadow-xs">
@@ -81,12 +91,12 @@ export default function ProductCard({
           </div>
         ) : null}
 
-        {/* Pojok kanan atas: Tombol icon Wishlist outline tipis transparan (Heart) dengan spring tactile tap */}
+        {/* Pojok Kanan Atas: Tombol Wishlist Taktil */}
         <div className="absolute top-2 right-2 z-10">
           <motion.button
-            whileTap={{ scale: 0.85 }}
-            whileHover={{ scale: 1.1 }}
-            transition={{ type: 'spring', stiffness: 400, damping: 17 }}
+            whileTap={{ scale: 0.82 }}
+            whileHover={{ scale: 1.08 }}
+            transition={{ type: 'spring', stiffness: 450, damping: 16 }}
             type="button"
             onClick={handleWishlist}
             className={`p-1.5 rounded-none transition-colors duration-200 cursor-pointer ${
@@ -105,7 +115,7 @@ export default function ProductCard({
           </motion.button>
         </div>
 
-        {/* Efek Hover: Tombol Quick View semi-transparan muncul lembut di bagian bawah foto */}
+        {/* Hover Quick View Slide-Up */}
         {onOpenDetail && (
           <motion.button
             whileTap={{ scale: 0.97 }}
@@ -119,9 +129,9 @@ export default function ProductCard({
         )}
       </div>
 
-      {/* B. BLOK INFORMASI DI BAWAH FOTO (Airy & Clean) */}
-      <div className="pt-3 space-y-1.5 flex flex-col">
-        {/* Baris 1: Swatch warna lingkaran mini (diameter 12px-14px) rapi berjajar */}
+      {/* 2. BLOK INFORMASI AIRY & CLEAN */}
+      <div className="pt-2.5 space-y-1.5 flex flex-col">
+        {/* Baris 1: Color Swatches Bar */}
         {product.colors && product.colors.length > 0 && (
           <div className="flex items-center justify-between gap-1">
             <div className="flex items-center gap-1.5 flex-wrap">
@@ -155,49 +165,48 @@ export default function ProductCard({
           </div>
         )}
 
-        {/* Baris 2: Kategori & Gender halus (contoh: "PRIA • Kemeja & Flannel") */}
+        {/* Baris 2: Sub-Kategori Mikro */}
         <div className="text-zinc-500 text-[11px] font-medium uppercase tracking-wider truncate">
           {product.gender ? product.gender.toUpperCase() : 'UNISEX'}
           {product.category_name ? ` • ${product.category_name}` : ''}
         </div>
 
-        {/* Baris 3: Nama Produk (font-medium text-xs sm:text-sm text-zinc-950 line-clamp-2 leading-snug group-hover:text-[#E60012] transition-colors) */}
+        {/* Baris 3: Judul Produk */}
         <Link href={`/product/${product.id}`} className="block">
-          <h3 className="font-medium text-xs sm:text-sm text-zinc-950 line-clamp-2 leading-snug group-hover:text-[#E60012] transition-colors">
+          <h3 className="font-medium text-xs sm:text-[13px] text-zinc-950 line-clamp-2 leading-snug group-hover:text-[#E60012] transition-colors">
             {product.name}
           </h3>
         </Link>
 
-        {/* Baris 4: Blok Harga */}
+        {/* Baris 4: Blok Harga Tabular Uniqlo */}
         <div className="flex items-baseline gap-1.5 flex-wrap pt-0.5">
           {hasDiscount ? (
             <>
-              <span className="text-[#E60012] font-mono font-bold text-sm sm:text-base">
+              <span className="text-[#E60012] font-mono font-bold text-sm sm:text-base tabular-nums">
                 Rp {product.price.toLocaleString('id-ID')}
               </span>
-              <span className="text-zinc-400 line-through text-xs font-mono">
+              <span className="text-zinc-400 line-through text-xs font-mono tabular-nums">
                 Rp {product.original_price?.toLocaleString('id-ID')}
               </span>
             </>
           ) : (
-            <span className="text-zinc-950 font-mono font-bold text-sm sm:text-base">
+            <span className="text-zinc-950 font-mono font-bold text-sm sm:text-base tabular-nums">
               Rp {product.price.toLocaleString('id-ID')}
             </span>
           )}
         </div>
 
-        {/* Baris 5: Rating Bintang halus (bintang amber 10px + angka rating "★ 4.8" dan ulasan "(24)") */}
+        {/* Baris 5: Rating Bintang */}
         <div className="flex items-center gap-1 text-[11px] text-zinc-400 pt-0.5">
           <Star size={10} className="fill-amber-400 text-amber-400 shrink-0" />
-          <span className="font-medium text-zinc-700 font-mono">
+          <span className="font-medium text-zinc-700 font-mono tabular-nums">
             {(product.rating || 4.8).toFixed(1)}
           </span>
-          <span className="text-zinc-400 font-mono">
+          <span className="text-zinc-400 font-mono tabular-nums">
             ({product.reviews_count || 12})
           </span>
         </div>
       </div>
-
     </motion.div>
   );
 }

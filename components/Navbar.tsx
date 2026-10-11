@@ -72,14 +72,14 @@ export default function Navbar({
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 sm:h-18 gap-3 sm:gap-6">
             
-            {/* Left: Dual Box Logo & Department/Gender Tabs */}
+            {/* Left: Dual Box Logo & Department Tabs */}
             <div className="flex items-center gap-3 sm:gap-6 lg:gap-8">
               <Link href="/" className="flex items-center gap-2 group shrink-0">
                 <div className="flex items-center gap-1">
-                  <div className="w-8 h-8 sm:w-9 sm:h-9 bg-[#E60012] text-white font-black text-xs sm:text-sm tracking-tighter flex items-center justify-center shadow-xs">
+                  <div className="w-8 h-8 sm:w-9 sm:h-9 bg-[#E60012] text-white font-black text-xs sm:text-sm tracking-tighter flex items-center justify-center shadow-xs rounded-none">
                     US
                   </div>
-                  <div className="w-8 h-8 sm:w-9 sm:h-9 bg-[#E60012] text-white font-black text-[9px] sm:text-[10px] tracking-tight flex items-center justify-center leading-none text-center shadow-xs font-sans">
+                  <div className="w-8 h-8 sm:w-9 sm:h-9 bg-[#E60012] text-white font-black text-[9px] sm:text-[10px] tracking-tight flex items-center justify-center leading-none text-center shadow-xs font-sans rounded-none">
                     アー<br/>バン
                   </div>
                 </div>
@@ -102,14 +102,14 @@ export default function Navbar({
                       key={tab.value}
                       type="button"
                       onClick={() => handleGenderTabClick(tab.value)}
-                      className={`px-3 py-4 text-xs font-bold tracking-wider uppercase transition-all relative flex items-center cursor-pointer ${
+                      className={`px-3 py-5 text-xs font-bold tracking-wider uppercase transition-all relative flex items-center cursor-pointer ${
                         isActive
                           ? tab.highlight ? 'text-[#E60012] font-black' : 'text-zinc-950 font-black'
                           : tab.highlight ? 'text-[#E60012]/80 hover:text-[#E60012]' : 'text-zinc-600 hover:text-zinc-950'
                       }`}
                     >
                       <span>{tab.label}</span>
-                      {isActive && <span className="absolute bottom-0 left-2 right-2 h-[2.5px] bg-[#E60012]" />}
+                      {isActive && <span className="absolute bottom-0 left-0 right-0 h-[2.5px] bg-[#E60012]" />}
                     </button>
                   );
                 })}
@@ -126,7 +126,7 @@ export default function Navbar({
                   placeholder="Apa yang Anda cari?"
                   value={searchQuery}
                   onChange={(e) => onSearchChange(e.target.value)}
-                  className="w-full pl-9 pr-8 py-1.5 text-xs font-medium rounded-full bg-zinc-100 border border-zinc-200 text-zinc-900 placeholder-zinc-400 focus:outline-none focus:bg-white focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-all"
+                  className="w-full pl-9 pr-8 py-2 text-xs font-medium rounded-full bg-zinc-100 border border-zinc-200 text-zinc-900 placeholder-zinc-400 focus:outline-none focus:bg-white focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-all"
                 />
                 {searchQuery && (
                   <button
@@ -165,7 +165,7 @@ export default function Navbar({
                   className={wishlistCount > 0 ? 'text-[#E60012]' : 'text-zinc-900'}
                 />
                 {wishlistCount > 0 && (
-                  <span className="absolute top-1 right-1 w-4 h-4 bg-[#E60012] text-white text-[9px] font-black flex items-center justify-center rounded-full">
+                  <span className="absolute top-1 right-1 w-4 h-4 bg-[#E60012] text-white text-[9px] font-black flex items-center justify-center rounded-full tabular-nums">
                     {wishlistCount}
                   </span>
                 )}
@@ -184,7 +184,7 @@ export default function Navbar({
               >
                 <ShoppingBag size={20} className="text-zinc-900" />
                 {cartCount > 0 && (
-                  <span className="w-4 h-4 bg-[#E60012] text-white text-[9px] font-black flex items-center justify-center rounded-none">
+                  <span className="w-4 h-4 bg-[#E60012] text-white text-[9px] font-black flex items-center justify-center rounded-none tabular-nums">
                     {cartCount}
                   </span>
                 )}
@@ -219,7 +219,7 @@ export default function Navbar({
         )}
       </header>
 
-      {/* 3. Side Navigation Drawer Overlay (1:1 Uniqlo Indonesia Directory) */}
+      {/* Side Navigation Drawer Overlay */}
       <SideNavDrawer
         isOpen={sideDrawerOpen}
         onClose={() => setSideDrawerOpen(false)}
