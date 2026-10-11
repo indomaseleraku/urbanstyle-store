@@ -14,6 +14,7 @@ import { ProductPageAccordions } from '@/components/product/ProductPageAccordion
 import { ProductRelatedSection } from '@/components/product/ProductRelatedSection';
 import { ProductMobileBottomBar } from '@/components/product/ProductMobileBottomBar';
 import { ProductPageModals } from '@/components/product/ProductPageModals';
+import ProductDetailSkeleton from '@/components/product/ProductDetailSkeleton';
 import { dataStore } from '@/lib/store';
 
 export default function ProductDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -24,14 +25,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
   const store = useProductPageStore(productId);
 
   if (store.isLoading) {
-    return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
-        <div className="space-y-3 text-center">
-          <div className="w-8 h-8 border-2 border-[#E60012] border-t-transparent animate-spin mx-auto" />
-          <p className="text-xs font-bold uppercase tracking-widest text-zinc-600">Memuat Koleksi...</p>
-        </div>
-      </div>
-    );
+    return <ProductDetailSkeleton />;
   }
 
   if (!store.product) {
@@ -115,6 +109,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
               onBuyNow={store.handleBuyNow}
               addedNotice={store.addedNotice}
               onOpenInfoModal={(t) => store.setActiveInfoModal(t)}
+              onOpenStoreAvailability={() => store.setIsStoreModalOpen(true)}
             />
 
             <ProductPageAccordions product={product} selectedSize={store.selectedSize} />
@@ -148,6 +143,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
         product={product}
         isSizeChartOpen={store.isSizeChartOpen}
         onCloseSizeChart={() => store.setIsSizeChartOpen(false)}
+        onSelectSize={store.setSelectedSize}
         isWishlistOpen={store.isWishlistOpen}
         onCloseWishlist={() => store.setIsWishlistOpen(false)}
         wishlist={store.wishlist}
@@ -193,6 +189,10 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
         onOrderSuccess={() => store.setCartItems([])}
         activeInfoModal={store.activeInfoModal}
         onCloseInfoModal={() => store.setActiveInfoModal(null)}
+        isStoreModalOpen={store.isStoreModalOpen}
+        onCloseStoreModal={() => store.setIsStoreModalOpen(false)}
+        selectedSize={store.selectedSize}
+        currentColor={store.currentColor.name}
       />
     </div>
   );

@@ -20,6 +20,7 @@ interface ProductPageDetailsProps {
   onBuyNow: () => void;
   addedNotice: boolean;
   onOpenInfoModal: (type: ModalType) => void;
+  onOpenStoreAvailability?: () => void;
 }
 
 export const ProductPageDetails: React.FC<ProductPageDetailsProps> = ({
@@ -36,6 +37,7 @@ export const ProductPageDetails: React.FC<ProductPageDetailsProps> = ({
   onBuyNow,
   addedNotice,
   onOpenInfoModal,
+  onOpenStoreAvailability,
 }) => {
   const hasDiscount = Boolean(product.original_price && product.original_price > product.price);
 
@@ -101,6 +103,7 @@ export const ProductPageDetails: React.FC<ProductPageDetailsProps> = ({
         onAddToCart={onAddToCart}
         onBuyNow={onBuyNow}
         addedNotice={addedNotice}
+        onOpenStoreAvailability={onOpenStoreAvailability}
       />
 
       {/* Value Badges */}

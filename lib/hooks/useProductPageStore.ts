@@ -16,6 +16,7 @@ export function useProductPageStore(productId: number) {
   const [quantity, setQuantity] = useState(1);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [isSizeChartOpen, setIsSizeChartOpen] = useState(false);
+  const [isStoreModalOpen, setIsStoreModalOpen] = useState(false);
   const [addedNotice, setAddedNotice] = useState(false);
 
   // Cart & Wishlist state
@@ -127,6 +128,8 @@ export function useProductPageStore(productId: number) {
     setActiveImageIndex,
     isSizeChartOpen,
     setIsSizeChartOpen,
+    isStoreModalOpen,
+    setIsStoreModalOpen,
     addedNotice,
     currentColor,
     galleryList,

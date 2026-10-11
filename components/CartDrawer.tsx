@@ -4,6 +4,7 @@
 import React from 'react';
 import { CartItem } from '@/lib/types';
 import CartDrawerItem from '@/components/cart/CartDrawerItem';
+import CartReservationTimer from '@/components/cart/CartReservationTimer';
 import { X, ArrowRight, Truck, ShoppingBag } from 'lucide-react';
 
 interface CartDrawerProps {
@@ -74,6 +75,9 @@ export default function CartDrawer({
               <X size={20} />
             </button>
           </div>
+
+          {/* Cart Stock Reservation Timer (P0-LifeWear Feature) */}
+          {items.length > 0 && <CartReservationTimer />}
 
           {/* Sharp Free Shipping Progress Bar (Industrial Style) */}
           <div className="px-5 py-3 bg-zinc-100 border-b border-zinc-200 text-xs">

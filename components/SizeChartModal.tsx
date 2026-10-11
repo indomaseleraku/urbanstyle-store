@@ -2,8 +2,9 @@
 'use client';
 
 import React, { useState } from 'react';
-import { X, Ruler, CheckCircle2 } from 'lucide-react';
+import { X, CheckCircle2, Sparkles } from 'lucide-react';
 import { SizeMeasurement } from '@/lib/types';
+import SmartSizeRecommender from './product/SmartSizeRecommender';
 
 interface SizeChartModalProps {
   isOpen: boolean;
@@ -11,6 +12,7 @@ interface SizeChartModalProps {
   productName: string;
   categoryName?: string;
   measurements?: SizeMeasurement[];
+  onSelectSize?: (size: string) => void;
 }
 
 export default function SizeChartModal({
@@ -19,12 +21,16 @@ export default function SizeChartModal({
   productName,
   categoryName,
   measurements,
+  onSelectSize,
 }: SizeChartModalProps) {
-  const [activeTab, setActiveTab] = useState<'cm' | 'panduan'>('cm');
+  const [activeTab, setActiveTab] = useState<'cm' | 'recommender' | 'panduan'>('cm');
 
   if (!isOpen) return null;
 
-  const isPants = categoryName?.toLowerCase().includes('celana') || productName?.toLowerCase().includes('celana') || productName?.toLowerCase().includes('shorts');
+  const isPants =
+    categoryName?.toLowerCase().includes('celana') ||
+    productName?.toLowerCase().includes('celana') ||
+    productName?.toLowerCase().includes('shorts');
 
   const defaultTopMeasurements: SizeMeasurement[] = [
     { size: 'S', chest_width: 53, body_length: 70, sleeve_length: 59, shoulder_width: 46 },
@@ -40,18 +46,20 @@ export default function SizeChartModal({
     { size: 'XL', chest_width: 0, body_length: 99, sleeve_length: 0, shoulder_width: 0, waist: 88 },
   ];
 
-  const displayData = measurements && measurements.length > 0 
-    ? measurements 
-    : (isPants ? defaultBottomMeasurements : defaultTopMeasurements);
+  const displayData =
+    measurements && measurements.length > 0
+      ? measurements
+      : isPants
+      ? defaultBottomMeasurements
+      : defaultTopMeasurements;
 
   return (
     <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 overflow-y-auto animate-in fade-in duration-200">
-      <div className="bg-white border border-zinc-300 w-full max-w-2xl overflow-hidden shadow-2xl">
-        
+      <div className="bg-white border border-zinc-300 w-full max-w-2xl overflow-hidden shadow-2xl rounded-none">
         {/* Header */}
         <div className="p-4 sm:p-5 border-b border-zinc-200 flex items-center justify-between bg-zinc-50">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-[#E60012] text-white flex items-center justify-center font-black text-xs">
+            <div className="w-8 h-8 bg-[#E60012] text-white flex items-center justify-center font-black text-xs rounded-none">
               尺
             </div>
             <div>
@@ -63,9 +71,9 @@ export default function SizeChartModal({
               </h2>
             </div>
           </div>
-          <button 
-            onClick={onClose} 
-            className="p-1.5 text-zinc-400 hover:text-zinc-950 hover:bg-zinc-100 transition-colors"
+          <button
+            onClick={onClose}
+            className="p-1.5 text-zinc-400 hover:text-zinc-950 hover:bg-zinc-100 transition-colors cursor-pointer"
           >
             <X size={20} />
           </button>
@@ -73,31 +81,45 @@ export default function SizeChartModal({
 
         {/* Content */}
         <div className="p-5 sm:p-6 space-y-6">
-          <div className="flex items-center justify-between border-b border-zinc-200 pb-3">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-zinc-200 pb-3 gap-2">
             <div>
               <p className="text-xs font-bold text-zinc-900 uppercase">{productName}</p>
               <p className="text-[11px] text-zinc-500">Toleransi pengukuran fisik konveksi ± 1-1.5 cm</p>
             </div>
-            
+
             {/* Tabs */}
-            <div className="flex border border-zinc-300 text-xs font-bold uppercase">
+            <div className="flex border border-zinc-300 text-xs font-bold uppercase rounded-none overflow-hidden shrink-0">
               <button
                 onClick={() => setActiveTab('cm')}
-                className={`px-3 py-1.5 ${activeTab === 'cm' ? 'bg-zinc-900 text-white' : 'text-zinc-600 hover:bg-zinc-100'}`}
+                className={`px-3 py-1.5 cursor-pointer ${
+                  activeTab === 'cm' ? 'bg-zinc-900 text-white' : 'text-zinc-600 hover:bg-zinc-100'
+                }`}
               >
                 Tabel (cm)
               </button>
               <button
+                onClick={() => setActiveTab('recommender')}
+                className={`px-3 py-1.5 flex items-center gap-1 cursor-pointer ${
+                  activeTab === 'recommender'
+                    ? 'bg-[#E60012] text-white'
+                    : 'text-zinc-600 hover:bg-zinc-100'
+                }`}
+              >
+                <Sparkles size={12} />
+                <span>Rekomendasi</span>
+              </button>
+              <button
                 onClick={() => setActiveTab('panduan')}
-                className={`px-3 py-1.5 ${activeTab === 'panduan' ? 'bg-zinc-900 text-white' : 'text-zinc-600 hover:bg-zinc-100'}`}
+                className={`px-3 py-1.5 cursor-pointer ${
+                  activeTab === 'panduan' ? 'bg-zinc-900 text-white' : 'text-zinc-600 hover:bg-zinc-100'
+                }`}
               >
                 Cara Ukur
               </button>
             </div>
           </div>
 
-          {activeTab === 'cm' ? (
-            /* Table Section */
+          {activeTab === 'cm' && (
             <div className="border border-zinc-200 overflow-x-auto">
               <table className="w-full text-left text-xs border-collapse">
                 <thead>
@@ -140,28 +162,45 @@ export default function SizeChartModal({
                 </tbody>
               </table>
             </div>
-          ) : (
-            /* How to measure */
+          )}
+
+          {activeTab === 'recommender' && (
+            <SmartSizeRecommender
+              isPants={Boolean(isPants)}
+              onApplySize={(sz) => {
+                if (onSelectSize) onSelectSize(sz);
+                onClose();
+              }}
+            />
+          )}
+
+          {activeTab === 'panduan' && (
             <div className="space-y-4 text-xs text-zinc-700 bg-zinc-50 p-4 border border-zinc-200">
               <div className="flex items-start gap-2.5">
                 <CheckCircle2 size={16} className="text-[#E60012] shrink-0 mt-0.5" />
                 <div>
                   <strong className="text-zinc-900 uppercase">1. Lebar Dada (Chest Width)</strong>
-                  <p className="text-zinc-500 text-[11px]">Ukur secara mendatar tepat di bawah jahitan ketiak dari sisi kiri ke sisi kanan.</p>
+                  <p className="text-zinc-500 text-[11px]">
+                    Ukur secara mendatar tepat di bawah jahitan ketiak dari sisi kiri ke sisi kanan.
+                  </p>
                 </div>
               </div>
               <div className="flex items-start gap-2.5">
                 <CheckCircle2 size={16} className="text-[#E60012] shrink-0 mt-0.5" />
                 <div>
                   <strong className="text-zinc-900 uppercase">2. Panjang Pakaian (Body Length)</strong>
-                  <p className="text-zinc-500 text-[11px]">Ukur dari titik tertinggi bahu (samping kerah) lurus ke ujung bawah keliman baju.</p>
+                  <p className="text-zinc-500 text-[11px]">
+                    Ukur dari titik tertinggi bahu (samping kerah) lurus ke ujung bawah keliman baju.
+                  </p>
                 </div>
               </div>
               <div className="flex items-start gap-2.5">
                 <CheckCircle2 size={16} className="text-[#E60012] shrink-0 mt-0.5" />
                 <div>
                   <strong className="text-zinc-900 uppercase">3. Lingkar Pinggang (Waist)</strong>
-                  <p className="text-zinc-500 text-[11px]">Ukur mendatar melingkar pada bagian ban pinggang celana tanpa ditarik.</p>
+                  <p className="text-zinc-500 text-[11px]">
+                    Ukur mendatar melingkar pada bagian ban pinggang celana tanpa ditarik.
+                  </p>
                 </div>
               </div>
             </div>
@@ -172,14 +211,12 @@ export default function SizeChartModal({
             <span>Bingung memilih ukuran? Garansi retur dan tukar ukuran gratis selama 30 hari.</span>
             <button
               onClick={onClose}
-              className="px-4 py-1.5 bg-zinc-900 hover:bg-[#E60012] text-white text-[11px] font-bold uppercase transition-colors"
+              className="px-4 py-1.5 bg-zinc-900 hover:bg-[#E60012] text-white text-[11px] font-bold uppercase transition-colors cursor-pointer"
             >
               Mengerti
             </button>
           </div>
-
         </div>
-
       </div>
     </div>
   );

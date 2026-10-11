@@ -8,11 +8,13 @@ import CartDrawer from '@/components/CartDrawer';
 import CheckoutModal from '@/components/CheckoutModal';
 import InformationModals, { ModalType } from '@/components/InformationModals';
 import { AuthModal } from '@/components/AuthModal';
+import StoreAvailabilityModal from './StoreAvailabilityModal';
 
 interface ProductPageModalsProps {
   product: Product;
   isSizeChartOpen: boolean;
   onCloseSizeChart: () => void;
+  onSelectSize?: (size: string) => void;
   isWishlistOpen: boolean;
   onCloseWishlist: () => void;
   wishlist: Product[];
@@ -32,12 +34,17 @@ interface ProductPageModalsProps {
   onOrderSuccess: () => void;
   activeInfoModal: ModalType;
   onCloseInfoModal: () => void;
+  isStoreModalOpen?: boolean;
+  onCloseStoreModal?: () => void;
+  selectedSize?: string;
+  currentColor?: string;
 }
 
 export const ProductPageModals: React.FC<ProductPageModalsProps> = ({
   product,
   isSizeChartOpen,
   onCloseSizeChart,
+  onSelectSize,
   isWishlistOpen,
   onCloseWishlist,
   wishlist,
@@ -57,6 +64,10 @@ export const ProductPageModals: React.FC<ProductPageModalsProps> = ({
   onOrderSuccess,
   activeInfoModal,
   onCloseInfoModal,
+  isStoreModalOpen = false,
+  onCloseStoreModal = () => {},
+  selectedSize = 'M',
+  currentColor = 'Standard',
 }) => {
   return (
     <>
@@ -66,6 +77,7 @@ export const ProductPageModals: React.FC<ProductPageModalsProps> = ({
         productName={product.name}
         categoryName={product.category_name}
         measurements={product.size_measurements}
+        onSelectSize={onSelectSize}
       />
 
       <WishlistDrawer
@@ -99,6 +111,14 @@ export const ProductPageModals: React.FC<ProductPageModalsProps> = ({
       <InformationModals type={activeInfoModal} onClose={onCloseInfoModal} />
 
       <AuthModal />
+
+      <StoreAvailabilityModal
+        isOpen={isStoreModalOpen}
+        onClose={onCloseStoreModal}
+        productName={product.name}
+        selectedSize={selectedSize}
+        selectedColor={currentColor}
+      />
     </>
   );
 };
