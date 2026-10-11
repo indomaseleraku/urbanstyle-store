@@ -135,72 +135,44 @@ export default function FooterLinks({ onOpenInfoModal, onOpenSizeChart, onSelect
             <li>
               <button
                 type="button"
+                onClick={() => onOpenInfoModal && onOpenInfoModal('stores')}
+                className="hover:text-white transition-colors cursor-pointer text-left flex items-center gap-1.5 text-zinc-300 font-bold"
+              >
+                <span>📍 Toko Fisik (Click & Collect)</span>
+                <span className="text-[9px] bg-[#E60012] text-white px-1 py-0.2">6 TOKO</span>
+              </button>
+            </li>
+            <li>
+              <button
+                type="button"
                 onClick={() => onOpenInfoModal && onOpenInfoModal('lifewear')}
                 className="hover:text-white transition-colors cursor-pointer text-left"
               >
                 Tentang Filosofi LifeWear
               </button>
             </li>
-            <li>
-              {onSelectCategory ? (
-                <button
-                  type="button"
-                  onClick={() => handleCategoryNav('kemeja')}
-                  className="hover:text-white transition-colors cursor-pointer text-left"
-                >
-                  Koleksi Kemeja & Flannel
-                </button>
-              ) : (
-                <Link href="/?category=kemeja#katalog" className="hover:text-white transition-colors">
-                  Koleksi Kemeja & Flannel
-                </Link>
-              )}
-            </li>
-            <li>
-              {onSelectCategory ? (
-                <button
-                  type="button"
-                  onClick={() => handleCategoryNav('kaos')}
-                  className="hover:text-white transition-colors cursor-pointer text-left"
-                >
-                  Kaos Katun & AIRism
-                </button>
-              ) : (
-                <Link href="/?category=kaos#katalog" className="hover:text-white transition-colors">
-                  Kaos Katun & AIRism
-                </Link>
-              )}
-            </li>
-            <li>
-              {onSelectCategory ? (
-                <button
-                  type="button"
-                  onClick={() => handleCategoryNav('celana')}
-                  className="hover:text-white transition-colors cursor-pointer text-left"
-                >
-                  Celana Chino & Ankle
-                </button>
-              ) : (
-                <Link href="/?category=celana#katalog" className="hover:text-white transition-colors">
-                  Celana Chino & Ankle
-                </Link>
-              )}
-            </li>
-            <li>
-              {onSelectCategory ? (
-                <button
-                  type="button"
-                  onClick={() => handleCategoryNav('jaket')}
-                  className="hover:text-white transition-colors cursor-pointer text-left"
-                >
-                  Jaket Parka & Outerwear
-                </button>
-              ) : (
-                <Link href="/?category=jaket#katalog" className="hover:text-white transition-colors">
-                  Jaket Parka & Outerwear
-                </Link>
-              )}
-            </li>
+            {[
+              { slug: 'kemeja', label: 'Koleksi Kemeja & Flannel' },
+              { slug: 'kaos', label: 'Kaos Katun & AIRism' },
+              { slug: 'celana', label: 'Celana Chino & Ankle' },
+              { slug: 'jaket', label: 'Jaket Parka & Outerwear' },
+            ].map((cat) => (
+              <li key={cat.slug}>
+                {onSelectCategory ? (
+                  <button
+                    type="button"
+                    onClick={() => handleCategoryNav(cat.slug)}
+                    className="hover:text-white transition-colors cursor-pointer text-left"
+                  >
+                    {cat.label}
+                  </button>
+                ) : (
+                  <Link href={`/?category=${cat.slug}#katalog`} className="hover:text-white transition-colors">
+                    {cat.label}
+                  </Link>
+                )}
+              </li>
+            ))}
           </ul>
         </div>
 

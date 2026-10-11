@@ -7,9 +7,9 @@ import { STORES } from '@/lib/constants/stores';
 interface StoreAvailabilityModalProps {
   isOpen: boolean;
   onClose: () => void;
-  productName: string;
-  selectedSize: string;
-  selectedColor: string;
+  productName?: string;
+  selectedSize?: string;
+  selectedColor?: string;
 }
 
 export default function StoreAvailabilityModal({
@@ -58,12 +58,16 @@ export default function StoreAvailabilityModal({
         {/* Selected Variant Summary */}
         <div className="px-5 py-3 bg-zinc-100 border-b border-zinc-200 text-xs flex items-center justify-between">
           <div>
-            <p className="font-bold text-zinc-900 uppercase truncate max-w-xs">{productName}</p>
+            <p className="font-bold text-zinc-900 uppercase truncate max-w-xs">
+              {productName || 'Direktori Gerai Resmi UrbanStyle'}
+            </p>
             <p className="text-[11px] text-zinc-500 font-mono">
-              Varian: {selectedColor} • Ukuran {selectedSize}
+              {productName
+                ? `Varian: ${selectedColor || 'Semua Varian'} • Ukuran ${selectedSize || 'Semua Ukuran'}`
+                : 'Click & Collect gratis biaya ambil • Pengambilan siap dalam 2 jam'}
             </p>
           </div>
-          <span className="px-2 py-0.5 bg-white border border-zinc-300 text-[10px] font-mono font-bold text-zinc-800">
+          <span className="px-2 py-0.5 bg-white border border-zinc-300 text-[10px] font-mono font-bold text-zinc-800 shrink-0 ml-2">
             Gratis Biaya Ambil
           </span>
         </div>

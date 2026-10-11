@@ -4,7 +4,7 @@
 import React from 'react';
 import { X, ShieldCheck, Truck, Sparkles, HelpCircle, CheckCircle2, RotateCcw } from 'lucide-react';
 
-export type ModalType = 'return' | 'shipping' | 'lifewear' | 'help' | null;
+export type ModalType = 'return' | 'shipping' | 'lifewear' | 'help' | 'stores' | null;
 
 interface InfoModalProps {
   type: ModalType;

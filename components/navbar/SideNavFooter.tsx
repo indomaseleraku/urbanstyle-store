@@ -31,6 +31,13 @@ export default function SideNavFooter({ onOpenInfoModal, onClose }: SideNavFoote
       <div className="pt-2 border-t border-zinc-200 grid grid-cols-2 gap-2 text-[10px] font-bold uppercase">
         <button
           type="button"
+          onClick={() => { onOpenInfoModal('stores'); onClose(); }}
+          className="col-span-2 py-2 px-2 text-center bg-zinc-950 text-white hover:bg-[#E60012] font-black cursor-pointer transition-colors"
+        >
+          📍 Cari Gerai Fisik (Click & Collect) →
+        </button>
+        <button
+          type="button"
           onClick={() => { onOpenInfoModal('shipping'); onClose(); }}
           className="py-1.5 px-2 text-left bg-white border border-zinc-200 hover:border-zinc-950 text-zinc-700 cursor-pointer"
         >

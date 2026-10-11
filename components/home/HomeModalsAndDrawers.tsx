@@ -5,6 +5,7 @@ import React from 'react';
 import ProductDetailModal from '@/components/ProductDetailModal';
 import SizeChartModal from '@/components/SizeChartModal';
 import InformationModals from '@/components/InformationModals';
+import StoreAvailabilityModal from '@/components/product/StoreAvailabilityModal';
 import { AuthModal } from '@/components/AuthModal';
 import WishlistDrawer from '@/components/WishlistDrawer';
 import CartDrawer from '@/components/CartDrawer';
@@ -65,6 +66,10 @@ export default function HomeModalsAndDrawers({
       />
 
       <InformationModals type={s.activeInfoModal} onClose={() => s.setActiveInfoModal(null)} />
+      <StoreAvailabilityModal
+        isOpen={s.activeInfoModal === 'stores'}
+        onClose={() => s.setActiveInfoModal(null)}
+      />
       <AuthModal />
 
       <WishlistDrawer

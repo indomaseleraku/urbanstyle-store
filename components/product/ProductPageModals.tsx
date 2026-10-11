@@ -113,8 +113,11 @@ export const ProductPageModals: React.FC<ProductPageModalsProps> = ({
       <AuthModal />
 
       <StoreAvailabilityModal
-        isOpen={isStoreModalOpen}
-        onClose={onCloseStoreModal}
+        isOpen={isStoreModalOpen || activeInfoModal === 'stores'}
+        onClose={() => {
+          onCloseStoreModal();
+          if (activeInfoModal === 'stores') onCloseInfoModal();
+        }}
         productName={product.name}
         selectedSize={selectedSize}
         selectedColor={currentColor}

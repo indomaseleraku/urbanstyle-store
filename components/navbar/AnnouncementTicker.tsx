@@ -3,7 +3,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { Truck, RotateCcw, Copy } from 'lucide-react';
+import { Truck, RotateCcw, Copy, Store } from 'lucide-react';
 import { ModalType } from '../InformationModals';
 
 interface AnnouncementTickerProps {
@@ -65,6 +65,16 @@ export default function AnnouncementTicker({
 
         {/* Right Info Links */}
         <div className="hidden md:flex items-center gap-3 text-zinc-500">
+          <button
+            type="button"
+            onClick={() => onOpenInfoModal('stores')}
+            className="hover:text-zinc-950 transition-colors flex items-center gap-1 cursor-pointer font-bold text-zinc-800"
+            title="Buka direktori gerai fisik resmi & Click & Collect"
+          >
+            <Store size={12} className="text-[#E60012]" />
+            <span>Toko Fisik (Click & Collect)</span>
+          </button>
+          <span className="text-zinc-300">•</span>
           <button
             type="button"
             onClick={() => onOpenInfoModal('lifewear')}
