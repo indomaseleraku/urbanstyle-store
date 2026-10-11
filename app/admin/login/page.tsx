@@ -5,11 +5,11 @@ import React, { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { 
-  ShieldCheck, Lock, ArrowRight, UserCheck, Package, 
-  CreditCard, Eye, EyeOff, AlertCircle, ArrowLeft, Terminal
+  Lock, ArrowRight, Eye, EyeOff, AlertCircle, ArrowLeft, Terminal
 } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
 import { StaffRole } from '@/lib/types';
+import AdminQuickDemoRoles from '@/components/admin/AdminQuickDemoRoles';
 
 function AdminLoginForm() {
   const router = useRouter();
@@ -170,61 +170,8 @@ function AdminLoginForm() {
               </button>
             </form>
 
-            {/* Quick 1-Click Role Simulator (Khusus Evaluasi UAS / Dosen & Jurnal) */}
-            <div className="pt-5 border-t border-zinc-800/80 space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="text-[10px] font-mono text-zinc-400 uppercase tracking-wider font-semibold">
-                  Mode Pengujian Cepat RBAC (1-Klik)
-                </span>
-                <span className="text-[9px] bg-zinc-800 text-emerald-400 font-mono px-1.5 py-0.5 border border-zinc-700">
-                  UAS & Sidang Ready
-                </span>
-              </div>
-
-              <div className="grid grid-cols-3 gap-2">
-                <button
-                  type="button"
-                  onClick={() => handleQuickDemoRole('owner')}
-                  className="p-2.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-700/80 hover:border-[#E60012] transition-all text-left group"
-                >
-                  <div className="flex items-center gap-1.5 text-zinc-300 group-hover:text-white mb-1">
-                    <ShieldCheck size={13} className="text-[#E60012]" />
-                    <span className="font-bold text-[10px] uppercase font-mono">Owner</span>
-                  </div>
-                  <p className="text-[9px] text-zinc-500 line-clamp-2 leading-tight">
-                    Hak mutlak omzet, DSS Pareto, staf & kupon.
-                  </p>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => handleQuickDemoRole('gudang')}
-                  className="p-2.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-700/80 hover:border-amber-500 transition-all text-left group"
-                >
-                  <div className="flex items-center gap-1.5 text-zinc-300 group-hover:text-white mb-1">
-                    <Package size={13} className="text-amber-500" />
-                    <span className="font-bold text-[10px] uppercase font-mono">Gudang</span>
-                  </div>
-                  <p className="text-[9px] text-zinc-500 line-clamp-2 leading-tight">
-                    Kontrol inventaris, restok & resi kurir.
-                  </p>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => handleQuickDemoRole('kasir')}
-                  className="p-2.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-700/80 hover:border-cyan-500 transition-all text-left group"
-                >
-                  <div className="flex items-center gap-1.5 text-zinc-300 group-hover:text-white mb-1">
-                    <CreditCard size={13} className="text-cyan-400" />
-                    <span className="font-bold text-[10px] uppercase font-mono">Kasir</span>
-                  </div>
-                  <p className="text-[9px] text-zinc-500 line-clamp-2 leading-tight">
-                    Verifikasi slip bayar & status pesanan.
-                  </p>
-                </button>
-              </div>
-            </div>
+            {/* Quick 1-Click Role Simulator */}
+            <AdminQuickDemoRoles onSelectRole={handleQuickDemoRole} />
 
             {/* Security Notice Footer */}
             <div className="pt-2 flex items-center justify-center gap-2 text-[10px] text-zinc-500 font-mono">

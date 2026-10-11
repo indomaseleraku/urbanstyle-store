@@ -7,21 +7,13 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/lib/auth-context';
 import { dataStore } from '@/lib/store';
 import { UserAddress } from '@/lib/types';
-import { MapPin, Plus, Trash2, CheckCircle, Home, Building2, Check } from 'lucide-react';
+import { MapPin, Plus, Trash2 } from 'lucide-react';
+import AddAddressForm from '@/components/account/AddAddressForm';
 
 export default function AddressBookPage() {
   const { user } = useAuth();
   const [addresses, setAddresses] = useState<UserAddress[]>([]);
   const [isAdding, setIsAdding] = useState(false);
-
-  // Form State
-  const [label, setLabel] = useState('Rumah');
-  const [recipientName, setRecipientName] = useState(user?.full_name || '');
-  const [phone, setPhone] = useState(user?.phone || '');
-  const [addressLine, setAddressLine] = useState('');
-  const [city, setCity] = useState('Tangerang Selatan');
-  const [postalCode, setPostalCode] = useState('15417');
-  const [isDefault, setIsDefault] = useState(false);
 
   useEffect(() => {
     async function loadAddresses() {
@@ -33,34 +25,40 @@ export default function AddressBookPage() {
     loadAddresses();
   }, [user]);
 
-  const handleAddAddress = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleAddAddress = async (data: {
+    label: string;
+    recipientName: string;
+    phone: string;
+    addressLine: string;
+    city: string;
+    postalCode: string;
+    isDefault: boolean;
+  }) => {
     if (!user) return;
 
     await dataStore.addUserAddress({
       user_id: user.id,
-      label,
-      recipient_name: recipientName,
-      phone,
-      address_line: addressLine,
-      city,
-      postal_code: postalCode,
-      is_default: isDefault,
+      label: data.label,
+      recipient_name: data.recipientName,
+      phone: data.phone,
+      address_line: data.addressLine,
+      city: data.city,
+      postal_code: data.postalCode,
+      is_default: data.isDefault,
     });
 
     const updated = await dataStore.getUserAddresses(user.id);
     setAddresses(updated);
     setIsAdding(false);
-    // Reset Form
-    setAddressLine('');
-    setIsDefault(false);
   };
 
   const handleDelete = async (id: string) => {
     if (!user) return;
-    await dataStore.deleteUserAddress(id);
-    const updated = await dataStore.getUserAddresses(user.id);
-    setAddresses(updated);
+    if (confirm('Yakin ingin menghapus alamat ini?')) {
+      await dataStore.deleteUserAddress(id);
+      const updated = await dataStore.getUserAddresses(user.id);
+      setAddresses(updated);
+    }
   };
 
   const handleSetDefault = async (id: string) => {
@@ -71,153 +69,38 @@ export default function AddressBookPage() {
   };
 
   return (
-    <div className="bg-white border border-zinc-200 p-6 sm:p-8 space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-zinc-200 pb-4">
         <div>
-          <h1 className="text-lg font-black uppercase tracking-tight text-zinc-950">
-            Buku Alamat Pengiriman
-          </h1>
-          <p className="text-xs text-zinc-500 mt-1">
-            Simpan alamat tujuan pengiriman untuk otomatis mengisi formulir saat checkout pesanan.
+          <h2 className="text-sm font-black uppercase tracking-wider text-zinc-950 flex items-center gap-2">
+            <MapPin size={16} className="text-[#E60012]" />
+            <span>Buku Alamat Pengiriman</span>
+          </h2>
+          <p className="text-xs text-zinc-500 mt-0.5">
+            Kelola alamat pengiriman pesanan Anda untuk transaksi cepat.
           </p>
         </div>
-
         {!isAdding && (
           <button
+            type="button"
             onClick={() => setIsAdding(true)}
-            className="flex items-center gap-1.5 px-3 py-2 bg-black hover:bg-[#E60012] text-white text-xs font-bold uppercase tracking-wider transition-colors"
+            className="flex items-center gap-1.5 px-3 py-2 bg-black hover:bg-[#E60012] text-white text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer"
           >
             <Plus size={14} />
-            <span>Tambah Alamat</span>
+            <span>Tambah Alamat Baru</span>
           </button>
         )}
       </div>
 
-      {/* Form Tambah Alamat */}
+      {/* Form Tambah Alamat Baru */}
       {isAdding && (
-        <form onSubmit={handleAddAddress} className="p-5 border border-zinc-300 bg-zinc-50 space-y-4 animate-in fade-in">
-          <div className="flex items-center justify-between border-b border-zinc-200 pb-2">
-            <h2 className="text-xs font-bold uppercase tracking-wider text-zinc-950">
-              Formulir Alamat Baru
-            </h2>
-            <button
-              type="button"
-              onClick={() => setIsAdding(false)}
-              className="text-xs text-zinc-500 hover:text-black font-semibold"
-            >
-              Batal
-            </button>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-[11px] font-bold uppercase tracking-wider text-zinc-700 mb-1">
-                Label Alamat
-              </label>
-              <select
-                value={label}
-                onChange={(e) => setLabel(e.target.value)}
-                className="w-full px-3 py-2 border border-zinc-300 bg-white text-xs focus:outline-none focus:border-black font-medium"
-              >
-                <option value="Rumah">Rumah</option>
-                <option value="Kantor">Kantor</option>
-                <option value="Kampus / Kos">Kampus / Kos</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-[11px] font-bold uppercase tracking-wider text-zinc-700 mb-1">
-                Nama Penerima
-              </label>
-              <input
-                type="text"
-                value={recipientName}
-                onChange={(e) => setRecipientName(e.target.value)}
-                placeholder="Nama Lengkap"
-                className="w-full px-3 py-2 border border-zinc-300 bg-white text-xs focus:outline-none focus:border-black font-medium"
-                required
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-[11px] font-bold uppercase tracking-wider text-zinc-700 mb-1">
-                Nomor Telepon
-              </label>
-              <input
-                type="tel"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                placeholder="08xxxxxxxxxx"
-                className="w-full px-3 py-2 border border-zinc-300 bg-white text-xs focus:outline-none focus:border-black font-medium"
-                required
-              />
-            </div>
-
-            <div>
-              <label className="block text-[11px] font-bold uppercase tracking-wider text-zinc-700 mb-1">
-                Kota / Kabupaten
-              </label>
-              <input
-                type="text"
-                value={city}
-                onChange={(e) => setCity(e.target.value)}
-                placeholder="Kota"
-                className="w-full px-3 py-2 border border-zinc-300 bg-white text-xs focus:outline-none focus:border-black font-medium"
-                required
-              />
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-[11px] font-bold uppercase tracking-wider text-zinc-700 mb-1">
-              Alamat Lengkap & Patokan
-            </label>
-            <textarea
-              value={addressLine}
-              onChange={(e) => setAddressLine(e.target.value)}
-              placeholder="Nama Jalan, Nomor Rumah, RT/RW, Kelurahan, Kecamatan"
-              rows={2}
-              className="w-full px-3 py-2 border border-zinc-300 bg-white text-xs focus:outline-none focus:border-black font-medium"
-              required
-            />
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-[11px] font-bold uppercase tracking-wider text-zinc-700 mb-1">
-                Kode Pos
-              </label>
-              <input
-                type="text"
-                value={postalCode}
-                onChange={(e) => setPostalCode(e.target.value)}
-                placeholder="15417"
-                className="w-full px-3 py-2 border border-zinc-300 bg-white text-xs focus:outline-none focus:border-black font-medium"
-              />
-            </div>
-
-            <div className="flex items-center pt-5">
-              <label className="flex items-center gap-2 cursor-pointer text-xs font-semibold text-zinc-700">
-                <input
-                  type="checkbox"
-                  checked={isDefault}
-                  onChange={(e) => setIsDefault(e.target.checked)}
-                  className="rounded-none border-zinc-300 text-black focus:ring-0"
-                />
-                <span>Jadikan Alamat Pengiriman Utama</span>
-              </label>
-            </div>
-          </div>
-
-          <button
-            type="submit"
-            className="w-full py-2.5 bg-black hover:bg-[#E60012] text-white text-xs font-bold uppercase tracking-wider transition-colors"
-          >
-            Simpan Alamat Ini
-          </button>
-        </form>
+        <AddAddressForm
+          initialRecipientName={user?.full_name || ''}
+          initialPhone={user?.phone || ''}
+          onCancel={() => setIsAdding(false)}
+          onSubmit={handleAddAddress}
+        />
       )}
 
       {/* Daftar Alamat Tersimpan */}
@@ -256,15 +139,17 @@ export default function AddressBookPage() {
                 <div className="flex items-center gap-2 shrink-0">
                   {!addr.is_default && (
                     <button
+                      type="button"
                       onClick={() => handleSetDefault(addr.id)}
-                      className="text-[11px] font-bold uppercase tracking-wider text-zinc-600 hover:text-black border border-zinc-300 px-2 py-1"
+                      className="text-[11px] font-bold uppercase tracking-wider text-zinc-600 hover:text-black border border-zinc-300 px-2 py-1 cursor-pointer"
                     >
                       Pilih Utama
                     </button>
                   )}
                   <button
+                    type="button"
                     onClick={() => handleDelete(addr.id)}
-                    className="p-1 text-zinc-400 hover:text-red-600 transition-colors"
+                    className="p-1 text-zinc-400 hover:text-red-600 transition-colors cursor-pointer"
                     title="Hapus alamat"
                   >
                     <Trash2 size={16} />

@@ -1,10 +1,10 @@
 // components/home/EditorialSections.tsx
 'use client';
 
-import React from 'react';
 import { Sparkles, ArrowRight } from 'lucide-react';
 import ProductCard from '@/components/ProductCard';
 import { Product } from '@/lib/types';
+import { STYLE_HINT_LOOKS } from '@/lib/constants/editorial';
 
 interface EditorialSectionsProps {
   limitedOfferProducts: Product[];
@@ -16,33 +16,6 @@ interface EditorialSectionsProps {
   onSelectCategory: (slug: string) => void;
   onSortPopular: () => void;
 }
-
-const STYLE_HINT_LOOKS = [
-  {
-    title: 'Kasual Santai Akhir Pekan',
-    tag: 'Kaos Boxy + Easy Shorts',
-    category: 'kaos',
-    img: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=600&q=80',
-  },
-  {
-    title: 'Smart Casual Kantor',
-    tag: 'Kemeja Flannel + Ankle Pants',
-    category: 'kemeja',
-    img: 'https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=600&q=80',
-  },
-  {
-    title: 'Streetwear Minimalis',
-    tag: 'Parka UV + Chino Relaxed',
-    category: 'jaket',
-    img: 'https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=600&q=80',
-  },
-  {
-    title: 'Gaya Monokrom Elegan',
-    tag: 'Oxford Shirt + Chino Hitam',
-    category: 'celana',
-    img: 'https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=600&q=80',
-  },
-];
 
 export default function EditorialSections({
   limitedOfferProducts,

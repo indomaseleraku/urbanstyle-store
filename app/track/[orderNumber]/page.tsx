@@ -10,8 +10,6 @@ import { Order, TrackingEvent } from '@/lib/types';
 import { 
   Truck, 
   Package, 
-  CheckCircle2, 
-  Clock, 
   MapPin, 
   ArrowLeft, 
   FileText, 
@@ -19,6 +17,8 @@ import {
   Copy,
   Check
 } from 'lucide-react';
+import TrackingStepper from '@/components/tracking/TrackingStepper';
+import TrackingTimeline from '@/components/tracking/TrackingTimeline';
 
 export default function OrderTrackingPage({
   params,
@@ -60,14 +60,6 @@ export default function OrderTrackingPage({
       setTimeout(() => setCopiedResi(false), 2000);
     }
   };
-
-  const stepsList = [
-    { step: 1, title: 'Pesanan Dibuat' },
-    { step: 2, title: 'Dibayar' },
-    { step: 3, title: 'Dikemas' },
-    { step: 4, title: 'Dikirim' },
-    { step: 5, title: 'Selesai' },
-  ];
 
   if (isLoading) {
     return (
@@ -138,7 +130,6 @@ export default function OrderTrackingPage({
 
       {/* Main Container */}
       <main className="max-w-4xl mx-auto w-full px-4 py-8 flex-1 space-y-6">
-        
         {/* Card Info Resi */}
         <div className="bg-white border border-zinc-200 p-6 sm:p-8 space-y-6">
           <div className="flex flex-wrap items-center justify-between gap-4 pb-6 border-b border-zinc-200">
@@ -154,7 +145,7 @@ export default function OrderTrackingPage({
 
             <button
               onClick={loadData}
-              className="flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider text-zinc-600 hover:text-black border border-zinc-200 px-2.5 py-1.5 bg-zinc-50"
+              className="flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider text-zinc-600 hover:text-black border border-zinc-200 px-2.5 py-1.5 bg-zinc-50 cursor-pointer"
             >
               <RotateCw size={13} />
               <span>Segarkan</span>
@@ -180,7 +171,7 @@ export default function OrderTrackingPage({
                 {trackingNumber !== '-' && !trackingNumber.includes('Menunggu') && (
                   <button
                     onClick={handleCopyResi}
-                    className="p-1 text-zinc-500 hover:text-black"
+                    className="p-1 text-zinc-500 hover:text-black cursor-pointer"
                     title="Salin Resi"
                   >
                     {copiedResi ? <Check size={14} className="text-green-600" /> : <Copy size={14} />}
@@ -198,75 +189,10 @@ export default function OrderTrackingPage({
           </div>
 
           {/* Stepper Progress Visual 5 Tahap */}
-          <div className="py-4">
-            <div className="relative">
-              {/* Line connector */}
-              <div className="absolute top-4 left-0 right-0 h-0.5 bg-zinc-200 z-0" />
-              <div 
-                className="absolute top-4 left-0 h-0.5 bg-[#E60012] transition-all duration-500 z-0"
-                style={{ width: `${((currentStep - 1) / (stepsList.length - 1)) * 100}%` }}
-              />
-
-              {/* Steps icons */}
-              <div className="relative z-10 flex justify-between">
-                {stepsList.map((item) => {
-                  const isDone = currentStep >= item.step;
-                  const isCurrent = currentStep === item.step;
-                  return (
-                    <div key={item.step} className="flex flex-col items-center">
-                      <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-colors ${
-                        isDone
-                          ? 'bg-[#E60012] text-white shadow-xs'
-                          : 'bg-white border-2 border-zinc-300 text-zinc-400'
-                      }`}>
-                        {isDone ? <Check size={14} /> : item.step}
-                      </div>
-                      <span className={`text-[10px] sm:text-xs font-bold uppercase tracking-wider mt-2 text-center ${
-                        isCurrent ? 'text-[#E60012] font-black' : isDone ? 'text-zinc-900' : 'text-zinc-400'
-                      }`}>
-                        {item.title}
-                      </span>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
+          <TrackingStepper currentStep={currentStep} />
 
           {/* Timeline Riwayat Perjalanan Paket */}
-          <div className="space-y-4 pt-6 border-t border-zinc-200">
-            <h2 className="text-xs font-bold uppercase tracking-wider text-zinc-950 flex items-center gap-2">
-              <Clock size={15} />
-              <span>Riwayat Perjalanan Paket (Tracking Log)</span>
-            </h2>
-
-            <div className="relative pl-6 space-y-6 before:absolute before:left-2 before:top-2 before:bottom-2 before:w-0.5 before:bg-zinc-200">
-              {events.map((evt, idx) => (
-                <div key={idx} className="relative group">
-                  <div className={`absolute -left-6 top-1 w-4 h-4 rounded-full border-2 ${
-                    evt.is_completed
-                      ? 'bg-[#E60012] border-white ring-2 ring-[#E60012]'
-                      : 'bg-zinc-200 border-white'
-                  }`} />
-                  <div>
-                    <div className="flex flex-wrap items-center justify-between gap-2">
-                      <h3 className={`text-xs font-bold uppercase tracking-wider ${
-                        evt.is_completed ? 'text-zinc-950' : 'text-zinc-400'
-                      }`}>
-                        {evt.title}
-                      </h3>
-                      <span className="text-[10px] font-mono text-zinc-400">{evt.timestamp}</span>
-                    </div>
-                    <p className={`text-xs mt-0.5 ${
-                      evt.is_completed ? 'text-zinc-600' : 'text-zinc-400'
-                    }`}>
-                      {evt.description}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+          <TrackingTimeline events={events} />
 
           {/* Alamat Pengiriman */}
           <div className="p-4 bg-zinc-50 border border-zinc-200 space-y-1">
@@ -277,9 +203,7 @@ export default function OrderTrackingPage({
             <p className="text-xs text-zinc-700 font-medium">{order.customer_name} ({order.customer_phone})</p>
             <p className="text-xs text-zinc-600">{order.customer_address}</p>
           </div>
-
         </div>
-
       </main>
     </div>
   );
