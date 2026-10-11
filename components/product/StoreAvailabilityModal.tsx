@@ -40,7 +40,7 @@ export default function StoreAvailabilityModal({
             </div>
             <div>
               <span className="text-[10px] font-bold text-[#E60012] uppercase tracking-widest">
-                CLICK & COLLECT // TOKO OFFLINE
+                CLICK & COLLECT • TOKO OFFLINE
               </span>
               <h2 className="text-sm sm:text-base font-black uppercase tracking-tight text-zinc-950">
                 Cek Ketersediaan Gerai Fisik

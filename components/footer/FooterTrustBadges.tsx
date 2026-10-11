@@ -54,7 +54,7 @@ export default function FooterTrustBadges() {
 
       {/* LAYER 5: Bottom Legal Bar */}
       <div className="border-t border-zinc-900 py-4 px-4 text-center text-[11px] text-zinc-500">
-        <p>Copyright © 2026 UrbanStyle Store. Dibuat oleh Kimy Eka Ardiansyah (Teknik Informatika, Universitas Pamulang). Hak Cipta Dilindungi Undang-Undang.</p>
+        <p>Copyright © 2026 UrbanStyle LifeWear Tokyo. Seluruh Hak Cipta Dilindungi Undang-Undang.</p>
       </div>
     </>
   );

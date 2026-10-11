@@ -116,8 +116,8 @@ export default function EditorialSections({
       <section className="bg-zinc-50 border-b border-zinc-200 py-10 sm:py-14">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-xl mx-auto mb-8 space-y-1.5">
-            <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400 font-mono">
-              // STYLEHINT COMMUNITY
+            <span className="text-[10px] font-black uppercase tracking-widest text-[#E60012] font-mono">
+              STYLEHINT COMMUNITY
             </span>
             <h3 className="text-xl sm:text-2xl font-black uppercase tracking-tight text-zinc-950">
               Inspirasi Padu Padan Gaya Hidup Nyata

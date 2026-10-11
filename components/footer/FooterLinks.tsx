@@ -51,14 +51,14 @@ export default function FooterLinks({ onOpenInfoModal, onOpenSizeChart, onSelect
             </span>
           </div>
           <p className="text-xs text-zinc-400 leading-relaxed max-w-sm">
-            Sistem Informasi Manajemen Retail Fashion terinspirasi filosofi Uniqlo LifeWear. Mengintegrasikan Transaction Processing System (TPS) stok atomik, modul DSS penjualan, serta teknologi tekstil modern.
+            UrbanStyle LifeWear menghadirkan pakaian esensial harian dengan kesederhanaan desain, mutu serat alami, dan detail kenyamanan yang terus disempurnakan.
           </p>
-          <div className="pt-1 flex items-center gap-3 text-xs text-zinc-400">
+          <div className="pt-1 flex items-center gap-2 text-xs text-zinc-400">
             <span className="font-mono text-[10px] bg-zinc-900 border border-zinc-800 px-2 py-1 text-zinc-300">
-              PROYEK SIM V4.0
+              LIFEWEAR TOKYO
             </span>
             <span className="font-mono text-[10px] text-zinc-500">
-              // UNIVERSITAS PAMULANG
+              EST. 2026 • INDONESIA
             </span>
           </div>
         </div>
@@ -176,7 +176,7 @@ export default function FooterLinks({ onOpenInfoModal, onOpenSizeChart, onSelect
           </ul>
         </div>
 
-        {/* Kolom 4: Pengembang SIM */}
+        {/* Kolom 4: Jaminan Pelanggan */}
         <div className="md:col-span-3 border-t md:border-t-0 border-zinc-800 pt-3 md:pt-0">
           <button
             type="button"
@@ -184,7 +184,7 @@ export default function FooterLinks({ onOpenInfoModal, onOpenSizeChart, onSelect
             className="w-full flex items-center justify-between text-left md:pointer-events-none pb-2 md:pb-0"
           >
             <h4 className="text-xs font-black uppercase tracking-widest text-[#E60012]">
-              Pengembang SIM
+              Jaminan Pelanggan
             </h4>
             <span className="md:hidden text-zinc-400">
               {openSections.developer ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
@@ -193,14 +193,14 @@ export default function FooterLinks({ onOpenInfoModal, onOpenSizeChart, onSelect
           <div className={`pt-2 ${openSections.developer ? 'block' : 'hidden md:block'}`}>
             <div className="p-3.5 bg-zinc-900 border border-zinc-800 text-xs space-y-1.5 text-zinc-300">
               <p className="font-bold text-white uppercase text-[11px]">
-                Kimy Eka Ardiansyah
+                Standar Mutu LifeWear
               </p>
               <p className="text-[10px] text-zinc-400 leading-relaxed">
-                Mahasiswa Teknik Informatika, Universitas Pamulang. Dikembangkan untuk Ujian Akhir Semester (UAS) & Jurnal Ilmiah Komputer JIUP.
+                Setiap pakaian melewati kontrol mutu ketat, garansi keaslian 100%, serta proteksi pertukaran ukuran dan retur 30 hari.
               </p>
               <div className="pt-1 flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                <span className="text-[10px] font-mono text-zinc-400">Sistem Aktif & Terverifikasi</span>
+                <span className="text-[10px] font-mono text-zinc-400">Layanan Pelanggan Aktif</span>
               </div>
             </div>
           </div>

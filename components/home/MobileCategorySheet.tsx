@@ -65,7 +65,7 @@ export default function MobileCategorySheet({
                     Pilih Kategori Busana
                   </h3>
                   <span className="text-[9px] text-zinc-400 font-mono tracking-widest uppercase">
-                    // LIFEWEAR CATALOG DIRECTORY
+                    KATALOG RESMI LIFEWEAR
                   </span>
                 </div>
               </div>

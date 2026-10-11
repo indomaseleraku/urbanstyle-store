@@ -44,7 +44,7 @@ export default function MemberLoyaltyBanner({ user, onOpenAuthModal }: MemberLoy
             <div className="space-y-2">
               <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-[#E60012] text-white text-[9px] font-black uppercase tracking-widest rounded-none shadow-xs">
                 <Sparkles size={11} className="text-amber-300" />
-                <span>KEANGGOTAAN DIGITAL RESMI // LIFEWEAR PASS</span>
+                <span>KEANGGOTAAN DIGITAL RESMI • LIFEWEAR PASS</span>
               </div>
               <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black uppercase tracking-tight text-white leading-tight">
                 Nikmati Seluruh Keuntungan Eksklusif Member UrbanStyle

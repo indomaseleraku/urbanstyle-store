@@ -45,7 +45,7 @@ export const ProductPageDetails: React.FC<ProductPageDetailsProps> = ({
     <div className="space-y-5">
       <div className="space-y-1.5 border-b border-zinc-200 pb-4">
         <span className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">
-          {product.category_name || 'Koleksi'} // {(product.gender || 'unisex').toUpperCase()}
+          {product.category_name || 'Koleksi'} • {(product.gender || 'unisex').toUpperCase()}
         </span>
         <h1 className="text-xl sm:text-2xl font-black uppercase tracking-tight text-zinc-950 leading-tight">
           {product.name}
@@ -85,7 +85,7 @@ export const ProductPageDetails: React.FC<ProductPageDetailsProps> = ({
           )}
         </div>
         <span className="text-[11px] font-bold uppercase text-zinc-500 font-mono block">
-          SKU: US-{product.id.toString().padStart(4, '0')} // LIFEWEAR ESSENTIAL
+          SKU: US-{product.id.toString().padStart(4, '0')} • LIFEWEAR ESSENTIAL
         </span>
       </div>
 

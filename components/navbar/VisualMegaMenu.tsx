@@ -99,25 +99,25 @@ export default function VisualMegaMenu({
       <div className="relative z-10 bg-white border-b border-zinc-300 shadow-2xl max-h-[92vh] flex flex-col overflow-y-auto">
         {/* TOP HEADER ROW: Logo, Department Tabs, Language & Close Button */}
         <div className="border-b border-zinc-200 bg-white sticky top-0 z-20">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 sm:h-16 flex items-center justify-between">
             {/* Left: Dual Box Uniqlo Logo & Department Tabs */}
-            <div className="flex items-center gap-6 sm:gap-10 h-full">
+            <div className="flex items-center gap-4 sm:gap-8 h-full">
               <Link
                 href="/"
                 onClick={onClose}
                 className="flex items-center gap-1 shrink-0"
                 title="UrbanStyle LifeWear"
               >
-                <div className="w-8 h-8 sm:w-9 sm:h-9 bg-[#E60012] text-white font-black text-xs sm:text-sm tracking-tighter flex items-center justify-center shadow-xs rounded-none">
+                <div className="w-7 h-7 sm:w-8 sm:h-8 bg-[#E60012] text-white font-black text-[11px] sm:text-xs tracking-tighter flex items-center justify-center shadow-xs rounded-none">
                   US
                 </div>
-                <div className="w-8 h-8 sm:w-9 sm:h-9 bg-[#E60012] text-white font-black text-[9px] sm:text-[10px] tracking-tight flex items-center justify-center leading-none text-center shadow-xs font-sans rounded-none">
+                <div className="w-7 h-7 sm:w-8 sm:h-8 bg-[#E60012] text-white font-black text-[8px] sm:text-[9px] tracking-tight flex items-center justify-center leading-none text-center shadow-xs font-sans rounded-none">
                   アー<br />バン
                 </div>
               </Link>
 
-              {/* Department Tabs: WANITA, PRIA, ANAK, BAYI */}
-              <nav className="flex items-center gap-6 sm:gap-8 h-full">
+              {/* Department Tabs: WANITA, PRIA */}
+              <nav className="flex items-center gap-4 sm:gap-6 h-full">
                 {departments.map((dept) => {
                   const isActive = currentDept === dept.id;
                   return (
@@ -125,7 +125,7 @@ export default function VisualMegaMenu({
                       key={dept.id}
                       type="button"
                       onClick={() => setCurrentDept(dept.id)}
-                      className={`h-full text-sm sm:text-base tracking-wider uppercase transition-all relative flex items-center cursor-pointer ${
+                      className={`h-full text-xs sm:text-sm tracking-wider uppercase transition-all relative flex items-center cursor-pointer ${
                         isActive
                           ? 'text-zinc-950 font-black'
                           : 'text-zinc-500 hover:text-zinc-950 font-bold'
@@ -133,7 +133,7 @@ export default function VisualMegaMenu({
                     >
                       <span>{dept.label}</span>
                       {isActive && (
-                        <span className="absolute bottom-0 left-0 right-0 h-[3px] bg-zinc-950" />
+                        <span className="absolute bottom-0 left-0 right-0 h-[2.5px] bg-zinc-950" />
                       )}
                     </button>
                   );
@@ -142,48 +142,48 @@ export default function VisualMegaMenu({
             </div>
 
             {/* Right: Language indicator (ID ID) & Close Button (X) */}
-            <div className="flex items-center gap-4 sm:gap-6">
+            <div className="flex items-center gap-3 sm:gap-5">
               <div className="hidden sm:flex items-center gap-1.5 text-zinc-700 text-xs font-bold uppercase">
-                <Globe size={16} className="text-zinc-800" />
+                <Globe size={15} className="text-zinc-800" />
                 <span>ID ID</span>
               </div>
 
               <button
                 type="button"
                 onClick={onClose}
-                className="p-2 text-zinc-500 hover:text-zinc-950 hover:bg-zinc-100 transition-colors cursor-pointer rounded-none"
+                className="p-1.5 text-zinc-500 hover:text-zinc-950 hover:bg-zinc-100 transition-colors cursor-pointer rounded-none"
                 aria-label="Tutup Menu"
                 title="Tutup Menu"
               >
-                <X size={24} />
+                <X size={20} />
               </button>
             </div>
           </div>
         </div>
 
         {/* SEARCH CAPSULE ROW: "Apa yang Anda cari?" */}
-        <div className="max-w-5xl w-full mx-auto px-4 sm:px-6 pt-5 pb-2">
+        <div className="max-w-5xl w-full mx-auto px-4 sm:px-6 pt-4 pb-1">
           <form onSubmit={handleSearchSubmit} className="relative">
             <input
               type="text"
               placeholder="Apa yang Anda cari?"
               value={localSearch}
               onChange={(e) => setLocalSearch(e.target.value)}
-              className="w-full pl-6 pr-12 py-3 sm:py-3.5 text-xs sm:text-sm font-medium rounded-full bg-white border border-zinc-300 text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-zinc-950 focus:ring-1 focus:ring-zinc-950 shadow-xs transition-all"
+              className="w-full pl-5 pr-11 py-2 sm:py-2.5 text-xs font-medium rounded-full bg-white border border-zinc-300 text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-zinc-950 focus:ring-1 focus:ring-zinc-950 shadow-xs transition-all"
             />
             <button
               type="submit"
-              className="absolute right-4 top-1/2 -translate-y-1/2 p-1 text-zinc-400 hover:text-zinc-950 transition-colors cursor-pointer"
+              className="absolute right-3.5 top-1/2 -translate-y-1/2 p-1 text-zinc-400 hover:text-zinc-950 transition-colors cursor-pointer"
               title="Cari"
             >
-              <Search size={18} />
+              <Search size={16} />
             </button>
           </form>
         </div>
 
         {/* 6-COLUMN VISUAL CATEGORY GRID */}
-        <div className="max-w-6xl w-full mx-auto px-4 sm:px-6 py-6 sm:py-8">
-          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-x-4 sm:gap-x-6 md:gap-x-8 gap-y-6 sm:gap-y-8">
+        <div className="max-w-6xl w-full mx-auto px-4 sm:px-6 py-4 sm:py-6">
+          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-x-3 sm:gap-x-5 md:gap-x-6 gap-y-4 sm:gap-y-6">
             {items.map((item) => (
               <button
                 key={item.id}
@@ -193,7 +193,7 @@ export default function VisualMegaMenu({
                 title={`Koleksi ${item.name}`}
               >
                 {/* Isolated Cutout Product Image Container */}
-                <div className="w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 flex items-center justify-center mb-2 overflow-hidden bg-white">
+                <div className="w-16 h-16 sm:w-20 sm:h-20 md:w-22 md:h-22 flex items-center justify-center mb-1.5 overflow-hidden bg-white">
                   <img
                     src={item.imageUrl}
                     alt={item.name}
@@ -203,7 +203,7 @@ export default function VisualMegaMenu({
                 </div>
 
                 {/* Category Typography Label */}
-                <span className="text-[11px] sm:text-xs text-zinc-800 group-hover:text-black group-hover:underline leading-snug line-clamp-2 max-w-[110px] text-center font-normal">
+                <span className="text-[11px] text-zinc-800 group-hover:text-black group-hover:underline leading-snug line-clamp-2 max-w-[100px] text-center font-normal">
                   {item.name}
                 </span>
               </button>
@@ -212,8 +212,8 @@ export default function VisualMegaMenu({
         </div>
 
         {/* Bottom Helper Bar */}
-        <div className="border-t border-zinc-200 bg-zinc-50 py-3 px-4 text-center text-[11px] text-zinc-500 font-mono uppercase tracking-wider">
-          LifeWear Esensial Tokyo // Pilih Kategori untuk Menyaring Katalog Penuh
+        <div className="border-t border-zinc-200 bg-zinc-50 py-2.5 px-4 text-center text-[10px] text-zinc-500 font-mono uppercase tracking-wider">
+          LifeWear Esensial Tokyo • Kategori Pilihan Resmi
         </div>
       </div>
     </div>

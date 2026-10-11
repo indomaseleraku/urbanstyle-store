@@ -122,24 +122,24 @@ export default function InformationModals({ type, onClose }: InfoModalProps) {
           {type === 'help' && (
             <>
               <p className="text-sm font-bold text-zinc-900">
-                Pusat Bantuan & Layanan Informasi Sistem E-Commerce
+                Pusat Bantuan & Layanan Konsumen UrbanStyle
               </p>
               <div className="space-y-3 bg-zinc-50 p-4 border border-zinc-200">
                 <div>
-                  <strong className="text-zinc-900">Informasi Proyek Akademis:</strong>
-                  <p className="text-[11px] text-zinc-600">Dikembangkan oleh <strong>Kimy Eka Ardiansyah</strong> untuk keperluan penelitian ilmiah Program Studi Teknik Informatika, Fakultas Ilmu Komputer, Universitas Pamulang.</p>
+                  <strong className="text-zinc-900">Jam Layanan Pelanggan:</strong>
+                  <p className="text-[11px] text-zinc-600">Senin – Minggu, 08.00 – 21.00 WIB (Termasuk Hari Libur Nasional)</p>
                 </div>
                 <div>
                   <strong className="text-zinc-900">Kontak WhatsApp Layanan Toko:</strong>
-                  <p className="text-[11px] text-zinc-600 font-mono">+62 812-3456-7890 (Aktif 08.00 - 21.00 WIB)</p>
+                  <p className="text-[11px] text-zinc-600 font-mono">+62 812-3456-7890</p>
                 </div>
                 <div>
-                  <strong className="text-zinc-900">Email Resmi:</strong>
-                  <p className="text-[11px] text-zinc-600 font-mono">kimy.eka@unpam.ac.id / support@urbanstyle.store</p>
+                  <strong className="text-zinc-900">Email Resmi Layanan:</strong>
+                  <p className="text-[11px] text-zinc-600 font-mono">cs@urbanstyle.store</p>
                 </div>
               </div>
               <p className="text-[11px] text-zinc-500">
-                Untuk keperluan demonstrasi dosen, semua transaksi QRIS dapat disimulasikan secara instan melalui tombol demo pada nota faktur.
+                Tim layanan pelanggan kami siap membantu pertanyaan terkait pesanan, pelacakan ekspedisi, panduan ukuran, dan penukaran produk.
               </p>
             </>
           )}

@@ -50,9 +50,9 @@ export const ThermalLabelModal: React.FC<ThermalLabelModalProps> = ({
         <div className="grid grid-cols-2 gap-4 text-xs border-b-2 border-black pb-3">
           <div>
             <span className="text-[9px] uppercase font-bold text-zinc-500 block">PENGIRIM:</span>
-            <p className="font-bold">UrbanStyle Store</p>
-            <p className="text-[11px] text-zinc-600">Gedung UNPAM Kampus Pusat, Pamulang</p>
-            <p className="text-[11px] text-zinc-600">Tangerang Selatan, 15417</p>
+            <p className="font-bold">UrbanStyle Store Logistics</p>
+            <p className="text-[11px] text-zinc-600">Pusat Distribusi Gudang UrbanStyle, BSD City</p>
+            <p className="text-[11px] text-zinc-600">Tangerang Selatan, 15321</p>
             <p className="text-[11px] text-zinc-600">0811-9988-7766</p>
           </div>
 

@@ -52,8 +52,8 @@ export default function LifeWearStorySection({ onExploreClick, onSelectCategory 
 
               {/* Bottom Quote Banner */}
               <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-5 text-white">
-                <p className="text-xs font-mono tracking-widest uppercase text-zinc-300">
-                  // FILOSOFI DESAIN
+                <p className="text-xs font-mono tracking-widest uppercase text-amber-300">
+                  FILOSOFI DESAIN
                 </p>
                 <p className="text-sm sm:text-base font-black uppercase tracking-tight mt-0.5">
                   "Simple Made Better — Keindahan dalam Kesederhanaan."

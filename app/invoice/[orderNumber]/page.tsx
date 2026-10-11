@@ -171,9 +171,9 @@ export default async function InvoicePage({ params }: { params: Promise<{ orderN
             <InvoicePriceSummary order={order} subtotal={subtotal} />
           </div>
 
-          {/* Academic Footer Notice */}
+          {/* Official Store Footer Notice */}
           <div className="pt-6 border-t border-zinc-200 text-center text-[11px] text-zinc-400">
-            Sistem Informasi E-Commerce UrbanStyle Store • Karya Ilmiah Kimy Eka Ardiansyah (Universitas Pamulang, 2026)
+            Faktur Pembayaran Resmi UrbanStyle LifeWear Tokyo • Simpan bukti transaksi ini untuk keperluan verifikasi dan klaim garansi.
           </div>
 
         </div>

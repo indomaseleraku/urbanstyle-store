@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "UrbanStyle // LifeWear — Modern Essentials & SIM E-Commerce",
-  description: "Sistem Informasi Manajemen E-Commerce Retail Fashion oleh Kimy Eka Ardiansyah (Teknik Informatika, Universitas Pamulang)",
+  title: "UrbanStyle LifeWear Tokyo — Pakaian Esensial Sehari-hari",
+  description: "Pakaian esensial berkualitas tinggi yang dirancang untuk kesederhanaan, keindahan siluet, dan kenyamanan sehari-hari.",
 };
 
 export default function RootLayout({

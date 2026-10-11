@@ -18,7 +18,7 @@ interface Slide {
 const SLIDES: Slide[] = [
   {
     id: 1,
-    tag: 'AUTUMN / WINTER 2026 // LIFEWEAR DROP',
+    tag: 'AUTUMN / WINTER 2026 • LIFEWEAR DROP',
     title: 'Modern Utility Essentials',
     subtitle: 'Kemeja Flannel Double-Brushed & Celana Ankle Ultra Stretch untuk gaya hidup dinamis kampus dan kerja.',
     categorySlug: 'kemeja',

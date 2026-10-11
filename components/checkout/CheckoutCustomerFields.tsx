@@ -88,7 +88,7 @@ export const CheckoutCustomerFields: React.FC<CheckoutCustomerFieldsProps> = ({
         <textarea
           required
           rows={2}
-          placeholder="Jl. Surya Kencana No. 1, Pamulang Barat, Tangerang Selatan"
+          placeholder="Contoh: Jl. Jenderal Sudirman No. 28, RT 02 / RW 05, Jakarta Selatan"
           value={address}
           onChange={(e) => setAddress(e.target.value)}
           className="w-full px-3.5 py-2.5 text-base md:text-sm border border-zinc-300 bg-zinc-50 focus:bg-white focus:outline-none focus:border-zinc-900 font-medium rounded-none"

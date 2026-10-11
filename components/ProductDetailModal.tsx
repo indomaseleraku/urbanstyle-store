@@ -117,7 +117,7 @@ export default function ProductDetailModal({
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between text-[11px] font-bold uppercase tracking-wider text-zinc-400">
                   <span>
-                    {product.category_name || 'Koleksi'} // {(product.gender || 'unisex').toUpperCase()}
+                    {product.category_name || 'Koleksi'} • {(product.gender || 'unisex').toUpperCase()}
                   </span>
                   <div className="flex items-center gap-2">
                     <span className="font-mono">SKU: US-{product.id.toString().padStart(4, '0')}</span>

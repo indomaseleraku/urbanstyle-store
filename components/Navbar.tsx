@@ -67,31 +67,31 @@ export default function Navbar({
 
       <header className="bg-white border-b border-zinc-200 sticky top-0 z-40 transition-colors">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16 sm:h-20 gap-3 sm:gap-6 relative">
+          <div className="flex items-center justify-between h-14 sm:h-16 gap-2 sm:gap-4 lg:gap-6 relative">
             
             {/* Left: Dual Box Logo & Department Tabs */}
-            <div className="flex items-center gap-3 sm:gap-6 lg:gap-8 h-full">
-              <Link href="/" className="flex items-center gap-2 group shrink-0" title="UrbanStyle LifeWear">
+            <div className="flex items-center gap-2 sm:gap-4 lg:gap-6 h-full">
+              <Link href="/" className="flex items-center gap-1.5 group shrink-0" title="UrbanStyle LifeWear">
                 <div className="flex items-center gap-1">
-                  <div className="w-8 h-8 sm:w-9 sm:h-9 bg-[#E60012] text-white font-black text-xs sm:text-sm tracking-tighter flex items-center justify-center shadow-xs rounded-none">
+                  <div className="w-7 h-7 sm:w-8 sm:h-8 bg-[#E60012] text-white font-black text-[11px] sm:text-xs tracking-tighter flex items-center justify-center shadow-xs rounded-none">
                     US
                   </div>
-                  <div className="w-8 h-8 sm:w-9 sm:h-9 bg-[#E60012] text-white font-black text-[9px] sm:text-[10px] tracking-tight flex items-center justify-center leading-none text-center shadow-xs font-sans rounded-none">
+                  <div className="w-7 h-7 sm:w-8 sm:h-8 bg-[#E60012] text-white font-black text-[8px] sm:text-[9px] tracking-tight flex items-center justify-center leading-none text-center shadow-xs font-sans rounded-none">
                     アー<br />バン
                   </div>
                 </div>
                 <div className="flex flex-col ml-1 hidden sm:flex">
-                  <span className="font-black text-base sm:text-lg tracking-tight uppercase text-zinc-950 group-hover:text-[#E60012] transition-colors leading-tight">
+                  <span className="font-black text-sm sm:text-base tracking-tight uppercase text-zinc-950 group-hover:text-[#E60012] transition-colors leading-tight">
                     UrbanStyle
                   </span>
-                  <span className="text-[8px] sm:text-[9px] font-bold tracking-[0.25em] uppercase text-zinc-400 -mt-0.5">
+                  <span className="text-[7px] sm:text-[8px] font-bold tracking-[0.25em] uppercase text-zinc-400 -mt-0.5">
                     LifeWear Tokyo
                   </span>
                 </div>
               </Link>
 
               {/* Department/Gender Tabs (SEMUA, WANITA, PRIA, LIMITED OFFER) */}
-              <nav className="flex items-center gap-1 sm:gap-2 h-full overflow-x-auto">
+              <nav className="flex items-center gap-0.5 sm:gap-1.5 h-full overflow-x-auto">
                 {GENDER_TABS.map((tab) => {
                   const isActive = tab.value === 'sale'
                     ? selectedCategory === 'sale'
@@ -102,16 +102,16 @@ export default function Navbar({
                       key={tab.value}
                       type="button"
                       onClick={() => handleGenderTabClick(tab.value)}
-                      className={`px-2.5 sm:px-3.5 h-full text-xs sm:text-sm font-bold tracking-wider uppercase transition-all relative flex items-center cursor-pointer shrink-0 ${
+                      className={`px-2 sm:px-3 h-full text-xs sm:text-[13px] font-bold tracking-wider uppercase transition-all relative flex items-center cursor-pointer shrink-0 whitespace-nowrap ${
                         isActive
                           ? tab.highlight ? 'text-[#E60012] font-black' : 'text-zinc-950 font-black'
                           : tab.highlight ? 'text-[#E60012]/85 hover:text-[#E60012]' : 'text-zinc-600 hover:text-zinc-950'
                       }`}
                     >
                       <span>{label}</span>
-                      {tab.highlight && <span className="ml-1 text-xs">🔥</span>}
+                      {tab.highlight && <span className="ml-1 text-[11px]">🔥</span>}
                       {isActive && (
-                        <span className={`absolute bottom-0 left-0 right-0 h-[3px] ${tab.highlight ? 'bg-[#E60012]' : 'bg-zinc-950'}`} />
+                        <span className={`absolute bottom-0 left-0 right-0 h-[2.5px] ${tab.highlight ? 'bg-[#E60012]' : 'bg-zinc-950'}`} />
                       )}
                     </button>
                   );
@@ -120,25 +120,25 @@ export default function Navbar({
             </div>
 
             {/* Right: Search Capsule + Wishlist + Member + Cart + Menu */}
-            <div className="flex items-center gap-2 sm:gap-3">
+            <div className="flex items-center gap-1.5 sm:gap-2.5">
               {/* Desktop Search Capsule */}
-              <div className="relative hidden lg:block w-60 xl:w-72 transition-all duration-300">
-                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none" size={14} />
+              <div className="relative hidden lg:block w-44 lg:w-52 xl:w-60 transition-all duration-300">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none" size={13} />
                 <input
                   type="text"
                   placeholder="Apa yang Anda cari?"
                   value={searchQuery}
                   onChange={(e) => onSearchChange(e.target.value)}
-                  className="w-full pl-9 pr-8 py-2 text-xs font-medium rounded-full bg-zinc-100 border border-zinc-200 text-zinc-900 placeholder-zinc-400 focus:outline-none focus:bg-white focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-all"
+                  className="w-full pl-8 pr-7 py-1.5 text-xs font-medium rounded-full bg-zinc-100 border border-zinc-200 text-zinc-900 placeholder-zinc-400 focus:outline-none focus:bg-white focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-all"
                 />
                 {searchQuery && (
                   <button
                     type="button"
                     onClick={() => onSearchChange('')}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-900 transition-colors cursor-pointer"
+                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-900 transition-colors cursor-pointer"
                     title="Hapus pencarian"
                   >
-                    <X size={12} />
+                    <X size={11} />
                   </button>
                 )}
               </div>
@@ -147,28 +147,28 @@ export default function Navbar({
               <button
                 type="button"
                 onClick={() => setIsSearchOpen(!isSearchOpen)}
-                className="lg:hidden p-2 text-zinc-700 hover:text-black transition-colors bg-transparent cursor-pointer"
+                className="lg:hidden p-1.5 text-zinc-700 hover:text-black transition-colors bg-transparent cursor-pointer"
                 title="Cari produk"
                 aria-label="Cari produk"
               >
-                <Search size={20} />
+                <Search size={18} />
               </button>
 
               {/* Wishlist Heart Icon */}
               <button
                 type="button"
                 onClick={onOpenWishlist}
-                className="p-2 text-zinc-900 hover:text-[#E60012] transition-colors relative bg-transparent cursor-pointer"
+                className="p-1.5 text-zinc-900 hover:text-[#E60012] transition-colors relative bg-transparent cursor-pointer"
                 title="Daftar Favorit"
                 aria-label="Daftar Favorit"
               >
                 <Heart
-                  size={20}
+                  size={18}
                   fill={wishlistCount > 0 ? '#E60012' : 'none'}
                   className={wishlistCount > 0 ? 'text-[#E60012]' : 'text-zinc-900'}
                 />
                 {wishlistCount > 0 && (
-                  <span className="absolute top-1 right-1 w-4 h-4 bg-[#E60012] text-white text-[9px] font-black flex items-center justify-center rounded-full tabular-nums">
+                  <span className="absolute top-0.5 right-0.5 w-3.5 h-3.5 bg-[#E60012] text-white text-[8px] font-black flex items-center justify-center rounded-full tabular-nums">
                     {wishlistCount}
                   </span>
                 )}
@@ -181,13 +181,13 @@ export default function Navbar({
               <button
                 type="button"
                 onClick={onOpenCart}
-                className="p-2 text-zinc-900 hover:text-black transition-colors relative flex items-center gap-1.5 bg-transparent cursor-pointer"
+                className="p-1.5 text-zinc-900 hover:text-black transition-colors relative flex items-center gap-1 bg-transparent cursor-pointer"
                 title="Keranjang Belanja"
                 aria-label="Keranjang Belanja"
               >
-                <ShoppingBag size={20} className="text-zinc-900" />
+                <ShoppingBag size={18} className="text-zinc-900" />
                 {cartCount > 0 && (
-                  <span className="w-4 h-4 bg-[#E60012] text-white text-[9px] font-black flex items-center justify-center rounded-none tabular-nums">
+                  <span className="w-3.5 h-3.5 bg-[#E60012] text-white text-[8px] font-black flex items-center justify-center rounded-none tabular-nums">
                     {cartCount}
                   </span>
                 )}
@@ -201,12 +201,12 @@ export default function Navbar({
                   setVisualMenuGender(selectedGender === 'wanita' ? 'wanita' : 'pria');
                   setIsVisualMegaMenuOpen(true);
                 }}
-                className="p-2 sm:px-2.5 sm:py-1.5 flex items-center gap-1.5 text-zinc-900 hover:text-[#E60012] border border-transparent hover:border-zinc-200 transition-colors cursor-pointer"
+                className="p-1.5 sm:px-2 sm:py-1 flex items-center gap-1 text-zinc-900 hover:text-[#E60012] border border-transparent hover:border-zinc-200 transition-colors cursor-pointer"
                 title="Buka Menu Kategori Visual Uniqlo"
                 aria-label="Buka Menu"
               >
-                <Menu size={22} />
-                <span className="text-[11px] font-black tracking-widest uppercase hidden sm:inline">MENU</span>
+                <Menu size={18} />
+                <span className="text-[10px] font-black tracking-widest uppercase hidden sm:inline">MENU</span>
               </button>
             </div>
           </div>

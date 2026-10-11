@@ -82,7 +82,7 @@ export default function CategoryBubbles({
               Kategori Cerita LifeWear
             </h3>
             <span className="text-[10px] text-zinc-400 font-mono hidden sm:inline">
-              // STORIES & COLLECTIONS
+              • KOLEKSI PILIHAN
             </span>
           </div>
           <span className="text-[10px] text-zinc-400 font-bold uppercase tracking-widest hidden sm:inline">

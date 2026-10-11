@@ -72,14 +72,14 @@ export default function ProfilePage() {
                   URBANSTYLE LIFEWEAR
                 </p>
                 <p className="text-[9px] text-zinc-400 font-mono tracking-wider">
-                  MEMBER PASS // ID KEANGGOTAAN
+                  MEMBER PASS • ID KEANGGOTAAN
                 </p>
               </div>
             </div>
 
             <div className="flex items-center gap-1.5 px-2.5 py-1 bg-white/10 border border-white/15 text-[10px] font-black uppercase tracking-widest text-[#E60012]">
               <Sparkles size={11} className="text-amber-400" />
-              <span className="text-white">{user?.role === 'admin' ? 'ADMIN // VIP' : 'ACTIVE MEMBER'}</span>
+              <span className="text-white">{user?.role === 'admin' ? 'ADMIN • VIP' : 'ACTIVE MEMBER'}</span>
             </div>
           </div>
 
