@@ -5,13 +5,13 @@
 export interface VisualCategoryItem {
   id: string;
   name: string;
-  gender: 'wanita' | 'pria' | 'anak' | 'bayi';
+  gender: 'wanita' | 'pria';
   categorySlug: string;
   searchKeyword?: string;
   imageUrl: string;
 }
 
-export const VISUAL_MENU_ITEMS: Record<'wanita' | 'pria' | 'anak' | 'bayi', VisualCategoryItem[]> = {
+export const VISUAL_MENU_ITEMS: Record<'wanita' | 'pria', VisualCategoryItem[]> = {
   wanita: [
     {
       id: 'w-luaran',
@@ -244,94 +244,6 @@ export const VISUAL_MENU_ITEMS: Record<'wanita' | 'pria' | 'anak' | 'bayi', Visu
       categorySlug: 'all',
       searchKeyword: 'Tas',
       imageUrl: 'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?auto=format&fit=crop&w=400&q=80',
-    },
-  ],
-  anak: [
-    {
-      id: 'k-kaos',
-      name: 'Kaos & UT Anak',
-      gender: 'anak',
-      categorySlug: 'kaos',
-      imageUrl: 'https://images.unsplash.com/photo-1519238263530-99bdd11df2ea?auto=format&fit=crop&w=400&q=80',
-    },
-    {
-      id: 'k-luaran',
-      name: 'Luaran & Jaket Parka',
-      gender: 'anak',
-      categorySlug: 'jaket',
-      imageUrl: 'https://images.unsplash.com/photo-1503944583220-79d8926ad5e2?auto=format&fit=crop&w=400&q=80',
-    },
-    {
-      id: 'k-celana',
-      name: 'Celana & Legging',
-      gender: 'anak',
-      categorySlug: 'celana',
-      imageUrl: 'https://images.unsplash.com/photo-1519457431-44ccd64a579b?auto=format&fit=crop&w=400&q=80',
-    },
-    {
-      id: 'k-sweat',
-      name: 'Sweatshirt & Fleece',
-      gender: 'anak',
-      categorySlug: 'jaket',
-      imageUrl: 'https://images.unsplash.com/photo-1578587018452-892bacefd3f2?auto=format&fit=crop&w=400&q=80',
-    },
-    {
-      id: 'k-piyama',
-      name: 'Piyama & Loungewear',
-      gender: 'anak',
-      categorySlug: 'celana',
-      imageUrl: 'https://images.unsplash.com/photo-1516762689617-e1cffcef479d?auto=format&fit=crop&w=400&q=80',
-    },
-    {
-      id: 'k-aksesoris',
-      name: 'Topi & Aksesoris',
-      gender: 'anak',
-      categorySlug: 'all',
-      imageUrl: 'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?auto=format&fit=crop&w=400&q=80',
-    },
-  ],
-  bayi: [
-    {
-      id: 'b-bodysuit',
-      name: 'Bodysuit & Romper',
-      gender: 'bayi',
-      categorySlug: 'kaos',
-      imageUrl: 'https://images.unsplash.com/photo-1522771930-78848d9293e8?auto=format&fit=crop&w=400&q=80',
-    },
-    {
-      id: 'b-topi',
-      name: 'Kaos & Pakaian Bayi',
-      gender: 'bayi',
-      categorySlug: 'kaos',
-      imageUrl: 'https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?auto=format&fit=crop&w=400&q=80',
-    },
-    {
-      id: 'b-legging',
-      name: 'Celana Legging Bayi',
-      gender: 'bayi',
-      categorySlug: 'celana',
-      imageUrl: 'https://images.unsplash.com/photo-1519457431-44ccd64a579b?auto=format&fit=crop&w=400&q=80',
-    },
-    {
-      id: 'b-jaket',
-      name: 'Jaket & Kardigan Bayi',
-      gender: 'bayi',
-      categorySlug: 'jaket',
-      imageUrl: 'https://images.unsplash.com/photo-1503944583220-79d8926ad5e2?auto=format&fit=crop&w=400&q=80',
-    },
-    {
-      id: 'b-selimut',
-      name: 'Selimut & Bedong',
-      gender: 'bayi',
-      categorySlug: 'all',
-      imageUrl: 'https://images.unsplash.com/photo-1516762689617-e1cffcef479d?auto=format&fit=crop&w=400&q=80',
-    },
-    {
-      id: 'b-piyama',
-      name: 'Piyama Tidur Bayi',
-      gender: 'bayi',
-      categorySlug: 'celana',
-      imageUrl: 'https://images.unsplash.com/photo-1522771930-78848d9293e8?auto=format&fit=crop&w=400&q=80',
     },
   ],
 };

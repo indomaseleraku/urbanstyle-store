@@ -32,7 +32,7 @@ export default function Navbar({
   const [drawerGender, setDrawerGender] = useState<'pria' | 'wanita'>('pria');
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isVisualMegaMenuOpen, setIsVisualMegaMenuOpen] = useState(false);
-  const [visualMenuGender, setVisualMenuGender] = useState<'wanita' | 'pria' | 'anak' | 'bayi'>('wanita');
+  const [visualMenuGender, setVisualMenuGender] = useState<'wanita' | 'pria'>('wanita');
 
   useEffect(() => {
     if (selectedGender === 'wanita') setDrawerGender('wanita');

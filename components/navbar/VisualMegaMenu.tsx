@@ -9,7 +9,7 @@ import { VISUAL_MENU_ITEMS, VisualCategoryItem } from '@/lib/constants/visualMeg
 interface VisualMegaMenuProps {
   isOpen: boolean;
   onClose: () => void;
-  activeGender: 'wanita' | 'pria' | 'anak' | 'bayi';
+  activeGender: 'wanita' | 'pria';
   onSelectGender: (gender: string) => void;
   onSelectCategory: (categorySlug: string) => void;
   onSearchChange: (query: string) => void;
@@ -23,11 +23,11 @@ export default function VisualMegaMenu({
   onSelectCategory,
   onSearchChange,
 }: VisualMegaMenuProps) {
-  const [currentDept, setCurrentDept] = useState<'wanita' | 'pria' | 'anak' | 'bayi'>('wanita');
+  const [currentDept, setCurrentDept] = useState<'wanita' | 'pria'>('wanita');
   const [localSearch, setLocalSearch] = useState('');
 
   useEffect(() => {
-    if (initialGender === 'pria' || initialGender === 'wanita' || initialGender === 'anak' || initialGender === 'bayi') {
+    if (initialGender === 'pria' || initialGender === 'wanita') {
       setCurrentDept(initialGender);
     }
   }, [initialGender]);
@@ -82,11 +82,9 @@ export default function VisualMegaMenu({
     }
   };
 
-  const departments: Array<{ id: 'wanita' | 'pria' | 'anak' | 'bayi'; label: string }> = [
+  const departments: Array<{ id: 'wanita' | 'pria'; label: string }> = [
     { id: 'wanita', label: 'WANITA' },
     { id: 'pria', label: 'PRIA' },
-    { id: 'anak', label: 'ANAK' },
-    { id: 'bayi', label: 'BAYI' },
   ];
 
   return (
