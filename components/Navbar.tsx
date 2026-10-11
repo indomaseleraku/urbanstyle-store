@@ -13,19 +13,12 @@ import MobileSearchBar from './navbar/MobileSearchBar';
 import VisualMegaMenu from './navbar/VisualMegaMenu';
 
 export default function Navbar({
-  categories: _categories,
-  selectedCategory: _selectedCategory,
-  onSelectCategory,
-  selectedGender,
-  onSelectGender,
-  searchQuery,
-  onSearchChange,
-  cartCount,
-  onOpenCart,
-  wishlistCount,
-  onOpenWishlist,
-  onOpenInfoModal,
-  onSelectSort,
+  selectedCategory, onSelectCategory,
+  selectedGender, onSelectGender,
+  searchQuery, onSearchChange,
+  cartCount, onOpenCart,
+  wishlistCount, onOpenWishlist,
+  onOpenInfoModal, onSelectSort,
 }: NavbarProps) {
   const { isAdmin } = useAuth();
   const [sideDrawerOpen, setSideDrawerOpen] = useState(false);
@@ -47,14 +40,25 @@ export default function Navbar({
     setSideDrawerOpen(false);
     setTimeout(() => {
       const el = document.getElementById(categorySlug === 'sale' ? 'limited-offer' : 'katalog') || document.getElementById('katalog');
-      if (el) el.scrollIntoView({ behavior: 'smooth' });
+      el?.scrollIntoView({ behavior: 'smooth' });
     }, 50);
   };
 
   const handleGenderTabClick = (tabValue: string) => {
-    setVisualMenuGender(tabValue as any);
-    setIsVisualMegaMenuOpen(true);
-    onSelectGender(tabValue);
+    if (tabValue === 'wanita' || tabValue === 'pria') {
+      setVisualMenuGender(tabValue as 'wanita' | 'pria');
+      setIsVisualMegaMenuOpen(true);
+      onSelectGender(tabValue);
+    } else if (tabValue === 'all') {
+      setIsVisualMegaMenuOpen(false);
+      onSelectGender('all');
+      onSelectCategory('all');
+      setTimeout(() => document.getElementById('katalog')?.scrollIntoView({ behavior: 'smooth' }), 50);
+    } else if (tabValue === 'sale') {
+      setIsVisualMegaMenuOpen(false);
+      onSelectCategory('sale');
+      setTimeout(() => (document.getElementById('limited-offer') || document.getElementById('katalog'))?.scrollIntoView({ behavior: 'smooth' }), 50);
+    }
   };
 
   return (
@@ -86,23 +90,29 @@ export default function Navbar({
                 </div>
               </Link>
 
-              {/* Department/Gender Tabs (WANITA, PRIA, ANAK, BAYI) */}
+              {/* Department/Gender Tabs (SEMUA, WANITA, PRIA, LIMITED OFFER) */}
               <nav className="flex items-center gap-1 sm:gap-2 h-full overflow-x-auto">
                 {GENDER_TABS.map((tab) => {
-                  const isActive = selectedGender === tab.value;
+                  const isActive = tab.value === 'sale'
+                    ? selectedCategory === 'sale'
+                    : selectedGender === tab.value && selectedCategory !== 'sale';
+                  const label = tab.label.replace(' 🔥', '');
                   return (
                     <button
                       key={tab.value}
                       type="button"
                       onClick={() => handleGenderTabClick(tab.value)}
-                      className={`px-2.5 sm:px-3.5 h-full text-xs sm:text-sm font-bold tracking-wider uppercase transition-all relative flex items-center cursor-pointer ${
+                      className={`px-2.5 sm:px-3.5 h-full text-xs sm:text-sm font-bold tracking-wider uppercase transition-all relative flex items-center cursor-pointer shrink-0 ${
                         isActive
-                          ? 'text-zinc-950 font-black'
-                          : 'text-zinc-600 hover:text-zinc-950'
+                          ? tab.highlight ? 'text-[#E60012] font-black' : 'text-zinc-950 font-black'
+                          : tab.highlight ? 'text-[#E60012]/85 hover:text-[#E60012]' : 'text-zinc-600 hover:text-zinc-950'
                       }`}
                     >
-                      <span>{tab.label}</span>
-                      {isActive && <span className="absolute bottom-0 left-0 right-0 h-[3px] bg-zinc-950" />}
+                      <span>{label}</span>
+                      {tab.highlight && <span className="ml-1 text-xs">🔥</span>}
+                      {isActive && (
+                        <span className={`absolute bottom-0 left-0 right-0 h-[3px] ${tab.highlight ? 'bg-[#E60012]' : 'bg-zinc-950'}`} />
+                      )}
                     </button>
                   );
                 })}
