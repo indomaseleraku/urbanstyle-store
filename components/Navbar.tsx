@@ -10,6 +10,7 @@ import AnnouncementTicker from './navbar/AnnouncementTicker';
 import UserAccountMenu from './navbar/UserAccountMenu';
 import SideNavDrawer from './navbar/SideNavDrawer';
 import MobileSearchBar from './navbar/MobileSearchBar';
+import VisualMegaMenu from './navbar/VisualMegaMenu';
 
 export default function Navbar({
   categories: _categories,
@@ -30,6 +31,8 @@ export default function Navbar({
   const [sideDrawerOpen, setSideDrawerOpen] = useState(false);
   const [drawerGender, setDrawerGender] = useState<'pria' | 'wanita'>('pria');
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isVisualMegaMenuOpen, setIsVisualMegaMenuOpen] = useState(false);
+  const [visualMenuGender, setVisualMenuGender] = useState<'wanita' | 'pria' | 'anak' | 'bayi'>('wanita');
 
   useEffect(() => {
     if (selectedGender === 'wanita') setDrawerGender('wanita');
@@ -49,6 +52,10 @@ export default function Navbar({
   };
 
   const handleGenderTabClick = (tabValue: string) => {
+    if (tabValue === 'wanita' || tabValue === 'pria' || tabValue === 'anak' || tabValue === 'bayi') {
+      setVisualMenuGender(tabValue as any);
+      setIsVisualMegaMenuOpen(true);
+    }
     onSelectGender(tabValue);
     onSelectCategory('all');
     setTimeout(() => {
@@ -189,11 +196,11 @@ export default function Navbar({
                 id="menuIcon"
                 type="button"
                 onClick={() => {
-                  setDrawerGender(selectedGender === 'wanita' ? 'wanita' : 'pria');
-                  setSideDrawerOpen(true);
+                  setVisualMenuGender(selectedGender === 'wanita' ? 'wanita' : 'pria');
+                  setIsVisualMegaMenuOpen(true);
                 }}
                 className="p-2 sm:px-2.5 sm:py-1.5 flex items-center gap-1.5 text-zinc-900 hover:text-[#E60012] border border-transparent hover:border-zinc-200 transition-colors cursor-pointer"
-                title="Buka Menu Kategori Lengkap"
+                title="Buka Menu Kategori Visual Uniqlo"
                 aria-label="Buka Menu"
               >
                 <Menu size={22} />
@@ -213,7 +220,17 @@ export default function Navbar({
         )}
       </header>
 
-      {/* Side Navigation Drawer Overlay (1:1 Uniqlo Indonesia Directory) */}
+      {/* Visual Mega Menu Overlay (1:1 Uniqlo Category Navigation Grid) */}
+      <VisualMegaMenu
+        isOpen={isVisualMegaMenuOpen}
+        onClose={() => setIsVisualMegaMenuOpen(false)}
+        activeGender={visualMenuGender}
+        onSelectGender={onSelectGender}
+        onSelectCategory={onSelectCategory}
+        onSearchChange={onSearchChange}
+      />
+
+      {/* Side Navigation Drawer Overlay (Sitemap Directory) */}
       <SideNavDrawer
         isOpen={sideDrawerOpen}
         onClose={() => setSideDrawerOpen(false)}
