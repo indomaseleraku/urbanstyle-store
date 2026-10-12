@@ -3,58 +3,21 @@
 // components/AuthModal.tsx
 // Modal Autentikasi Pengguna & Keanggotaan Member Bergaya Uniqlo LifeWear
 
-import React, { useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/lib/auth-context';
 import GoogleSignInButton from '@/components/auth/GoogleSignInButton';
-import { X, User, Lock, Mail, Sparkles, CheckCircle2, Eye, EyeOff, Zap, ExternalLink } from 'lucide-react';
+import EmailOtpAuthForm from '@/components/auth/EmailOtpAuthForm';
+import { X, Sparkles, Zap, ExternalLink } from 'lucide-react';
 
 export const AuthModal: React.FC = () => {
-  const { isAuthModalOpen, closeAuthModal, login, register, loginAsDemoMember } = useAuth();
-  const [activeTab, setActiveTab] = useState<'login' | 'register'>('login');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
-  const [fullName, setFullName] = useState('');
-  const [errorMsg, setErrorMsg] = useState('');
-  const [successMsg, setSuccessMsg] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { isAuthModalOpen, closeAuthModal, loginAsDemoMember } = useAuth();
 
   if (!isAuthModalOpen) return null;
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setErrorMsg('');
-    setSuccessMsg('');
-    if (!email || !password) return setErrorMsg('Mohon isi alamat email dan kata sandi.');
-
-    setIsSubmitting(true);
-    if (activeTab === 'login') {
-      const res = await login(email, password);
-      setIsSubmitting(false);
-      if (res.success) {
-        setSuccessMsg('Masuk akun berhasil!');
-        setTimeout(() => closeAuthModal(), 500);
-      } else setErrorMsg(res.message || 'Gagal masuk akun.');
-    } else {
-      if (!fullName) {
-        setIsSubmitting(false);
-        return setErrorMsg('Mohon lengkapi nama Anda.');
-      }
-      const res = await register(email, password, fullName);
-      setIsSubmitting(false);
-      if (res.success) {
-        setSuccessMsg('Pendaftaran berhasil! Selamat datang di UrbanStyle Member.');
-        setTimeout(() => closeAuthModal(), 700);
-      } else setErrorMsg(res.message || 'Gagal mendaftar akun.');
-    }
-  };
-
   const handleQuickDemo = async () => {
-    setErrorMsg('');
-    setSuccessMsg('Masuk sebagai Akun Demo Member...');
     await loginAsDemoMember();
-    setTimeout(() => { setSuccessMsg(''); closeAuthModal(); }, 400);
+    setTimeout(() => closeAuthModal(), 300);
   };
 
   return (
@@ -100,105 +63,13 @@ export const AuthModal: React.FC = () => {
         <div className="relative flex items-center justify-center mb-3.5">
           <div className="border-t border-gray-200 w-full" />
           <span className="bg-white px-2.5 text-[10px] font-bold uppercase tracking-widest text-gray-400 shrink-0">
-            ATAU DENGAN EMAIL
+            ATAU DENGAN EMAIL + OTP 6 DIGIT
           </span>
           <div className="border-t border-gray-200 w-full" />
         </div>
 
-        {/* Tab Switcher */}
-        <div className="flex border-b border-gray-200 mb-3.5">
-          <button
-            type="button"
-            onClick={() => { setActiveTab('login'); setErrorMsg(''); setSuccessMsg(''); }}
-            className={`flex-1 py-1.5 text-xs font-bold uppercase tracking-wider transition-colors border-b-2 -mb-px cursor-pointer ${
-              activeTab === 'login' ? 'border-[#E60012] text-[#E60012]' : 'border-transparent text-gray-500 hover:text-black'
-            }`}
-          >
-            Masuk Akun
-          </button>
-          <button
-            type="button"
-            onClick={() => { setActiveTab('register'); setErrorMsg(''); setSuccessMsg(''); }}
-            className={`flex-1 py-1.5 text-xs font-bold uppercase tracking-wider transition-colors border-b-2 -mb-px cursor-pointer ${
-              activeTab === 'register' ? 'border-[#E60012] text-[#E60012]' : 'border-transparent text-gray-500 hover:text-black'
-            }`}
-          >
-            Daftar Member
-          </button>
-        </div>
-
-        {errorMsg && <div className="mb-3 p-2 bg-red-50 border border-red-200 text-red-700 text-xs font-medium">{errorMsg}</div>}
-        {successMsg && (
-          <div className="mb-3 p-2 bg-green-50 border border-green-200 text-green-700 text-xs font-medium flex items-center space-x-1.5">
-            <CheckCircle2 className="w-4 h-4 shrink-0 text-green-600" />
-            <span>{successMsg}</span>
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit} className="space-y-3">
-          {activeTab === 'register' && (
-            <div>
-              <label className="block text-[11px] font-bold uppercase tracking-wider text-gray-700 mb-1">Nama Lengkap</label>
-              <div className="relative">
-                <User className="w-4 h-4 absolute left-3 top-2.5 text-gray-400" />
-                <input
-                  type="text"
-                  required
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
-                  placeholder="Contoh: Kimy Eka Ardiansyah"
-                  className="w-full pl-9 pr-3 py-2 border border-gray-300 text-xs focus:outline-hidden focus:border-black"
-                />
-              </div>
-            </div>
-          )}
-
-          <div>
-            <label className="block text-[11px] font-bold uppercase tracking-wider text-gray-700 mb-1">Alamat Email</label>
-            <div className="relative">
-              <Mail className="w-4 h-4 absolute left-3 top-2.5 text-gray-400" />
-              <input
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="nama@email.com"
-                className="w-full pl-9 pr-3 py-2 border border-gray-300 text-xs focus:outline-hidden focus:border-black font-mono"
-              />
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-[11px] font-bold uppercase tracking-wider text-gray-700 mb-1">Kata Sandi</label>
-            <div className="relative">
-              <Lock className="w-4 h-4 absolute left-3 top-2.5 text-gray-400" />
-              <input
-                type={showPassword ? 'text' : 'password'}
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-                className="w-full pl-9 pr-9 py-2 border border-gray-300 text-xs focus:outline-hidden focus:border-black font-mono"
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-2.5 top-2 text-gray-400 hover:text-black cursor-pointer"
-                title={showPassword ? 'Sembunyikan sandi' : 'Tampilkan sandi'}
-              >
-                {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
-              </button>
-            </div>
-          </div>
-
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="w-full py-2.5 bg-black hover:bg-[#E60012] text-white text-xs font-bold uppercase tracking-wider transition-colors duration-150 cursor-pointer disabled:opacity-50"
-          >
-            {isSubmitting ? 'Memproses...' : activeTab === 'login' ? 'Masuk ke Akun' : 'Daftar Sebagai Member'}
-          </button>
-        </form>
+        {/* Opsi B: Formulir Email + Verifikasi OTP 6 Digit */}
+        <EmailOtpAuthForm onSuccess={closeAuthModal} />
 
         {/* 1-Click Quick Demo Login Simulator */}
         <div className="mt-3.5 pt-3 border-t border-gray-200 space-y-2">
