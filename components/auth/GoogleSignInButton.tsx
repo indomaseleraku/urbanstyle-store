@@ -5,6 +5,7 @@
 
 import React, { useState } from 'react';
 import { useAuth } from '@/lib/auth-context';
+import { supabase } from '@/lib/services/supabaseClient';
 import { X, CheckCircle2 } from 'lucide-react';
 
 interface GoogleSignInButtonProps {
@@ -28,6 +29,34 @@ export default function GoogleSignInButton({
   const [useCustom, setUseCustom] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+
+  const handleGoogleButtonClick = async () => {
+    setError('');
+    if (supabase && process.env.NEXT_PUBLIC_GOOGLE_OAUTH_ENABLED !== 'false') {
+      try {
+        setIsLoading(true);
+        const currentParams = new URLSearchParams(window.location.search);
+        const redirectTarget = currentParams.get('redirect') || '/account/profile';
+        sessionStorage.setItem('urbanstyle_oauth_redirect', redirectTarget);
+
+        const { error: oauthErr } = await supabase.auth.signInWithOAuth({
+          provider: 'google',
+          options: {
+            redirectTo: `${window.location.origin}/auth/callback`,
+            queryParams: {
+              prompt: 'select_account',
+            },
+          },
+        });
+        if (!oauthErr) return;
+      } catch {
+        // Fallback ke modal pemilih akun jika jaringan terputus
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    setIsPickerOpen(true);
+  };
 
   const handleSelectAccount = async (email: string, name: string) => {
     setError('');
@@ -57,7 +86,7 @@ export default function GoogleSignInButton({
     <>
       <button
         type="button"
-        onClick={() => setIsPickerOpen(true)}
+        onClick={handleGoogleButtonClick}
         disabled={isLoading}
         className="w-full py-2.5 px-4 bg-white hover:bg-zinc-50 border border-zinc-300 hover:border-zinc-900 text-zinc-800 text-xs font-bold tracking-wide transition-all flex items-center justify-center gap-2.5 cursor-pointer shadow-2xs"
       >

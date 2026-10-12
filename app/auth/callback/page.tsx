@@ -1,9 +1,9 @@
 'use client';
 
 // app/auth/callback/page.tsx
-// Penangan Callback OAuth Google dari Supabase Auth
+// Penangan Callback OAuth Google dari Supabase Auth (PKCE & Implicit Flow)
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/services/supabaseClient';
 import { useAuth } from '@/lib/auth-context';
@@ -11,31 +11,85 @@ import { useAuth } from '@/lib/auth-context';
 export default function AuthCallbackPage() {
   const router = useRouter();
   const { loginWithGoogle } = useAuth();
+  const handledRef = useRef(false);
 
   useEffect(() => {
+    async function finalizeUserSession(email: string, fullName: string) {
+      if (handledRef.current) return;
+      handledRef.current = true;
+      await loginWithGoogle(email, fullName);
+      const target =
+        (typeof window !== 'undefined' && sessionStorage.getItem('urbanstyle_oauth_redirect')) ||
+        '/account/profile';
+      if (typeof window !== 'undefined') {
+        sessionStorage.removeItem('urbanstyle_oauth_redirect');
+      }
+      router.replace(target);
+    }
+
     async function handleOAuthSession() {
-      if (supabase) {
-        try {
-          const { data } = await supabase.auth.getSession();
-          if (data?.session?.user) {
-            const u = data.session.user;
+      if (!supabase) {
+        router.replace('/account/login');
+        return;
+      }
+
+      try {
+        const params = new URLSearchParams(window.location.search);
+        const code = params.get('code');
+        if (code) {
+          const { data: exchangeData } = await supabase.auth.exchangeCodeForSession(code);
+          if (exchangeData?.session?.user) {
+            const u = exchangeData.session.user;
             const email = u.email || 'member@gmail.com';
             const fullName =
               u.user_metadata?.full_name ||
               u.user_metadata?.name ||
               email.split('@')[0].toUpperCase();
-            await loginWithGoogle(email, fullName);
-            router.replace('/account/profile');
+            await finalizeUserSession(email, fullName);
             return;
           }
-        } catch (err) {
-          console.error('OAuth callback error:', err);
         }
+
+        const { data } = await supabase.auth.getSession();
+        if (data?.session?.user) {
+          const u = data.session.user;
+          const email = u.email || 'member@gmail.com';
+          const fullName =
+            u.user_metadata?.full_name ||
+            u.user_metadata?.name ||
+            email.split('@')[0].toUpperCase();
+          await finalizeUserSession(email, fullName);
+          return;
+        }
+      } catch (err) {
+        console.error('OAuth callback error:', err);
       }
-      router.replace('/account/login');
     }
 
     handleOAuthSession();
+
+    const sub = supabase?.auth.onAuthStateChange(async (event, session) => {
+      if ((event === 'SIGNED_IN' || event === 'INITIAL_SESSION') && session?.user) {
+        const u = session.user;
+        const email = u.email || 'member@gmail.com';
+        const fullName =
+          u.user_metadata?.full_name ||
+          u.user_metadata?.name ||
+          email.split('@')[0].toUpperCase();
+        await finalizeUserSession(email, fullName);
+      }
+    });
+
+    const fallbackTimer = setTimeout(() => {
+      if (!handledRef.current) {
+        router.replace('/account/login');
+      }
+    }, 6000);
+
+    return () => {
+      sub?.data.subscription.unsubscribe();
+      clearTimeout(fallbackTimer);
+    };
   }, [loginWithGoogle, router]);
 
   return (
