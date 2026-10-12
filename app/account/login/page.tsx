@@ -6,6 +6,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft, Mail, Lock, User, Eye, EyeOff, Sparkles, CheckCircle2, Zap } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
+import GoogleSignInButton from '@/components/auth/GoogleSignInButton';
 
 function MemberLoginForm() {
   const router = useRouter();
@@ -95,6 +96,16 @@ function MemberLoginForm() {
               <p className="text-[11px]">
                 Kode <span className="font-mono font-bold bg-white px-1 border border-red-200 text-[#E60012]">URBANWELCOME50</span> diskon Rp 50.000 belanja pertama.
               </p>
+            </div>
+
+            <GoogleSignInButton onSuccess={() => router.push(redirectTarget)} />
+
+            <div className="relative flex items-center justify-center">
+              <div className="border-t border-zinc-200 w-full" />
+              <span className="bg-white px-2.5 text-[10px] font-bold uppercase tracking-widest text-zinc-400 shrink-0">
+                ATAU DENGAN EMAIL
+              </span>
+              <div className="border-t border-zinc-200 w-full" />
             </div>
 
             <div className="flex border-b border-zinc-200">

@@ -11,6 +11,7 @@ import {
   persistUserSession,
   findLocalRegisteredUser,
   saveLocalRegisteredUser,
+  resolveOrCreateGoogleUser,
 } from './services/authStorageService';
 
 interface AuthContextType {
@@ -29,6 +30,7 @@ interface AuthContextType {
   login: (email: string, pass: string) => Promise<{ success: boolean; message?: string }>;
   staffLogin: (email: string, pass: string) => Promise<{ success: boolean; message?: string }>;
   register: (email: string, pass: string, fullName: string) => Promise<{ success: boolean; message?: string }>;
+  loginWithGoogle: (googleEmail?: string, googleName?: string) => Promise<{ success: boolean; message?: string }>;
   logout: (redirectTo?: string | unknown) => Promise<void>;
   loginAsDemoMember: () => Promise<void>;
   loginAsDemoAdmin: () => Promise<void>;
@@ -72,7 +74,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
 
     let found = INITIAL_USERS.find((u) => u.email.toLowerCase() === cleanEmail);
-    if (!found && ['member', 'kimy', 'member@urbanstyle.com', 'kimy.eka@unpam.ac.id'].includes(cleanEmail)) {
+    if (!found && ['member', 'kimy', 'member@urbanstyle.com', 'kimy.eka@unpam.ac.id', 'thn071205@gmail.com'].includes(cleanEmail)) {
       found = INITIAL_USERS.find((u) => u.role === 'customer') || INITIAL_USERS[0];
     } else if (!found && (cleanEmail === 'admin' || cleanEmail.startsWith('admin@') || cleanEmail === 'owner')) {
       found = INITIAL_USERS.find((u) => u.role === 'owner' || u.role === 'admin') || INITIAL_USERS[1];
@@ -92,17 +94,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       await persistUserSession(found);
       setIsLoading(false);
       setIsAuthModalOpen(false);
-
-      if (['admin', 'owner', 'gudang', 'kasir'].includes(found.role)) {
-        window.location.href = '/admin';
-      }
+      if (['admin', 'owner', 'gudang', 'kasir'].includes(found.role)) window.location.href = '/admin';
       return { success: true };
     }
 
     setIsLoading(false);
     return {
       success: false,
-      message: 'Email atau kata sandi tidak cocok. Silakan daftar jika belum memiliki akun, atau klik tombol Masuk Cepat Demo.',
+      message: 'Email atau kata sandi tidak cocok. Silakan daftar jika belum memiliki akun, atau gunakan Lanjutkan dengan Google.',
     };
   };
 
@@ -123,7 +122,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setIsLoading(false);
       return { success: false, message: 'Akses ditolak: Akun tidak terdaftar sebagai staf internal.' };
     }
-
     if (!pass || pass.trim().length === 0) {
       setIsLoading(false);
       return { success: false, message: 'Kata sandi wajib diisi untuk mengakses portal staf.' };
@@ -163,11 +161,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return { success: true };
   };
 
+  const loginWithGoogle = async (googleEmail = 'thn071205@gmail.com', googleName = 'Kimy Eka Ardiansyah') => {
+    setIsLoading(true);
+    const profile = await resolveOrCreateGoogleUser(googleEmail, googleName);
+    setUser(profile);
+    await persistUserSession(profile);
+    setIsLoading(false);
+    setIsAuthModalOpen(false);
+    return { success: true };
+  };
+
   const logout = async (redirectTo?: string | unknown) => {
     setUser(null);
     await persistUserSession(null);
-    const dest = typeof redirectTo === 'string' ? redirectTo : '/';
-    window.location.href = dest;
+    window.location.href = typeof redirectTo === 'string' ? redirectTo : '/';
   };
 
   const loginAsDemoMember = async () => {
@@ -215,6 +222,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         login,
         staffLogin,
         register,
+        loginWithGoogle,
         logout,
         loginAsDemoMember,
         loginAsDemoAdmin,

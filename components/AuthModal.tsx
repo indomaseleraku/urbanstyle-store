@@ -6,6 +6,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/lib/auth-context';
+import GoogleSignInButton from '@/components/auth/GoogleSignInButton';
 import { X, User, Lock, Mail, Sparkles, CheckCircle2, Eye, EyeOff, Zap, ExternalLink } from 'lucide-react';
 
 export const AuthModal: React.FC = () => {
@@ -91,12 +92,25 @@ export const AuthModal: React.FC = () => {
           </p>
         </div>
 
+        {/* Opsi A: Tombol Lanjutkan dengan Google */}
+        <div className="mb-3.5">
+          <GoogleSignInButton onSuccess={closeAuthModal} />
+        </div>
+
+        <div className="relative flex items-center justify-center mb-3.5">
+          <div className="border-t border-gray-200 w-full" />
+          <span className="bg-white px-2.5 text-[10px] font-bold uppercase tracking-widest text-gray-400 shrink-0">
+            ATAU DENGAN EMAIL
+          </span>
+          <div className="border-t border-gray-200 w-full" />
+        </div>
+
         {/* Tab Switcher */}
-        <div className="flex border-b border-gray-200 mb-4">
+        <div className="flex border-b border-gray-200 mb-3.5">
           <button
             type="button"
             onClick={() => { setActiveTab('login'); setErrorMsg(''); setSuccessMsg(''); }}
-            className={`flex-1 py-2 text-xs font-bold uppercase tracking-wider transition-colors border-b-2 -mb-px cursor-pointer ${
+            className={`flex-1 py-1.5 text-xs font-bold uppercase tracking-wider transition-colors border-b-2 -mb-px cursor-pointer ${
               activeTab === 'login' ? 'border-[#E60012] text-[#E60012]' : 'border-transparent text-gray-500 hover:text-black'
             }`}
           >
@@ -105,7 +119,7 @@ export const AuthModal: React.FC = () => {
           <button
             type="button"
             onClick={() => { setActiveTab('register'); setErrorMsg(''); setSuccessMsg(''); }}
-            className={`flex-1 py-2 text-xs font-bold uppercase tracking-wider transition-colors border-b-2 -mb-px cursor-pointer ${
+            className={`flex-1 py-1.5 text-xs font-bold uppercase tracking-wider transition-colors border-b-2 -mb-px cursor-pointer ${
               activeTab === 'register' ? 'border-[#E60012] text-[#E60012]' : 'border-transparent text-gray-500 hover:text-black'
             }`}
           >
