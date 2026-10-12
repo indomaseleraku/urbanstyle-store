@@ -163,8 +163,11 @@ export default function OtpVerificationStep({
       <div className="p-3 bg-zinc-50 border border-zinc-200 flex items-start gap-2.5">
         <ShieldCheck size={18} className="text-[#E60012] shrink-0 mt-0.5" />
         <div className="text-xs text-zinc-700 leading-relaxed">
-          Kode verifikasi <strong>6 digit</strong> telah dikirim ke kotak masuk Gmail:{' '}
+          Kode verifikasi <strong>6 digit</strong> telah dikirim ke Gmail:{' '}
           <span className="font-mono font-bold text-black break-all">{email}</span>
+          <span className="block text-[10px] text-zinc-500 mt-0.5">
+            Cek Kotak Masuk Utama atau folder Spam/Promosi untuk pengiriman pertama.
+          </span>
         </div>
       </div>
 
