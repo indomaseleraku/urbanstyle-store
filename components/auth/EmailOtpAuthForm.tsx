@@ -171,7 +171,7 @@ export default function EmailOtpAuthForm({ onSuccess, onTabChange }: EmailOtpAut
         )}
 
         <div>
-          <label className="block text-[11px] font-bold uppercase tracking-wider text-zinc-700 mb-1">Alamat Email (Penerima OTP)</label>
+          <label className="block text-[11px] font-bold uppercase tracking-wider text-zinc-700 mb-1">Alamat Email</label>
           <div className="relative">
             <Mail size={15} className="absolute left-3 top-2.5 text-zinc-400" />
             <input
@@ -213,10 +213,10 @@ export default function EmailOtpAuthForm({ onSuccess, onTabChange }: EmailOtpAut
           className="w-full py-2.5 bg-black hover:bg-zinc-800 text-white text-xs font-black uppercase tracking-wider transition-colors disabled:opacity-50 cursor-pointer"
         >
           {isSendingOtp
-            ? 'Mengirim Kode OTP ke Email...'
+            ? 'Mengirim Kode Verifikasi...'
             : activeTab === 'login'
-            ? 'Kirim Kode OTP & Masuk'
-            : 'Kirim Kode OTP & Daftar'}
+            ? 'Masuk'
+            : 'Daftar Akun'}
         </button>
       </form>
     </div>
