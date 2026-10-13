@@ -189,7 +189,7 @@ export default function OtpVerificationStep({
         <label className="block text-[10px] font-bold uppercase tracking-wider text-zinc-600 mb-2 text-center">
           Masukkan 6 Digit Kode OTP
         </label>
-        <div className="grid grid-cols-6 gap-2">
+        <div className="grid grid-cols-6 gap-1.5 sm:gap-2">
           {digits.map((digit, idx) => (
             <input
               key={idx}
@@ -203,7 +203,7 @@ export default function OtpVerificationStep({
               onChange={(e) => handleDigitChange(idx, e.target.value)}
               onKeyDown={(e) => handleKeyDown(idx, e)}
               onPaste={handlePaste}
-              className="w-full h-12 text-center font-mono text-lg font-black border-2 border-zinc-300 focus:border-black focus:outline-hidden text-zinc-900 bg-white transition-colors"
+              className="w-full h-10 sm:h-12 text-center font-mono text-base sm:text-lg font-black border-2 border-zinc-300 focus:border-black focus:outline-hidden text-zinc-900 bg-white transition-colors"
             />
           ))}
         </div>
