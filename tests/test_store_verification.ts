@@ -518,7 +518,13 @@ async function runTests() {
     activeProd.price + 10000, 
     'Total tagihan tetap penuh sesuai harga resmi tanpa kompromi'
   );
-  console.log('  ✓ Proteksi Anti-Price-Tampering aktif: Diskon sepihak dari klien dibatalkan di server');
+  // 4.4 Verifikasi Validasi Kredensial & Proteksi Password Salah
+  const { validateUserPassword } = await import('../lib/services/authStorageService.ts');
+  const wrongPassResult = await validateUserPassword('member@urbanstyle.com', 'passwordsalah123');
+  assert.equal(wrongPassResult.valid, false, 'Password salah wajib ditolak oleh sistem autentikasi');
+  const correctPassResult = await validateUserPassword('member@urbanstyle.com', 'password');
+  assert.equal(correctPassResult.valid, true, 'Password benar wajib diterima oleh sistem autentikasi');
+  console.log('  ✓ Proteksi Autentikasi Password aktif: Kata sandi salah ditolak keras dan sandi valid diterima');
 
   console.log('✓ Lapis 4 PASSED: Seluruh modul keamanan & anti-tampering terverifikasi 100% aman.\n');
   console.log('🎉 SELURUH PENGUJIAN OTOMATIS 4 LAPIS URBANSTYLE STORE V4.0 BERHASIL 100%! 🎉');
