@@ -128,7 +128,7 @@ export default function EmailOtpAuthForm({ onSuccess, onTabChange }: EmailOtpAut
           type="button"
           onClick={() => switchTab('login')}
           className={`flex-1 py-2 text-xs font-bold uppercase tracking-wider border-b-2 -mb-px cursor-pointer ${
-            activeTab === 'login' ? 'border-[#E60012] text-[#E60012]' : 'border-transparent text-zinc-400 hover:text-black'
+            activeTab === 'login' ? 'border-black text-black' : 'border-transparent text-zinc-400 hover:text-black'
           }`}
         >
           Masuk Akun
@@ -137,7 +137,7 @@ export default function EmailOtpAuthForm({ onSuccess, onTabChange }: EmailOtpAut
           type="button"
           onClick={() => switchTab('register')}
           className={`flex-1 py-2 text-xs font-bold uppercase tracking-wider border-b-2 -mb-px cursor-pointer ${
-            activeTab === 'register' ? 'border-[#E60012] text-[#E60012]' : 'border-transparent text-zinc-400 hover:text-black'
+            activeTab === 'register' ? 'border-black text-black' : 'border-transparent text-zinc-400 hover:text-black'
           }`}
         >
           Daftar Member
@@ -210,7 +210,7 @@ export default function EmailOtpAuthForm({ onSuccess, onTabChange }: EmailOtpAut
         <button
           type="submit"
           disabled={isSendingOtp}
-          className="w-full py-2.5 bg-black hover:bg-[#E60012] text-white text-xs font-black uppercase tracking-wider transition-colors disabled:opacity-50 cursor-pointer"
+          className="w-full py-2.5 bg-black hover:bg-zinc-800 text-white text-xs font-black uppercase tracking-wider transition-colors disabled:opacity-50 cursor-pointer"
         >
           {isSendingOtp
             ? 'Mengirim Kode OTP ke Email...'

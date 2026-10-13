@@ -161,7 +161,7 @@ export default function OtpVerificationStep({
   return (
     <form onSubmit={handleVerifySubmit} className="space-y-4">
       <div className="p-3 bg-zinc-50 border border-zinc-200 flex items-start gap-2.5">
-        <ShieldCheck size={18} className="text-[#E60012] shrink-0 mt-0.5" />
+        <ShieldCheck size={18} className="text-zinc-800 shrink-0 mt-0.5" />
         <div className="text-xs text-zinc-700 leading-relaxed">
           Kode verifikasi <strong>6 digit</strong> telah dikirim ke Gmail:{' '}
           <span className="font-mono font-bold text-black break-all">{email}</span>
@@ -203,7 +203,7 @@ export default function OtpVerificationStep({
               onChange={(e) => handleDigitChange(idx, e.target.value)}
               onKeyDown={(e) => handleKeyDown(idx, e)}
               onPaste={handlePaste}
-              className="w-full h-12 text-center font-mono text-lg font-black border-2 border-zinc-300 focus:border-[#E60012] focus:outline-hidden text-zinc-900 bg-white transition-colors"
+              className="w-full h-12 text-center font-mono text-lg font-black border-2 border-zinc-300 focus:border-black focus:outline-hidden text-zinc-900 bg-white transition-colors"
             />
           ))}
         </div>
@@ -212,7 +212,7 @@ export default function OtpVerificationStep({
       <button
         type="submit"
         disabled={isVerifying}
-        className="w-full py-3 bg-[#E60012] hover:bg-black text-white font-black text-xs uppercase tracking-widest transition-colors cursor-pointer disabled:opacity-50"
+        className="w-full py-3 bg-black hover:bg-zinc-800 text-white font-black text-xs uppercase tracking-widest transition-colors cursor-pointer disabled:opacity-50"
       >
         {isVerifying ? 'Memverifikasi OTP...' : 'Verifikasi & Masuk Sekarang'}
       </button>
@@ -230,7 +230,7 @@ export default function OtpVerificationStep({
           type="button"
           onClick={handleResend}
           disabled={countdown > 0 || isResending}
-          className="font-bold text-zinc-700 hover:text-[#E60012] disabled:text-zinc-400 flex items-center gap-1 cursor-pointer disabled:cursor-not-allowed"
+          className="font-bold text-zinc-700 hover:text-black disabled:text-zinc-400 flex items-center gap-1 cursor-pointer disabled:cursor-not-allowed"
         >
           <RefreshCw size={12} className={isResending ? 'animate-spin' : ''} />
           {countdown > 0 ? `Kirim Ulang (${countdown}d)` : 'Kirim Ulang OTP'}
