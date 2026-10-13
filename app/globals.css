@@ -23,6 +23,9 @@
 /* UrbanStyle Store - Uniqlo LifeWear Pure Aesthetic (Clean, Sharp, Zero-Slop) */
 html {
   scroll-behavior: smooth;
+  overflow-x: hidden;
+  max-width: 100%;
+  width: 100%;
 }
 
 body {
@@ -32,6 +35,9 @@ body {
   letter-spacing: -0.011em;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  max-width: 100%;
+  width: 100%;
 }
 
 /* Tabular figures for prices (Uniqlo e-commerce standard) */

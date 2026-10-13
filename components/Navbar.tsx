@@ -11,6 +11,7 @@ import UserAccountMenu from './navbar/UserAccountMenu';
 import SideNavDrawer from './navbar/SideNavDrawer';
 import MobileSearchBar from './navbar/MobileSearchBar';
 import VisualMegaMenu from './navbar/VisualMegaMenu';
+import DepartmentTabs from './navbar/DepartmentTabs';
 
 export default function Navbar({
   selectedCategory, onSelectCategory,
@@ -91,32 +92,12 @@ export default function Navbar({
               </Link>
 
               {/* Department/Gender Tabs (SEMUA, WANITA, PRIA, LIMITED OFFER) */}
-              <nav className="flex items-center gap-0.5 sm:gap-1.5 h-full overflow-x-auto">
-                {GENDER_TABS.map((tab) => {
-                  const isActive = tab.value === 'sale'
-                    ? selectedCategory === 'sale'
-                    : selectedGender === tab.value && selectedCategory !== 'sale';
-                  const label = tab.label.replace(' 🔥', '');
-                  return (
-                    <button
-                      key={tab.value}
-                      type="button"
-                      onClick={() => handleGenderTabClick(tab.value)}
-                      className={`px-2 sm:px-3 h-full text-xs sm:text-[13px] font-bold tracking-wider uppercase transition-all relative flex items-center cursor-pointer shrink-0 whitespace-nowrap ${
-                        isActive
-                          ? tab.highlight ? 'text-[#E60012] font-black' : 'text-zinc-950 font-black'
-                          : tab.highlight ? 'text-[#E60012]/85 hover:text-[#E60012]' : 'text-zinc-600 hover:text-zinc-950'
-                      }`}
-                    >
-                      <span>{label}</span>
-                      {tab.highlight && <span className="ml-1 text-[11px]">🔥</span>}
-                      {isActive && (
-                        <span className={`absolute bottom-0 left-0 right-0 h-[2.5px] ${tab.highlight ? 'bg-[#E60012]' : 'bg-zinc-950'}`} />
-                      )}
-                    </button>
-                  );
-                })}
-              </nav>
+              <DepartmentTabs
+                selectedCategory={selectedCategory}
+                selectedGender={selectedGender}
+                onTabClick={handleGenderTabClick}
+                variant="desktop"
+              />
             </div>
 
             {/* Right: Search Capsule + Wishlist + Member + Cart + Menu */}
@@ -211,6 +192,14 @@ export default function Navbar({
             </div>
           </div>
         </div>
+
+        {/* Mobile Sub-Header Department Tabs */}
+        <DepartmentTabs
+          selectedCategory={selectedCategory}
+          selectedGender={selectedGender}
+          onTabClick={handleGenderTabClick}
+          variant="mobile"
+        />
 
         {/* Mobile Search Dropdown Bar */}
         {isSearchOpen && (

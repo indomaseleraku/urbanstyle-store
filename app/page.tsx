@@ -34,7 +34,7 @@ function HomePageContent() {
   };
 
   return (
-    <div className="min-h-screen bg-white text-zinc-900 flex flex-col justify-between selection:bg-[#E60012] selection:text-white">
+    <div className="min-h-screen w-full max-w-full overflow-x-hidden bg-white text-zinc-900 flex flex-col justify-between selection:bg-[#E60012] selection:text-white">
       {/* 1. Global Navigation Bar */}
       <Navbar
         categories={s.categories}
