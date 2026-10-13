@@ -4,11 +4,12 @@
 // Formulir Login & Registrasi Manual dengan Verifikasi Sandi & OTP 6 Digit via Gmail
 
 import React, { useState } from 'react';
-import { User, Lock, Mail, CheckCircle2, Eye, EyeOff } from 'lucide-react';
+import { CheckCircle2 } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
 import { validateUserPassword } from '@/lib/services/authStorageService';
 import OtpVerificationStep from './OtpVerificationStep';
 import ForgotPasswordForm from './ForgotPasswordForm';
+import AuthInputFields from './AuthInputFields';
 
 interface EmailOtpAuthFormProps {
   onSuccess: () => void;
@@ -55,7 +56,6 @@ export default function EmailOtpAuthForm({ onSuccess, onTabChange }: EmailOtpAut
       return setErrorMsg('Mohon lengkapi nama Anda.');
     }
 
-    // Periksa kebenaran kata sandi saat Masuk Akun
     if (activeTab === 'login') {
       const passCheck = validateUserPassword(cleanEmail, cleanPass);
       if (!passCheck.valid) {
@@ -170,70 +170,22 @@ export default function EmailOtpAuthForm({ onSuccess, onTabChange }: EmailOtpAut
       )}
 
       <form onSubmit={handleRequestOtp} className="space-y-3">
-        {activeTab === 'register' && (
-          <div>
-            <label className="block text-[11px] font-bold uppercase tracking-wider text-zinc-700 mb-1">Nama Lengkap</label>
-            <div className="relative">
-              <User size={15} className="absolute left-3 top-2.5 text-zinc-400" />
-              <input
-                type="text"
-                required
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
-                placeholder="Contoh: Kimy Eka Ardiansyah"
-                className="w-full pl-9 pr-3 py-2 border border-zinc-300 text-xs focus:outline-hidden focus:border-black"
-              />
-            </div>
-          </div>
-        )}
-
-        <div>
-          <label className="block text-[11px] font-bold uppercase tracking-wider text-zinc-700 mb-1">Alamat Email</label>
-          <div className="relative">
-            <Mail size={15} className="absolute left-3 top-2.5 text-zinc-400" />
-            <input
-              type="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="nama@gmail.com"
-              className="w-full pl-9 pr-3 py-2 border border-zinc-300 text-xs focus:outline-hidden focus:border-black font-mono"
-            />
-          </div>
-        </div>
-
-        <div>
-          <label className="block text-[11px] font-bold uppercase tracking-wider text-zinc-700 mb-1">Kata Sandi</label>
-          <div className="relative">
-            <Lock size={15} className="absolute left-3 top-2.5 text-zinc-400" />
-            <input
-              type={showPassword ? 'text' : 'password'}
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
-              className="w-full pl-9 pr-9 py-2 border border-zinc-300 text-xs focus:outline-hidden focus:border-black font-mono"
-            />
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-2.5 top-2 text-zinc-400 hover:text-black cursor-pointer"
-            >
-              {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
-            </button>
-          </div>
-          {activeTab === 'login' && (
-            <div className="flex justify-end pt-1">
-              <button
-                type="button"
-                onClick={() => { setIsForgotPassword(true); setErrorMsg(''); setSuccessMsg(''); }}
-                className="text-[11px] text-zinc-500 hover:text-black underline cursor-pointer"
-              >
-                Lupa kata sandi?
-              </button>
-            </div>
-          )}
-        </div>
+        <AuthInputFields
+          activeTab={activeTab}
+          fullName={fullName}
+          setFullName={setFullName}
+          email={email}
+          setEmail={setEmail}
+          password={password}
+          setPassword={setPassword}
+          showPassword={showPassword}
+          setShowPassword={setShowPassword}
+          onForgotPassword={() => {
+            setIsForgotPassword(true);
+            setErrorMsg('');
+            setSuccessMsg('');
+          }}
+        />
 
         <button
           type="submit"

@@ -9,11 +9,12 @@ import { INITIAL_USERS } from './mock-data';
 import {
   loadUserSession,
   persistUserSession,
-  findLocalRegisteredUser,
   resolveOrCreateGoogleUser,
   validateUserPassword,
   saveRegisteredCredential,
   resetUserPassword,
+  resolveMemberUser,
+  authenticateStaff,
 } from './services/authStorageService';
 
 interface AuthContextType {
@@ -76,29 +77,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return { success: false, message: 'Kata sandi wajib diisi.' };
     }
 
-    // Validasi kata sandi terdaftar terlebih dahulu
     const passCheck = validateUserPassword(cleanEmail, pass);
     if (!passCheck.valid) {
       setIsLoading(false);
       return { success: false, message: passCheck.message || 'Kata sandi salah.' };
     }
 
-    let found = INITIAL_USERS.find((u) => u.email.toLowerCase() === cleanEmail);
-    if (!found && ['member', 'kimy', 'member@urbanstyle.com', 'kimy.eka@unpam.ac.id', 'thn071205@gmail.com'].includes(cleanEmail)) {
-      found = INITIAL_USERS.find((u) => u.role === 'customer') || INITIAL_USERS[0];
-    } else if (!found && (cleanEmail === 'admin' || cleanEmail.startsWith('admin@') || cleanEmail === 'owner')) {
-      found = INITIAL_USERS.find((u) => u.role === 'owner' || u.role === 'admin') || INITIAL_USERS[1];
-    } else if (!found && cleanEmail === 'gudang') {
-      found = INITIAL_USERS.find((u) => u.role === 'gudang');
-    } else if (!found && cleanEmail === 'kasir') {
-      found = INITIAL_USERS.find((u) => u.role === 'kasir');
-    }
-
-    if (!found) {
-      const localReg = findLocalRegisteredUser(cleanEmail);
-      if (localReg) found = localReg;
-    }
-
+    const found = resolveMemberUser(cleanEmail);
     if (found) {
       setUser(found);
       await persistUserSession(found);
@@ -109,36 +94,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
 
     setIsLoading(false);
-    return {
-      success: false,
-      message: 'Email belum terdaftar. Silakan pilih tab Daftar Akun.',
-    };
+    return { success: false, message: 'Email belum terdaftar. Silakan pilih tab Daftar Akun.' };
   };
 
   const staffLogin = async (email: string, pass: string): Promise<{ success: boolean; message?: string }> => {
     setIsLoading(true);
     const cleanEmail = email.toLowerCase().trim();
-    let found = INITIAL_USERS.find((u) => u.email.toLowerCase() === cleanEmail);
-
-    if (!found && ['admin', 'owner'].includes(cleanEmail)) {
-      found = INITIAL_USERS.find((u) => u.role === 'owner' || u.role === 'admin') || INITIAL_USERS[1];
-    } else if (!found && cleanEmail === 'gudang') {
-      found = INITIAL_USERS.find((u) => u.role === 'gudang');
-    } else if (!found && cleanEmail === 'kasir') {
-      found = INITIAL_USERS.find((u) => u.role === 'kasir');
-    }
-
-    if (!found || !['admin', 'owner', 'gudang', 'kasir'].includes(found.role)) {
+    const result = authenticateStaff(cleanEmail, pass);
+    if (!result.success || !result.user) {
       setIsLoading(false);
-      return { success: false, message: 'Akses ditolak: Akun tidak terdaftar sebagai staf internal.' };
+      return { success: false, message: result.message || 'Akses ditolak.' };
     }
-    if (!pass || pass.trim().length === 0) {
-      setIsLoading(false);
-      return { success: false, message: 'Kata sandi wajib diisi untuk mengakses portal staf.' };
-    }
-
-    setUser(found);
-    await persistUserSession(found);
+    setUser(result.user);
+    await persistUserSession(result.user);
     setIsLoading(false);
     return { success: true };
   };
@@ -187,10 +155,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return { success: false, message: 'Kata sandi baru minimal 4 karakter.' };
     }
     const ok = resetUserPassword(cleanEmail, newPass.trim());
-    if (ok) {
-      return { success: true, message: 'Kata sandi berhasil diperbarui.' };
-    }
-    return { success: false, message: 'Gagal memperbarui kata sandi.' };
+    return ok
+      ? { success: true, message: 'Kata sandi berhasil diperbarui.' }
+      : { success: false, message: 'Gagal memperbarui kata sandi.' };
   };
 
   const logout = async (redirectTo?: string | unknown) => {

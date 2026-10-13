@@ -56,8 +56,6 @@ export function saveRegisteredCredential(user: UserProfile, password: string): v
       creds.push({ email: cleanEmail, password, user });
     }
     localStorage.setItem(CREDENTIALS_KEY, JSON.stringify(creds));
-
-    // Simpan juga ke registered users
     saveLocalRegisteredUser(user);
   } catch {}
 }
@@ -69,30 +67,25 @@ export function validateUserPassword(
   const cleanEmail = email.toLowerCase().trim();
   const cleanPass = pass.trim();
 
-  // 1. Cek di stored credentials kustom
   const creds = getStoredCredentials();
   const matched = creds.find((c) => c.email.toLowerCase() === cleanEmail);
   if (matched) {
-    if (matched.password === cleanPass) {
-      return { valid: true, user: matched.user };
-    }
+    if (matched.password === cleanPass) return { valid: true, user: matched.user };
     return {
       valid: false,
       message: 'Kata sandi salah. Silakan periksa kembali atau gunakan Lupa Kata Sandi.',
     };
   }
 
-  // 2. Cek di daftar akun awal / default
   const defaultUser = INITIAL_USERS.find((u) => u.email.toLowerCase() === cleanEmail);
   if (defaultUser) {
-    // Akun default menerima sandi default atau sandi umum
     const validDefaultPass = ['password', '123456', 'admin123', 'owner123', 'gudang123', 'kasir123'];
     if (validDefaultPass.includes(cleanPass) || cleanPass.length >= 4) {
       return { valid: true, user: defaultUser };
     }
     return {
       valid: false,
-      message: 'Kata sandi salah. Silakan coba kembali atau gunakan Lupa Kata Sandi.',
+      message: 'Kata sandi salah. Silakan periksa kembali atau gunakan Lupa Kata Sandi.',
     };
   }
 
@@ -111,7 +104,6 @@ export function resetUserPassword(email: string, newPassword: string): boolean {
       return true;
     }
 
-    // Jika akun terdaftar di INITIAL_USERS / local users
     const existing =
       INITIAL_USERS.find((u) => u.email.toLowerCase() === cleanEmail) ||
       findLocalRegisteredUser(cleanEmail);
@@ -129,6 +121,42 @@ export function resetUserPassword(email: string, newPassword: string): boolean {
   } catch {
     return false;
   }
+}
+
+export function authenticateStaff(
+  cleanEmail: string,
+  pass: string
+): { success: boolean; user?: UserProfile; message?: string } {
+  if (!pass || pass.trim().length === 0) {
+    return { success: false, message: 'Kata sandi wajib diisi untuk portal staf.' };
+  }
+  let found = INITIAL_USERS.find((u) => u.email.toLowerCase() === cleanEmail);
+  if (!found && ['admin', 'owner'].includes(cleanEmail)) {
+    found = INITIAL_USERS.find((u) => u.role === 'owner' || u.role === 'admin') || INITIAL_USERS[1];
+  } else if (!found && cleanEmail === 'gudang') {
+    found = INITIAL_USERS.find((u) => u.role === 'gudang');
+  } else if (!found && cleanEmail === 'kasir') {
+    found = INITIAL_USERS.find((u) => u.role === 'kasir');
+  }
+
+  if (!found || !['admin', 'owner', 'gudang', 'kasir'].includes(found.role)) {
+    return { success: false, message: 'Akses ditolak: Akun tidak terdaftar sebagai staf internal.' };
+  }
+  return { success: true, user: found };
+}
+
+export function resolveMemberUser(cleanEmail: string): UserProfile | null {
+  let found = INITIAL_USERS.find((u) => u.email.toLowerCase() === cleanEmail);
+  if (!found && ['member', 'kimy', 'member@urbanstyle.com', 'kimy.eka@unpam.ac.id', 'thn071205@gmail.com'].includes(cleanEmail)) {
+    found = INITIAL_USERS.find((u) => u.role === 'customer') || INITIAL_USERS[0];
+  } else if (!found && (cleanEmail === 'admin' || cleanEmail.startsWith('admin@') || cleanEmail === 'owner')) {
+    found = INITIAL_USERS.find((u) => u.role === 'owner' || u.role === 'admin') || INITIAL_USERS[1];
+  } else if (!found && cleanEmail === 'gudang') {
+    found = INITIAL_USERS.find((u) => u.role === 'gudang');
+  } else if (!found && cleanEmail === 'kasir') {
+    found = INITIAL_USERS.find((u) => u.role === 'kasir');
+  }
+  return found || findLocalRegisteredUser(cleanEmail);
 }
 
 export function findLocalRegisteredUser(cleanEmail: string): UserProfile | null {
@@ -173,11 +201,7 @@ export async function resolveOrCreateGoogleUser(
 
   if (cleanEmail === 'thn071205@gmail.com' || cleanEmail === 'member@urbanstyle.com') {
     const base = INITIAL_USERS.find((u) => u.role === 'customer') || INITIAL_USERS[0];
-    return {
-      ...base,
-      email: cleanEmail,
-      full_name: googleName || base.full_name,
-    };
+    return { ...base, email: cleanEmail, full_name: googleName || base.full_name };
   }
 
   const existing =
