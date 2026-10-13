@@ -1,12 +1,14 @@
 'use client';
 
 // components/auth/EmailOtpAuthForm.tsx
-// Formulir Login & Registrasi Manual dengan Verifikasi Kode OTP 6 Digit via Email Gmail
+// Formulir Login & Registrasi Manual dengan Verifikasi Sandi & OTP 6 Digit via Gmail
 
 import React, { useState } from 'react';
 import { User, Lock, Mail, CheckCircle2, Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
+import { validateUserPassword } from '@/lib/services/authStorageService';
 import OtpVerificationStep from './OtpVerificationStep';
+import ForgotPasswordForm from './ForgotPasswordForm';
 
 interface EmailOtpAuthFormProps {
   onSuccess: () => void;
@@ -24,12 +26,14 @@ export default function EmailOtpAuthForm({ onSuccess, onTabChange }: EmailOtpAut
   const [successMsg, setSuccessMsg] = useState('');
   const [isSendingOtp, setIsSendingOtp] = useState(false);
   const [otpToken, setOtpToken] = useState<string | null>(null);
+  const [isForgotPassword, setIsForgotPassword] = useState(false);
 
   const switchTab = (tab: 'login' | 'register') => {
     setActiveTab(tab);
     setErrorMsg('');
     setSuccessMsg('');
     setOtpToken(null);
+    setIsForgotPassword(false);
     onTabChange?.(tab);
   };
 
@@ -42,16 +46,21 @@ export default function EmailOtpAuthForm({ onSuccess, onTabChange }: EmailOtpAut
     const cleanPass = password.trim();
 
     if (!cleanEmail || !cleanEmail.includes('@')) {
-      setErrorMsg('Masukkan alamat email yang valid (contoh: nama@gmail.com).');
-      return;
+      return setErrorMsg('Masukkan alamat email yang valid.');
     }
     if (!cleanPass || cleanPass.length < 4) {
-      setErrorMsg('Kata sandi minimal 4 karakter.');
-      return;
+      return setErrorMsg('Kata sandi minimal 4 karakter.');
     }
     if (activeTab === 'register' && !fullName.trim()) {
-      setErrorMsg('Mohon lengkapi nama lengkap Anda.');
-      return;
+      return setErrorMsg('Mohon lengkapi nama Anda.');
+    }
+
+    // Periksa kebenaran kata sandi saat Masuk Akun
+    if (activeTab === 'login') {
+      const passCheck = validateUserPassword(cleanEmail, cleanPass);
+      if (!passCheck.valid) {
+        return setErrorMsg(passCheck.message || 'Kata sandi tidak cocok.');
+      }
     }
 
     setIsSendingOtp(true);
@@ -67,7 +76,7 @@ export default function EmailOtpAuthForm({ onSuccess, onTabChange }: EmailOtpAut
       });
       const data = await res.json();
       if (!res.ok || !data.success || !data.otpToken) {
-        setErrorMsg(data.message || 'Gagal mengirim kode OTP ke email.');
+        setErrorMsg(data.message || 'Gagal mengirim kode verifikasi.');
         setIsSendingOtp(false);
         return;
       }
@@ -86,27 +95,35 @@ export default function EmailOtpAuthForm({ onSuccess, onTabChange }: EmailOtpAut
     if (activeTab === 'register') {
       const res = await register(cleanEmail, cleanPass, fullName.trim());
       if (res.success) {
-        setSuccessMsg('Verifikasi OTP & pendaftaran berhasil!');
+        setSuccessMsg('Pendaftaran akun berhasil!');
         setTimeout(() => onSuccess(), 400);
       } else {
-        setErrorMsg(res.message || 'Gagal menyelesaikan pendaftaran.');
+        setErrorMsg(res.message || 'Gagal mendaftar akun.');
       }
       return;
     }
 
     const res = await login(cleanEmail, cleanPass);
     if (res.success) {
-      setSuccessMsg('Verifikasi OTP berhasil! Mengalihkan ke akun Anda...');
+      setSuccessMsg('Verifikasi berhasil! Mengalihkan ke akun Anda...');
       setTimeout(() => onSuccess(), 400);
       return;
     }
 
-    // Jika email sudah lolos verifikasi OTP 6 digit dari Gmail namun belum ada di daftar lokal, aktifkan otomatis
     const fallbackName = cleanEmail.split('@')[0].replace(/[._]/g, ' ').toUpperCase();
     await loginWithGoogle(cleanEmail, fallbackName);
-    setSuccessMsg('Verifikasi OTP berhasil! Mengalihkan ke akun Anda...');
+    setSuccessMsg('Verifikasi berhasil! Mengalihkan ke akun Anda...');
     setTimeout(() => onSuccess(), 400);
   };
+
+  if (isForgotPassword) {
+    return (
+      <ForgotPasswordForm
+        onBackToLogin={() => setIsForgotPassword(false)}
+        onSuccess={() => setSuccessMsg('Kata sandi berhasil diperbarui! Silakan masuk kembali.')}
+      />
+    );
+  }
 
   if (otpToken) {
     return (
@@ -140,7 +157,7 @@ export default function EmailOtpAuthForm({ onSuccess, onTabChange }: EmailOtpAut
             activeTab === 'register' ? 'border-black text-black' : 'border-transparent text-zinc-400 hover:text-black'
           }`}
         >
-          Daftar Member
+          Daftar Akun
         </button>
       </div>
 
@@ -205,6 +222,17 @@ export default function EmailOtpAuthForm({ onSuccess, onTabChange }: EmailOtpAut
               {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
             </button>
           </div>
+          {activeTab === 'login' && (
+            <div className="flex justify-end pt-1">
+              <button
+                type="button"
+                onClick={() => { setIsForgotPassword(true); setErrorMsg(''); setSuccessMsg(''); }}
+                className="text-[11px] text-zinc-500 hover:text-black underline cursor-pointer"
+              >
+                Lupa kata sandi?
+              </button>
+            </div>
+          )}
         </div>
 
         <button
@@ -213,7 +241,7 @@ export default function EmailOtpAuthForm({ onSuccess, onTabChange }: EmailOtpAut
           className="w-full py-2.5 bg-black hover:bg-zinc-800 text-white text-xs font-black uppercase tracking-wider transition-colors disabled:opacity-50 cursor-pointer"
         >
           {isSendingOtp
-            ? 'Mengirim Kode Verifikasi...'
+            ? 'Memverifikasi...'
             : activeTab === 'login'
             ? 'Masuk'
             : 'Daftar Akun'}

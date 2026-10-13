@@ -29,21 +29,22 @@ function createTransporter() {
 export async function sendOtpEmail(
   toEmail: string,
   otpCode: string,
-  purpose: 'login' | 'register' = 'login'
+  purpose: 'login' | 'register' | 'reset' = 'login'
 ): Promise<{ sent: boolean; messageId?: string; error?: string }> {
   const cleanTo = toEmail.trim().toLowerCase();
-  const actionLabel = purpose === 'register' ? 'pendaftaran member' : 'masuk akun';
+  const actionLabel =
+    purpose === 'register' ? 'pendaftaran akun' : purpose === 'reset' ? 'reset kata sandi' : 'masuk akun';
 
   // Struktur <div dir="ltr"> identik dengan email ketikan asli Gmail Web agar lolos filter Spam
   const html = `<div dir="ltr" style="font-family: Arial, Helvetica, sans-serif; font-size: 14px; color: #222222; line-height: 1.6;">
   <p>Halo,</p>
-  <p>Berikut adalah 6 angka kode untuk melanjutkan ${actionLabel} Anda di UrbanStyle:</p>
+  <p>Berikut adalah 6 angka kode untuk ${actionLabel} Anda di UrbanStyle:</p>
   <p style="font-size: 22px; font-weight: bold; letter-spacing: 4px; margin: 16px 0; color: #111111;">${otpCode}</p>
   <p>Silakan masukkan kode tersebut pada halaman aplikasi (berlaku selama 5 menit).</p>
-  <p>Terima kasih,<br>Kimy — UrbanStyle</p>
+  <p>Terima kasih,<br>UrbanStyle LifeWear</p>
 </div>`;
 
-  const text = `Halo,\n\nBerikut adalah 6 angka kode untuk melanjutkan ${actionLabel} Anda di UrbanStyle:\n\n${otpCode}\n\nSilakan masukkan kode tersebut pada halaman aplikasi (berlaku selama 5 menit).\n\nTerima kasih,\nKimy — UrbanStyle`;
+  const text = `Halo,\n\nBerikut adalah 6 angka kode untuk ${actionLabel} Anda di UrbanStyle:\n\n${otpCode}\n\nSilakan masukkan kode tersebut pada halaman aplikasi (berlaku selama 5 menit).\n\nTerima kasih,\nUrbanStyle LifeWear`;
 
   const transporter = createTransporter();
   try {

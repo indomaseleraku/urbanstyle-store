@@ -10,8 +10,10 @@ import {
   loadUserSession,
   persistUserSession,
   findLocalRegisteredUser,
-  saveLocalRegisteredUser,
   resolveOrCreateGoogleUser,
+  validateUserPassword,
+  saveRegisteredCredential,
+  resetUserPassword,
 } from './services/authStorageService';
 
 interface AuthContextType {
@@ -31,6 +33,7 @@ interface AuthContextType {
   staffLogin: (email: string, pass: string) => Promise<{ success: boolean; message?: string }>;
   register: (email: string, pass: string, fullName: string) => Promise<{ success: boolean; message?: string }>;
   loginWithGoogle: (googleEmail?: string, googleName?: string) => Promise<{ success: boolean; message?: string }>;
+  resetPassword: (email: string, newPass: string) => Promise<{ success: boolean; message?: string }>;
   logout: (redirectTo?: string | unknown) => Promise<void>;
   loginAsDemoMember: () => Promise<void>;
   loginAsDemoAdmin: () => Promise<void>;
@@ -73,6 +76,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return { success: false, message: 'Kata sandi wajib diisi.' };
     }
 
+    // Validasi kata sandi terdaftar terlebih dahulu
+    const passCheck = validateUserPassword(cleanEmail, pass);
+    if (!passCheck.valid) {
+      setIsLoading(false);
+      return { success: false, message: passCheck.message || 'Kata sandi salah.' };
+    }
+
     let found = INITIAL_USERS.find((u) => u.email.toLowerCase() === cleanEmail);
     if (!found && ['member', 'kimy', 'member@urbanstyle.com', 'kimy.eka@unpam.ac.id', 'thn071205@gmail.com'].includes(cleanEmail)) {
       found = INITIAL_USERS.find((u) => u.role === 'customer') || INITIAL_USERS[0];
@@ -101,7 +111,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setIsLoading(false);
     return {
       success: false,
-      message: 'Email atau kata sandi tidak cocok. Silakan daftar jika belum memiliki akun, atau gunakan Lanjutkan dengan Google.',
+      message: 'Email belum terdaftar. Silakan pilih tab Daftar Akun.',
     };
   };
 
@@ -154,7 +164,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       created_at: new Date().toISOString(),
     };
 
-    saveLocalRegisteredUser(newMember);
+    saveRegisteredCredential(newMember, pass.trim());
     setUser(newMember);
     await persistUserSession(newMember);
     setIsLoading(false);
@@ -169,6 +179,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setIsLoading(false);
     setIsAuthModalOpen(false);
     return { success: true };
+  };
+
+  const resetPassword = async (email: string, newPass: string): Promise<{ success: boolean; message?: string }> => {
+    const cleanEmail = email.toLowerCase().trim();
+    if (!newPass || newPass.trim().length < 4) {
+      return { success: false, message: 'Kata sandi baru minimal 4 karakter.' };
+    }
+    const ok = resetUserPassword(cleanEmail, newPass.trim());
+    if (ok) {
+      return { success: true, message: 'Kata sandi berhasil diperbarui.' };
+    }
+    return { success: false, message: 'Gagal memperbarui kata sandi.' };
   };
 
   const logout = async (redirectTo?: string | unknown) => {
@@ -223,6 +245,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         staffLogin,
         register,
         loginWithGoogle,
+        resetPassword,
         logout,
         loginAsDemoMember,
         loginAsDemoAdmin,
