@@ -1,14 +1,13 @@
 'use client';
 
 // components/AuthModal.tsx
-// Modal Autentikasi Pengguna & Keanggotaan Member Bersih & Minimalis
+// Modal Autentikasi Pelanggan Bersih & Minimalis
 
 import React from 'react';
-import Link from 'next/link';
 import { useAuth } from '@/lib/auth-context';
 import GoogleSignInButton from '@/components/auth/GoogleSignInButton';
 import EmailOtpAuthForm from '@/components/auth/EmailOtpAuthForm';
-import { X, ExternalLink } from 'lucide-react';
+import { X } from 'lucide-react';
 
 export const AuthModal: React.FC = () => {
   const { isAuthModalOpen, closeAuthModal } = useAuth();
@@ -52,31 +51,13 @@ export const AuthModal: React.FC = () => {
         <div className="relative flex items-center justify-center mb-4">
           <div className="border-t border-zinc-200 w-full" />
           <span className="bg-white px-3 text-[10px] font-bold uppercase tracking-widest text-zinc-400 shrink-0">
-            ATAU DENGAN EMAIL & OTP
+            ATAU DENGAN EMAIL
           </span>
           <div className="border-t border-zinc-200 w-full" />
         </div>
 
         {/* Opsi B: Formulir Email + Verifikasi OTP 6 Digit */}
         <EmailOtpAuthForm onSuccess={closeAuthModal} />
-
-        <div className="mt-4 pt-3 border-t border-zinc-100 flex items-center justify-between text-[11px] text-zinc-500">
-          <Link
-            href="/account/login"
-            onClick={closeAuthModal}
-            className="hover:text-black flex items-center gap-1 transition-colors font-medium"
-          >
-            <span>Halaman Penuh</span>
-            <ExternalLink size={11} />
-          </Link>
-          <Link
-            href="/admin/login"
-            onClick={closeAuthModal}
-            className="hover:text-black transition-colors font-mono text-[10px]"
-          >
-            Portal Staf →
-          </Link>
-        </div>
       </div>
     </div>
   );

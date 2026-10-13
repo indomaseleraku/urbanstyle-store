@@ -38,12 +38,7 @@ function MemberLoginForm() {
             UrbanStyle LifeWear
           </span>
         </div>
-        <Link
-          href="/admin/login"
-          className="text-zinc-400 hover:text-black text-xs font-mono hidden sm:inline transition-colors"
-        >
-          Portal Staf →
-        </Link>
+        <div className="w-20 sm:w-28" />
       </header>
 
       <main className="flex-1 flex items-center justify-center p-4 sm:p-6 my-8">
@@ -64,7 +59,7 @@ function MemberLoginForm() {
             <div className="relative flex items-center justify-center">
               <div className="border-t border-zinc-200 w-full" />
               <span className="bg-white px-3 text-[10px] font-bold uppercase tracking-widest text-zinc-400 shrink-0">
-                ATAU DENGAN EMAIL & OTP
+                ATAU DENGAN EMAIL
               </span>
               <div className="border-t border-zinc-200 w-full" />
             </div>
