@@ -77,13 +77,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return { success: false, message: 'Kata sandi wajib diisi.' };
     }
 
-    const passCheck = validateUserPassword(cleanEmail, pass);
+    const passCheck = await validateUserPassword(cleanEmail, pass);
     if (!passCheck.valid) {
       setIsLoading(false);
       return { success: false, message: passCheck.message || 'Kata sandi salah.' };
     }
 
-    const found = resolveMemberUser(cleanEmail);
+    const found = passCheck.user || resolveMemberUser(cleanEmail);
     if (found) {
       setUser(found);
       await persistUserSession(found);
@@ -132,7 +132,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       created_at: new Date().toISOString(),
     };
 
-    saveRegisteredCredential(newMember, pass.trim());
+    await saveRegisteredCredential(newMember, pass.trim());
     setUser(newMember);
     await persistUserSession(newMember);
     setIsLoading(false);
@@ -154,7 +154,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (!newPass || newPass.trim().length < 4) {
       return { success: false, message: 'Kata sandi baru minimal 4 karakter.' };
     }
-    const ok = resetUserPassword(cleanEmail, newPass.trim());
+    const ok = await resetUserPassword(cleanEmail, newPass.trim());
     return ok
       ? { success: true, message: 'Kata sandi berhasil diperbarui.' }
       : { success: false, message: 'Gagal memperbarui kata sandi.' };
