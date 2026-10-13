@@ -1,12 +1,11 @@
 'use client';
 
 // components/auth/EmailOtpAuthForm.tsx
-// Formulir Login & Registrasi Manual dengan Verifikasi Sandi & OTP 6 Digit via Gmail
+// Login langsung dengan Email+Sandi & Registrasi Akun Baru Wajib Verifikasi OTP 6 Digit
 
 import React, { useState } from 'react';
 import { CheckCircle2 } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
-import { validateUserPassword } from '@/lib/services/authStorageService';
 import OtpVerificationStep from './OtpVerificationStep';
 import ForgotPasswordForm from './ForgotPasswordForm';
 import AuthInputFields from './AuthInputFields';
@@ -17,7 +16,7 @@ interface EmailOtpAuthFormProps {
 }
 
 export default function EmailOtpAuthForm({ onSuccess, onTabChange }: EmailOtpAuthFormProps) {
-  const { login, register, loginWithGoogle } = useAuth();
+  const { login, register } = useAuth();
   const [activeTab, setActiveTab] = useState<'login' | 'register'>('login');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -25,7 +24,7 @@ export default function EmailOtpAuthForm({ onSuccess, onTabChange }: EmailOtpAut
   const [showPassword, setShowPassword] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
-  const [isSendingOtp, setIsSendingOtp] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [otpToken, setOtpToken] = useState<string | null>(null);
   const [isForgotPassword, setIsForgotPassword] = useState(false);
 
@@ -38,7 +37,7 @@ export default function EmailOtpAuthForm({ onSuccess, onTabChange }: EmailOtpAut
     onTabChange?.(tab);
   };
 
-  const handleRequestOtp = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMsg('');
     setSuccessMsg('');
@@ -52,18 +51,27 @@ export default function EmailOtpAuthForm({ onSuccess, onTabChange }: EmailOtpAut
     if (!cleanPass || cleanPass.length < 4) {
       return setErrorMsg('Kata sandi minimal 4 karakter.');
     }
-    if (activeTab === 'register' && !fullName.trim()) {
-      return setErrorMsg('Mohon lengkapi nama Anda.');
-    }
 
+    // 1. Masuk Akun (Login): Langsung masuk dengan Email & Password (TANPA OTP)
     if (activeTab === 'login') {
-      const passCheck = validateUserPassword(cleanEmail, cleanPass);
-      if (!passCheck.valid) {
-        return setErrorMsg(passCheck.message || 'Kata sandi tidak cocok.');
+      setIsSubmitting(true);
+      const res = await login(cleanEmail, cleanPass);
+      setIsSubmitting(false);
+      if (res.success) {
+        setSuccessMsg('Masuk akun berhasil! Mengalihkan...');
+        setTimeout(() => onSuccess(), 400);
+      } else {
+        setErrorMsg(res.message || 'Email atau kata sandi tidak cocok.');
       }
+      return;
     }
 
-    setIsSendingOtp(true);
+    // 2. Daftar Akun (Register): Wajib kirim dan verifikasi OTP 6 digit dari Gmail
+    if (!fullName.trim()) {
+      return setErrorMsg('Mohon lengkapi nama lengkap Anda.');
+    }
+
+    setIsSubmitting(true);
     try {
       const res = await fetch('/api/auth/otp', {
         method: 'POST',
@@ -71,49 +79,34 @@ export default function EmailOtpAuthForm({ onSuccess, onTabChange }: EmailOtpAut
         body: JSON.stringify({
           action: 'send',
           email: cleanEmail,
-          purpose: activeTab,
+          purpose: 'register',
         }),
       });
       const data = await res.json();
       if (!res.ok || !data.success || !data.otpToken) {
-        setErrorMsg(data.message || 'Gagal mengirim kode verifikasi.');
-        setIsSendingOtp(false);
+        setErrorMsg(data.message || 'Gagal mengirim kode verifikasi ke email.');
+        setIsSubmitting(false);
         return;
       }
       setOtpToken(data.otpToken);
     } catch {
       setErrorMsg('Gagal menghubungi layanan pengiriman email OTP.');
     } finally {
-      setIsSendingOtp(false);
+      setIsSubmitting(false);
     }
   };
 
-  const handleOtpVerified = async () => {
+  const handleRegisterOtpVerified = async () => {
     const cleanEmail = email.trim().toLowerCase();
     const cleanPass = password.trim();
 
-    if (activeTab === 'register') {
-      const res = await register(cleanEmail, cleanPass, fullName.trim());
-      if (res.success) {
-        setSuccessMsg('Pendaftaran akun berhasil!');
-        setTimeout(() => onSuccess(), 400);
-      } else {
-        setErrorMsg(res.message || 'Gagal mendaftar akun.');
-      }
-      return;
-    }
-
-    const res = await login(cleanEmail, cleanPass);
+    const res = await register(cleanEmail, cleanPass, fullName.trim());
     if (res.success) {
-      setSuccessMsg('Verifikasi berhasil! Mengalihkan ke akun Anda...');
+      setSuccessMsg('Pendaftaran akun berhasil! Mengalihkan...');
       setTimeout(() => onSuccess(), 400);
-      return;
+    } else {
+      setErrorMsg(res.message || 'Gagal mendaftar akun.');
     }
-
-    const fallbackName = cleanEmail.split('@')[0].replace(/[._]/g, ' ').toUpperCase();
-    await loginWithGoogle(cleanEmail, fallbackName);
-    setSuccessMsg('Verifikasi berhasil! Mengalihkan ke akun Anda...');
-    setTimeout(() => onSuccess(), 400);
   };
 
   if (isForgotPassword) {
@@ -130,8 +123,8 @@ export default function EmailOtpAuthForm({ onSuccess, onTabChange }: EmailOtpAut
       <OtpVerificationStep
         email={email.trim().toLowerCase()}
         otpToken={otpToken}
-        purpose={activeTab}
-        onVerified={handleOtpVerified}
+        purpose="register"
+        onVerified={handleRegisterOtpVerified}
         onResendSuccess={(newToken) => setOtpToken(newToken)}
         onCancel={() => setOtpToken(null)}
       />
@@ -169,7 +162,7 @@ export default function EmailOtpAuthForm({ onSuccess, onTabChange }: EmailOtpAut
         </div>
       )}
 
-      <form onSubmit={handleRequestOtp} className="space-y-3">
+      <form onSubmit={handleSubmit} className="space-y-3">
         <AuthInputFields
           activeTab={activeTab}
           fullName={fullName}
@@ -189,11 +182,11 @@ export default function EmailOtpAuthForm({ onSuccess, onTabChange }: EmailOtpAut
 
         <button
           type="submit"
-          disabled={isSendingOtp}
+          disabled={isSubmitting}
           className="w-full py-2.5 bg-black hover:bg-zinc-800 text-white text-xs font-black uppercase tracking-wider transition-colors disabled:opacity-50 cursor-pointer"
         >
-          {isSendingOtp
-            ? 'Memverifikasi...'
+          {isSubmitting
+            ? 'Memproses...'
             : activeTab === 'login'
             ? 'Masuk'
             : 'Daftar Akun'}
