@@ -8,8 +8,8 @@ const SMTP_USER =
   rawSmtpUser && rawSmtpUser !== 'thn071205@gmail.com' ? rawSmtpUser : 'kimyeka24245@gmail.com';
 const SMTP_PASS = (process.env.GMAIL_SMTP_APP_PASSWORD || 'iazbigdjfimtgfsf').replace(/\s+/g, '');
 
-// Menggunakan nama asli profil Google ("Kimy") agar tidak dianggap spoofing korporat oleh filter gsmtp
-const SENDER_DISPLAY = 'Kimy (UrbanStyle)';
+// Nama pengirim resmi yang sudah sinkron dengan profil akun Google
+const SENDER_DISPLAY = process.env.GMAIL_SENDER_NAME || 'UrbanStyle LifeWear';
 
 function createTransporter() {
   return nodemailer.createTransport({
