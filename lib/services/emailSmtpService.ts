@@ -83,26 +83,27 @@ export async function sendOrderNotificationEmail(
 
   const html = `<div dir="ltr" style="font-family: Arial, Helvetica, sans-serif; font-size: 14px; color: #222222; line-height: 1.6;">
   <p>Halo ${payload.customerName},</p>
-  <p>Terima kasih sudah memesan di UrbanStyle. Berikut catatan pesanan Anda:</p>
+  <p>Pembayaran pesanan Anda telah <b>berhasil kami terima (LUNAS)</b>. Berikut adalah ringkasan faktur transaksi resmi Anda:</p>
   <p>
     Nomor Pesanan: <b>${payload.orderNumber}</b><br>
+    Status Pembayaran: <b style="color: #16a34a;">LUNAS</b><br>
     Item: ${payload.itemsSummary}<br>
-    Pembayaran: ${payload.paymentMethod}<br>
+    Metode Pembayaran: ${payload.paymentMethod}<br>
     Total: <b>${formattedTotal}</b>
     ${payload.shippingAddress ? `<br>Alamat Tujuan: ${payload.shippingAddress}` : ''}
   </p>
-  <p>Pesanan Anda sedang kami proses.</p>
-  <p>Salam,<br>Kimy — UrbanStyle</p>
+  <p>Pesanan Anda saat ini sedang dikemas oleh tim logistik kami.</p>
+  <p>Salam,<br>UrbanStyle LifeWear</p>
 </div>`;
 
-  const text = `Halo ${payload.customerName},\n\nTerima kasih sudah memesan di UrbanStyle. Berikut catatan pesanan Anda:\n\nNomor Pesanan: ${payload.orderNumber}\nItem: ${payload.itemsSummary}\nPembayaran: ${payload.paymentMethod}\nTotal: ${formattedTotal}${payload.shippingAddress ? `\nAlamat Tujuan: ${payload.shippingAddress}` : ''}\n\nPesanan Anda sedang kami proses.\n\nSalam,\nKimy — UrbanStyle`;
+  const text = `Halo ${payload.customerName},\n\nPembayaran pesanan Anda telah berhasil kami terima (LUNAS). Berikut adalah ringkasan faktur transaksi resmi Anda:\n\nNomor Pesanan: ${payload.orderNumber}\nStatus Pembayaran: LUNAS\nItem: ${payload.itemsSummary}\nMetode Pembayaran: ${payload.paymentMethod}\nTotal: ${formattedTotal}${payload.shippingAddress ? `\nAlamat Tujuan: ${payload.shippingAddress}` : ''}\n\nPesanan Anda saat ini sedang dikemas oleh tim logistik kami.\n\nSalam,\nUrbanStyle LifeWear`;
 
   const transporter = createTransporter();
   try {
     const info = await transporter.sendMail({
       from: `"${SENDER_DISPLAY}" <${SMTP_USER}>`,
       to: cleanTo,
-      subject: `Catatan pesanan UrbanStyle ${payload.orderNumber}`,
+      subject: `Pembayaran Berhasil - Faktur Pesanan UrbanStyle #${payload.orderNumber}`,
       text,
       html,
     });

@@ -62,6 +62,7 @@ export const dataStore = {
   // 5. Transaksi TPS & Pesanan
   createOrder: (payload: {
     user_id?: string;
+    customer_email?: string;
     customer_name: string;
     customer_phone: string;
     customer_address: string;
@@ -77,6 +78,7 @@ export const dataStore = {
   getOrderByNumber: (orderNumber: string) => orderService.getOrderByNumber(orderNumber),
   updateOrderStatus: (orderNumber: string, status: OrderStatus, trackingNumber?: string) => 
     orderService.updateOrderStatus(orderNumber, status, trackingNumber),
+  markInvoiceEmailSent: (orderNumber: string) => orderService.markInvoiceEmailSent(orderNumber),
 
   // 6. Pelacakan Logistik
   getOrderTracking: (orderNumber: string) => trackingService.getOrderTracking(orderNumber),

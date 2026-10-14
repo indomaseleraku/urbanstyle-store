@@ -3,7 +3,8 @@
 
 import React from 'react';
 import { CartItem, Order } from '@/lib/types';
-import { X, ArrowRight } from 'lucide-react';
+import { X, ArrowRight, Lock } from 'lucide-react';
+import { useAuth } from '@/lib/auth-context';
 import { COURIERS, FREE_SHIPPING_THRESHOLD } from './CartDrawer';
 import { useCheckoutForm } from '@/lib/hooks/useCheckoutForm';
 import { CheckoutCustomerFields } from './checkout/CheckoutCustomerFields';
@@ -40,6 +41,7 @@ export default function CheckoutModal({
   onConfirmOrder,
   onOrderSuccess,
 }: CheckoutModalProps) {
+  const { user, openAuthModal } = useAuth();
   const subtotal = items.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
   const isFreeShipping = subtotal >= FREE_SHIPPING_THRESHOLD;
   const courierObj = COURIERS.find((c) => c.name === selectedCourier) || COURIERS[0];
@@ -78,7 +80,40 @@ export default function CheckoutModal({
 
         {/* Content Body */}
         <div className="p-5 sm:p-6 max-h-[85vh] overflow-y-auto">
-          {!form.createdOrder ? (
+          {!user ? (
+            <div className="text-center py-8 px-4 space-y-4">
+              <div className="w-12 h-12 bg-red-50 text-[#E60012] flex items-center justify-center mx-auto border border-red-200">
+                <Lock size={22} />
+              </div>
+              <div className="space-y-1">
+                <h3 className="text-sm sm:text-base font-black uppercase text-zinc-900 tracking-tight">
+                  Wajib Masuk / Daftar Akun
+                </h3>
+                <p className="text-xs text-zinc-500 max-w-sm mx-auto leading-relaxed">
+                  Untuk keamanan transaksi dan penerbitan faktur digital resmi, Anda wajib masuk atau mendaftar akun sebelum melanjutkan pesanan.
+                </p>
+              </div>
+              <div className="flex flex-col gap-2 max-w-xs mx-auto pt-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    onClose();
+                    openAuthModal();
+                  }}
+                  className="w-full py-3 bg-black hover:bg-zinc-800 text-white text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer"
+                >
+                  Masuk / Daftar Akun Sekarang →
+                </button>
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className="w-full py-2.5 border border-zinc-300 text-zinc-700 text-xs font-bold uppercase tracking-wider hover:bg-zinc-50 transition-colors cursor-pointer"
+                >
+                  Kembali ke Keranjang
+                </button>
+              </div>
+            </div>
+          ) : !form.createdOrder ? (
             <form onSubmit={form.handleCheckout} className="space-y-4">
               {form.errorMsg && (
                 <div className="p-3 bg-red-50 border border-red-200 text-red-700 text-xs font-semibold rounded-none">

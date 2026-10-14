@@ -2,6 +2,8 @@
 // Real-time Status & Autonomous Settlement API
 import { NextResponse } from 'next/server';
 import { settlementService } from '@/lib/services/settlementService';
+import { dataStore } from '@/lib/store';
+import { sendOrderNotificationEmail } from '@/lib/services/emailSmtpService';
 
 export async function GET(
   request: Request,
@@ -67,6 +69,37 @@ export async function POST(
         { success: false, message: `Gagal memperbarui status pesanan #${orderNumber}.` },
         { status: 400 }
       );
+    }
+
+    // Trigger otomatis pengiriman email faktur lunas
+    try {
+      const order = await dataStore.getOrderByNumber(orderNumber);
+      if (order && !order.invoice_email_sent) {
+        let toEmail = (order.customer_email || '').trim().toLowerCase();
+        if (!toEmail && order.user_id) {
+          const profile = await dataStore.getUserProfile(order.user_id);
+          if (profile?.email) toEmail = profile.email.trim().toLowerCase();
+        }
+        if (toEmail && toEmail.includes('@')) {
+          const itemsSummary = order.items && order.items.length > 0
+            ? order.items.map(it => `${it.product_name} (${it.selected_size}, ${it.selected_color}) x${it.quantity}`).join(', ')
+            : 'Koleksi Busana UrbanStyle LifeWear';
+
+          sendOrderNotificationEmail({
+            toEmail,
+            customerName: order.customer_name || 'Pelanggan UrbanStyle',
+            orderNumber: order.order_number,
+            totalAmount: Number(order.total_amount),
+            paymentMethod: order.payment_method || 'QRIS / Transfer',
+            itemsSummary,
+            shippingAddress: order.customer_address,
+          }).then(res => {
+            if (res.sent) dataStore.markInvoiceEmailSent(orderNumber);
+          }).catch(e => console.warn('Gagal kirim email settlement:', e));
+        }
+      }
+    } catch (e) {
+      console.warn('Settlement email error:', e);
     }
 
     return NextResponse.json({

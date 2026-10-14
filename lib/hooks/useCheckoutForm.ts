@@ -12,6 +12,7 @@ interface UseCheckoutFormParams {
   subtotal: number;
   onConfirmOrder: (payload: {
     user_id?: string;
+    customer_email?: string;
     customer_name: string;
     customer_phone: string;
     customer_address: string;
@@ -102,6 +103,10 @@ export function useCheckoutForm({
 
   const handleCheckout = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!user) {
+      setErrorMsg('Anda harus masuk atau mendaftar akun terlebih dahulu untuk melakukan pemesanan.');
+      return;
+    }
     if (!name.trim() || !phone.trim() || !address.trim()) {
       setErrorMsg('Mohon lengkapi Nama, No. WhatsApp, dan Alamat Pengiriman.');
       return;
@@ -111,7 +116,8 @@ export function useCheckoutForm({
 
     try {
       const res = await onConfirmOrder({
-        user_id: user?.id,
+        user_id: user.id,
+        customer_email: user.email,
         customer_name: name,
         customer_phone: phone,
         customer_address: address,
@@ -126,20 +132,7 @@ export function useCheckoutForm({
       if (res.success && res.order) {
         setCreatedOrder(res.order);
         onOrderSuccess();
-        const targetEmail = user?.email || 'thn071205@gmail.com';
-        fetch('/api/notifications/email', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            toEmail: targetEmail,
-            customerName: name,
-            orderNumber: res.order.id,
-            totalAmount: res.order.total_amount,
-            paymentMethod: paymentMethod === 'Bank Transfer' ? `Bank Transfer (${selectedBank})` : paymentMethod,
-            itemsSummary: `${res.order.items?.length || 1} produk pakaian UrbanStyle LifeWear`,
-            shippingAddress: address,
-          }),
-        }).catch(() => {});
+        // Catatan: Notifikasi faktur email HANYA dikirim jika pesanan sudah berstatus 'Dibayar' / Lunas
       } else {
         setErrorMsg(res.message || 'Terjadi kesalahan saat memproses pesanan.');
       }

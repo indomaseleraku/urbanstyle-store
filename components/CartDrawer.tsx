@@ -5,7 +5,8 @@ import React from 'react';
 import { CartItem } from '@/lib/types';
 import CartDrawerItem from '@/components/cart/CartDrawerItem';
 import CartReservationTimer from '@/components/cart/CartReservationTimer';
-import { X, ArrowRight, Truck, ShoppingBag } from 'lucide-react';
+import { X, ArrowRight, Truck, ShoppingBag, Lock } from 'lucide-react';
+import { useAuth } from '@/lib/auth-context';
 
 interface CartDrawerProps {
   isOpen: boolean;
@@ -36,6 +37,7 @@ export default function CartDrawer({
   selectedCourier,
   onSelectCourier,
 }: CartDrawerProps) {
+  const { user, openAuthModal } = useAuth();
   if (!isOpen) return null;
 
   const subtotal = items.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
@@ -185,12 +187,33 @@ export default function CartDrawer({
               </div>
 
               {/* Proceed to Checkout CTA */}
-              <button
-                onClick={onOpenCheckout}
-                className="w-full py-4 bg-[#111111] hover:bg-[#E60012] text-white text-xs sm:text-sm font-bold uppercase tracking-wider transition-colors flex items-center justify-center gap-2 rounded-none shadow-sm min-h-[48px]"
-              >
-                <span>LANJUT KE PEMBAYARAN →</span>
-              </button>
+              {!user ? (
+                <div className="space-y-2">
+                  <div className="p-2.5 bg-zinc-50 border border-zinc-200 text-xs text-zinc-600 flex items-start gap-2">
+                    <Lock size={14} className="text-[#E60012] shrink-0 mt-0.5" />
+                    <p className="leading-tight">
+                      Anda belum masuk. Silakan <strong>Masuk atau Daftar Akun</strong> untuk memesan.
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => {
+                      onClose();
+                      openAuthModal();
+                    }}
+                    className="w-full py-3.5 bg-[#111111] hover:bg-[#E60012] text-white text-xs font-bold uppercase tracking-wider transition-colors flex items-center justify-center gap-2 rounded-none shadow-sm cursor-pointer"
+                  >
+                    <Lock size={14} />
+                    <span>MASUK / DAFTAR AKUN UNTUK MEMESAN</span>
+                  </button>
+                </div>
+              ) : (
+                <button
+                  onClick={onOpenCheckout}
+                  className="w-full py-4 bg-[#111111] hover:bg-[#E60012] text-white text-xs sm:text-sm font-bold uppercase tracking-wider transition-colors flex items-center justify-center gap-2 rounded-none shadow-sm min-h-[48px] cursor-pointer"
+                >
+                  <span>LANJUT KE PEMBAYARAN →</span>
+                </button>
+              )}
 
             </div>
           )}

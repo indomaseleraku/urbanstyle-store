@@ -15,18 +15,12 @@ export const orderService = {
     if (isSupabaseConfigured && supabase) {
       try {
         let q = supabase.from('orders').select('*, order_items(*)').order('id', { ascending: false });
-        if (userId) {
-          q = q.eq('user_id', userId);
-        }
+        if (userId) q = q.eq('user_id', userId);
         const { data, error } = await q;
         if (!error && data && data.length > 0) {
-          const dbOrders = data.map((d: any) => ({
-            ...d,
-            items: d.order_items || [],
-          }));
+          const dbOrders = data.map((d: any) => ({ ...d, items: d.order_items || [] }));
           const dbNumbers = new Set(data.map((d: any) => d.order_number));
-          const localOnly = localOrders.filter(o => !dbNumbers.has(o.order_number));
-          list = [...dbOrders, ...localOnly];
+          list = [...dbOrders, ...localOrders.filter(o => !dbNumbers.has(o.order_number))];
         }
       } catch (err) {
         console.warn('Supabase fetch orders fallback to local:', err);
@@ -66,6 +60,7 @@ export const orderService = {
 
   async createOrder(orderPayload: {
     user_id?: string;
+    customer_email?: string;
     customer_name: string;
     customer_phone: string;
     customer_address: string;
@@ -101,17 +96,11 @@ export const orderService = {
     const cachedProds = productService._getCachedRawProducts();
     for (const item of orderPayload.cart_items) {
       const currentProduct = localProds.find(p => p.id === item.product.id);
-      if (currentProduct) {
-        currentProduct.stock -= item.quantity;
-      }
-      if (item.product) {
-        item.product.stock = currentProduct ? currentProduct.stock : (item.product.stock - item.quantity);
-      }
-      if (cachedProds) {
+      if (currentProduct) currentProduct.stock -= item.quantity;
+      if (item.product) item.product.stock = currentProduct ? currentProduct.stock : (item.product.stock - item.quantity);
+      if (cachedProds && currentProduct) {
         const cachedP = cachedProds.find(p => p.id === item.product.id);
-        if (cachedP && currentProduct) {
-          cachedP.stock = currentProduct.stock;
-        }
+        if (cachedP) cachedP.stock = currentProduct.stock;
       }
     }
 
@@ -160,6 +149,7 @@ export const orderService = {
     const newOrder: Order = {
       id: maxId + 1,
       user_id: orderPayload.user_id,
+      customer_email: orderPayload.customer_email,
       order_number: orderNumber,
       customer_name: orderPayload.customer_name,
       customer_phone: orderPayload.customer_phone,
@@ -183,18 +173,13 @@ export const orderService = {
     if (isSupabaseConfigured && supabase) {
       try {
         const { data: orderData, error: orderErr } = await supabase.from('orders').insert({
-          user_id: newOrder.user_id,
-          order_number: newOrder.order_number,
-          customer_name: newOrder.customer_name,
-          customer_phone: newOrder.customer_phone,
-          customer_address: newOrder.customer_address,
-          shipping_courier: newOrder.shipping_courier,
-          shipping_cost: newOrder.shipping_cost,
-          discount_amount: newOrder.discount_amount,
-          payment_method: newOrder.payment_method,
-          bank_name: newOrder.bank_name,
-          unique_code: newOrder.unique_code,
-          total_amount: newOrder.total_amount,
+          user_id: newOrder.user_id, order_number: newOrder.order_number,
+          customer_email: newOrder.customer_email,
+          customer_name: newOrder.customer_name, customer_phone: newOrder.customer_phone,
+          customer_address: newOrder.customer_address, shipping_courier: newOrder.shipping_courier,
+          shipping_cost: newOrder.shipping_cost, discount_amount: newOrder.discount_amount,
+          payment_method: newOrder.payment_method, bank_name: newOrder.bank_name,
+          unique_code: newOrder.unique_code, total_amount: newOrder.total_amount,
           status: newOrder.status,
         }).select().single();
 
@@ -242,6 +227,19 @@ export const orderService = {
         await supabase.from('orders').update(updatePayload).eq('order_number', orderNumber);
       } catch (err) {
         console.warn('Update order status cloud error:', err);
+      }
+    }
+    return true;
+  },
+
+  async markInvoiceEmailSent(orderNumber: string): Promise<boolean> {
+    const o = localOrders.find(item => item.order_number === orderNumber);
+    if (o) o.invoice_email_sent = true;
+    if (isSupabaseConfigured && supabase) {
+      try {
+        await supabase.from('orders').update({ invoice_email_sent: true }).eq('order_number', orderNumber);
+      } catch (err) {
+        console.warn('Update invoice_email_sent error:', err);
       }
     }
     return true;

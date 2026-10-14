@@ -49,7 +49,15 @@ export default function HomeModalsAndDrawers({
         isOpen={Boolean(s.selectedProductForDetail)}
         onClose={() => s.setSelectedProductForDetail(null)}
         onAddToCart={(p, size, color, qty) => s.handleAddToCart(p, size, color, qty, true)}
-        onInstantBuy={s.handleInstantBuy}
+        onInstantBuy={(p, size, color, qty) => {
+          if (!user) {
+            s.handleAddToCart(p, size, color, qty, false);
+            s.setSelectedProductForDetail(null);
+            openAuthModal();
+            return;
+          }
+          s.handleInstantBuy(p, size, color, qty);
+        }}
         isWishlisted={
           s.selectedProductForDetail ? s.wishlist.some((w) => w.id === s.selectedProductForDetail?.id) : false
         }
@@ -87,6 +95,11 @@ export default function HomeModalsAndDrawers({
         selectedCourier={s.selectedCourier}
         onSelectCourier={s.setSelectedCourier}
         onOpenCheckout={() => {
+          if (!user) {
+            s.setIsCartOpen(false);
+            openAuthModal();
+            return;
+          }
           s.setIsCartOpen(false);
           s.setIsCheckoutOpen(true);
         }}

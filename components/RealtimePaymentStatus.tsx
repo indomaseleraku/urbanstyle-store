@@ -95,6 +95,13 @@ export function RealtimePaymentStatus({
             onStatusChanged(newStatus);
           }
 
+          // Trigger faktur email pelunasan resmi
+          fetch('/api/notifications/email', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ orderNumber }),
+          }).catch(() => {});
+
           // Otomatis refresh window agar nota ter-update total jika berada di invoice
           setTimeout(() => {
             if (typeof window !== 'undefined' && window.location.pathname.includes('/invoice/')) {

@@ -152,6 +152,7 @@ export interface TrackingEvent {
 export interface Order {
   id: number;
   user_id?: string;
+  customer_email?: string;
   order_number: string;
   customer_name: string;
   customer_phone: string;
@@ -169,6 +170,7 @@ export interface Order {
   status: OrderStatus;
   created_at: string;
   items: OrderItem[];
+  invoice_email_sent?: boolean;
 }
 
 export const BANK_ACCOUNTS: Record<string, { bankName: string; accountNumber: string; holderName: string }> = {
