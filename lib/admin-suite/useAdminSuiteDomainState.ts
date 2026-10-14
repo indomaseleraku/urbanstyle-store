@@ -1,7 +1,7 @@
 // lib/admin-suite/useAdminSuiteDomainState.ts
-// Domain State & Action Handlers untuk UrbanStyle Commerce OS
+// Domain State & Supabase Realtime Sync untuk UrbanStyle Operations Suite
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { 
   Role, Product, Order, OrderStatus, Employee, InboundShipment, 
   ExpenseItem, PromoVoucher, ActivityLog, StockAdjustment 
@@ -10,57 +10,24 @@ import {
   INITIAL_PRODUCTS, INITIAL_ORDERS, INITIAL_EMPLOYEES, 
   INITIAL_INBOUND, INITIAL_EXPENSES, INITIAL_PROMOS, INITIAL_LOGS 
 } from './initialData';
+import { adminSupabaseService } from './adminSupabaseService';
+import { adminSupabaseMutations } from './adminSupabaseMutations';
 
 export function useAdminSuiteDomainState(role: Role) {
-  const [products, setProducts] = useState<Product[]>(() => {
-    if (typeof window === 'undefined') return INITIAL_PRODUCTS;
-    const saved = localStorage.getItem('urban_products');
-    return saved ? JSON.parse(saved) : INITIAL_PRODUCTS;
-  });
-
-  const [orders, setOrders] = useState<Order[]>(() => {
-    if (typeof window === 'undefined') return INITIAL_ORDERS;
-    const saved = localStorage.getItem('urban_orders');
-    return saved ? JSON.parse(saved) : INITIAL_ORDERS;
-  });
-
-  const [employees, setEmployees] = useState<Employee[]>(() => {
-    if (typeof window === 'undefined') return INITIAL_EMPLOYEES;
-    const saved = localStorage.getItem('urban_employees');
-    return saved ? JSON.parse(saved) : INITIAL_EMPLOYEES;
-  });
-
-  const [inboundShipments, setInboundShipments] = useState<InboundShipment[]>(() => {
-    if (typeof window === 'undefined') return INITIAL_INBOUND;
-    const saved = localStorage.getItem('urban_inbound');
-    return saved ? JSON.parse(saved) : INITIAL_INBOUND;
-  });
-
-  const [expenses, setExpenses] = useState<ExpenseItem[]>(() => {
-    if (typeof window === 'undefined') return INITIAL_EXPENSES;
-    const saved = localStorage.getItem('urban_expenses');
-    return saved ? JSON.parse(saved) : INITIAL_EXPENSES;
-  });
-
-  const [promos, setPromos] = useState<PromoVoucher[]>(() => {
-    if (typeof window === 'undefined') return INITIAL_PROMOS;
-    const saved = localStorage.getItem('urban_promos');
-    return saved ? JSON.parse(saved) : INITIAL_PROMOS;
-  });
-
-  const [activityLogs, setActivityLogs] = useState<ActivityLog[]>(() => {
-    if (typeof window === 'undefined') return INITIAL_LOGS;
-    const saved = localStorage.getItem('urban_logs');
-    return saved ? JSON.parse(saved) : INITIAL_LOGS;
-  });
-
+  const [products, setProducts] = useState<Product[]>(INITIAL_PRODUCTS);
+  const [orders, setOrders] = useState<Order[]>(INITIAL_ORDERS);
+  const [employees, setEmployees] = useState<Employee[]>(INITIAL_EMPLOYEES);
+  const [inboundShipments, setInboundShipments] = useState<InboundShipment[]>(INITIAL_INBOUND);
+  const [expenses, setExpenses] = useState<ExpenseItem[]>(INITIAL_EXPENSES);
+  const [promos, setPromos] = useState<PromoVoucher[]>(INITIAL_PROMOS);
+  const [activityLogs, setActivityLogs] = useState<ActivityLog[]>(INITIAL_LOGS);
   const [stockAdjustments, setStockAdjustments] = useState<StockAdjustment[]>([
     {
       id: 'adj-01',
-      sku: 'URBAN-CHN-03',
-      productName: 'Celana Panjang Smart Ankle Pants',
-      previousStock: 24,
-      adjustedStock: 22,
+      sku: 'UB-0004',
+      productName: 'Celana Ankle Chino Katun Ultra Stretch Rapi',
+      previousStock: 28,
+      adjustedStock: 26,
       diff: -2,
       reason: 'Barang Rusak',
       date: '14 Okt 2026',
@@ -68,28 +35,35 @@ export function useAdminSuiteDomainState(role: Role) {
     }
   ]);
 
-  // Sync state ke localStorage
+  // Sync dari Supabase saat awal mount
   useEffect(() => {
-    if (typeof window === 'undefined') return;
-    localStorage.setItem('urban_products', JSON.stringify(products));
-  }, [products]);
+    let active = true;
+    async function syncFromCloud() {
+      const [p, o, e, pr, inb, exp, stkA, l] = await Promise.all([
+        adminSupabaseService.getProducts(),
+        adminSupabaseService.getOrders(),
+        adminSupabaseService.getEmployees(),
+        adminSupabaseService.getPromos(),
+        adminSupabaseService.getInbound(),
+        adminSupabaseService.getExpenses(),
+        adminSupabaseService.getStockAdjustments(),
+        adminSupabaseService.getActivityLogs()
+      ]);
+      if (!active) return;
+      if (p && p.length > 0) setProducts(p);
+      if (o && o.length > 0) setOrders(o);
+      if (e && e.length > 0) setEmployees(e);
+      if (pr && pr.length > 0) setPromos(pr);
+      if (inb && inb.length > 0) setInboundShipments(inb);
+      if (exp && exp.length > 0) setExpenses(exp);
+      if (stkA && stkA.length > 0) setStockAdjustments(stkA);
+      if (l && l.length > 0) setActivityLogs(l);
+    }
+    syncFromCloud();
+    return () => { active = false; };
+  }, []);
 
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    localStorage.setItem('urban_orders', JSON.stringify(orders));
-  }, [orders]);
-
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    localStorage.setItem('urban_employees', JSON.stringify(employees));
-  }, [employees]);
-
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    localStorage.setItem('urban_expenses', JSON.stringify(expenses));
-  }, [expenses]);
-
-  const addLog = (action: string, details: string, category: ActivityLog['category']) => {
+  const addLog = useCallback((action: string, details: string, category: ActivityLog['category']) => {
     const newLog: ActivityLog = {
       id: `log-${Date.now()}`,
       timestamp: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) + ' WIB',
@@ -100,22 +74,26 @@ export function useAdminSuiteDomainState(role: Role) {
       category
     };
     setActivityLogs(prev => [newLog, ...prev]);
-  };
+    adminSupabaseMutations.addActivityLog(newLog);
+  }, [role]);
 
   const addProduct = (prodData: Omit<Product, 'id' | 'salesCount' | 'rating'>) => {
     const newProd: Product = { ...prodData, id: `prod-${Date.now()}`, salesCount: 0, rating: 5.0 };
     setProducts(prev => [newProd, ...prev]);
+    adminSupabaseMutations.addProduct(newProd);
     addLog('Tambah Produk Baru', `Menambahkan "${newProd.name}" (${newProd.sku}) ke katalog`, 'inventory');
   };
 
   const updateProduct = (id: string, updates: Partial<Product>) => {
     setProducts(prev => prev.map(p => (p.id === id ? { ...p, ...updates } : p)));
+    adminSupabaseMutations.updateProduct(id, updates);
     addLog('Update Produk', `Memperbarui data produk ID ${id}`, 'inventory');
   };
 
   const deleteProduct = (id: string) => {
     const prod = products.find(p => p.id === id);
     setProducts(prev => prev.filter(p => p.id !== id));
+    adminSupabaseMutations.deleteProduct(id);
     if (prod) addLog('Hapus Produk', `Menghapus produk "${prod.name}" dari katalog`, 'inventory');
   };
 
@@ -138,12 +116,16 @@ export function useAdminSuiteDomainState(role: Role) {
       adjustedBy: role === 'warehouse_admin' ? 'Staf Gudang' : 'Superadmin'
     };
     setStockAdjustments(prev => [adj, ...prev]);
+    adminSupabaseMutations.adjustStock(sku, diff, reason, adj.adjustedBy, prevStock, newStock, product.name);
     addLog('Penyesuaian Stok', `SKU ${sku} diubah ${diff > 0 ? `+${diff}` : diff} unit (${reason})`, 'inventory');
   };
 
   const updateOrderStatus = (orderId: string, status: OrderStatus, trackingNumber?: string) => {
+    const targetOrder = orders.find(o => o.id === orderId || o.orderNumber === orderId);
+    const orderNum = targetOrder ? targetOrder.orderNumber : orderId;
+
     setOrders(prev => prev.map(o => {
-      if (o.id === orderId) {
+      if (o.id === orderId || o.orderNumber === orderId) {
         return {
           ...o,
           status,
@@ -153,7 +135,8 @@ export function useAdminSuiteDomainState(role: Role) {
       }
       return o;
     }));
-    addLog('Update Status Pesanan', `Pesanan ${orderId} diubah status menjadi "${status}"`, 'order');
+    adminSupabaseMutations.updateOrderStatus(orderNum, status, trackingNumber);
+    addLog('Update Status Pesanan', `Pesanan ${orderNum} diubah status menjadi "${status}"`, 'order');
   };
 
   const createOrder = (newOrderData: Partial<Order>): Order => {
@@ -182,7 +165,9 @@ export function useAdminSuiteDomainState(role: Role) {
       newOrder.items.forEach(item => {
         setProducts(prev => prev.map(p => {
           if (p.id === item.productId || p.sku === item.sku) {
-            return { ...p, stock: Math.max(0, p.stock - item.quantity), salesCount: p.salesCount + item.quantity };
+            const nextStock = Math.max(0, p.stock - item.quantity);
+            adminSupabaseMutations.updateProduct(p.id, { stock: nextStock });
+            return { ...p, stock: nextStock, salesCount: p.salesCount + item.quantity };
           }
           return p;
         }));
@@ -190,18 +175,21 @@ export function useAdminSuiteDomainState(role: Role) {
     }
 
     setOrders(prev => [newOrder, ...prev]);
+    adminSupabaseMutations.createOrder(newOrder);
     addLog('Pesanan Dibuat', `Pesanan ${newOrder.orderNumber} berhasil dibuat melalui etalase`, 'order');
     return newOrder;
   };
 
   const addEmployee = (empData: Omit<Employee, 'id' | 'lastLogin'>) => {
-    const newEmp: Employee = { ...empData, id: `emp-${Date.now()}`, lastLogin: 'Baru dibuat' };
+    const newEmp: Employee = { ...empData, id: `stf_${Date.now().toString().slice(-4)}`, lastLogin: 'Baru dibuat' };
     setEmployees(prev => [newEmp, ...prev]);
+    adminSupabaseMutations.addEmployee(newEmp);
     addLog('Tambah Karyawan', `Menambahkan ${newEmp.name} (${newEmp.roleLabel})`, 'employee');
   };
 
   const updateEmployee = (id: string, updates: Partial<Employee>) => {
     setEmployees(prev => prev.map(e => e.id === id ? { ...e, ...updates } : e));
+    adminSupabaseMutations.updateEmployee(id, updates);
     addLog('Update Data Karyawan', `Memperbarui profil staf ID ${id}`, 'employee');
   };
 
@@ -209,6 +197,7 @@ export function useAdminSuiteDomainState(role: Role) {
     setEmployees(prev => prev.map(e => {
       if (e.id === id) {
         const nextStatus = e.status === 'active' ? 'inactive' : 'active';
+        adminSupabaseMutations.updateEmployee(id, { status: nextStatus });
         addLog('Ubah Status Akses', `Status akses ${e.name} diubah menjadi ${nextStatus}`, 'employee');
         return { ...e, status: nextStatus };
       }
@@ -220,18 +209,21 @@ export function useAdminSuiteDomainState(role: Role) {
     const shipment = inboundShipments.find(s => s.id === id);
     if (!shipment) return;
     setInboundShipments(prev => prev.map(s => s.id === id ? { ...s, status: 'received' } : s));
+    adminSupabaseMutations.updateInboundStatus(id, 'received');
     addLog('Penerimaan Gudang', `Barang masuk ${shipment.poNumber} (${shipment.totalUnits} unit) diverifikasi QC`, 'inventory');
   };
 
   const addExpense = (expData: Omit<ExpenseItem, 'id' | 'status'>) => {
     const newExp: ExpenseItem = { ...expData, id: `exp-${Date.now()}`, status: 'approved' };
     setExpenses(prev => [newExp, ...prev]);
+    adminSupabaseMutations.addExpense(newExp);
     addLog('Catatan Beban Baru', `Beban ${newExp.category} Rp ${newExp.amount.toLocaleString('id-ID')} dicatat`, 'finance');
   };
 
   const addPromo = (pData: Omit<PromoVoucher, 'id' | 'usageCount'>) => {
     const newP: PromoVoucher = { ...pData, id: `prm-${Date.now()}`, usageCount: 0 };
     setPromos(prev => [newP, ...prev]);
+    adminSupabaseMutations.addPromo(newP);
     addLog('Buat Voucher Promo', `Voucher "${newP.code}" diaktifkan`, 'order');
   };
 
