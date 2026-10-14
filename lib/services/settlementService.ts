@@ -217,7 +217,7 @@ export const settlementService = {
   },
 
   /**
-   * Simulasi instan penyelesaian pesanan oleh sistem (untuk keperluan presentasi/demo)
+   * Pelunasan langsung pesanan oleh kasir / verifikasi sistem
    */
   async simulateInstantSettle(orderNumber: string): Promise<boolean> {
     return await orderService.updateOrderStatus(orderNumber, 'Dibayar');

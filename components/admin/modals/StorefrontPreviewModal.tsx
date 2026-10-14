@@ -78,9 +78,9 @@ export const StorefrontPreviewModal: React.FC = () => {
           <div className="flex items-center gap-2">
             <ShoppingBag className="w-4 h-4 text-emerald-400" />
             <div>
-              <h2 className="text-sm font-bold tracking-tight">Simulasi Etalase Toko (Customer Checkout)</h2>
+              <h2 className="text-sm font-bold tracking-tight">Preview Etalase Toko (Customer Checkout)</h2>
               <p className="text-[11px] text-slate-400">
-                Uji coba alur transaksi pelanggan untuk melihat data mengalir ke 3 dashboard secara instan
+                Buat pesanan dari perspektif pelanggan — data langsung mengalir ke 3 dashboard operasional
               </p>
             </div>
           </div>

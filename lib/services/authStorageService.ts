@@ -17,16 +17,11 @@ interface UserCredential {
 const DEFAULT_ACCOUNT_PASSWORDS: Record<string, string[]> = {
   'member@urbanstyle.com': ['password', '123456'],
   'thn071205@gmail.com': ['password', '123456'],
-  'member': ['password', '123456'],
-  'kimy': ['password', '123456'],
   'admin@urbanstyle.com': ['admin123'],
-  'admin': ['admin123'],
-  'owner': ['admin123'],
   'gudang@urbanstyle.com': ['gudang123'],
-  'gudang': ['gudang123'],
   'kasir@urbanstyle.com': ['kasir123'],
-  'kasir': ['kasir123'],
 };
+
 
 export function loadUserSession(): UserProfile | null {
   if (typeof window === 'undefined') return null;
@@ -158,7 +153,7 @@ export async function validateUserPassword(
     };
   }
 
-  // 3. Fallback: Cek akun bawaan / demo
+  // 3. Fallback: Cek akun bawaan sistem
   if (cleanEmail in DEFAULT_ACCOUNT_PASSWORDS) {
     const allowed = DEFAULT_ACCOUNT_PASSWORDS[cleanEmail];
     if (allowed.includes(cleanPass)) {
@@ -240,22 +235,47 @@ export async function resetUserPassword(email: string, newPassword: string): Pro
   return dbSuccess;
 }
 
-export function authenticateStaff(
+export async function authenticateStaff(
   cleanEmail: string,
   pass: string
-): { success: boolean; user?: UserProfile; message?: string } {
+): Promise<{ success: boolean; user?: UserProfile; message?: string }> {
   if (!pass || pass.trim().length === 0) {
     return { success: false, message: 'Kata sandi wajib diisi untuk portal staf.' };
   }
-  let found = INITIAL_USERS.find((u) => u.email.toLowerCase() === cleanEmail);
-  if (!found && ['admin', 'owner'].includes(cleanEmail)) {
-    found = INITIAL_USERS.find((u) => u.role === 'owner' || u.role === 'admin') || INITIAL_USERS[1];
-  } else if (!found && cleanEmail === 'gudang') {
-    found = INITIAL_USERS.find((u) => u.role === 'gudang');
-  } else if (!found && cleanEmail === 'kasir') {
-    found = INITIAL_USERS.find((u) => u.role === 'kasir');
+
+  // 1. Validasi langsung ke Supabase user_credentials
+  if (isSupabaseConfigured && supabase) {
+    try {
+      const { data, error } = await supabase
+        .from('user_credentials')
+        .select('*')
+        .eq('email', cleanEmail)
+        .in('role', ['admin', 'owner', 'gudang', 'kasir'])
+        .maybeSingle();
+
+      if (!error && data) {
+        if (data.password_hash === pass.trim()) {
+          const user: UserProfile = {
+            id: data.id,
+            email: data.email,
+            full_name: data.full_name,
+            role: data.role as any,
+            staff_role: (data.role === 'admin' ? 'owner' : data.role) as any,
+            phone: data.phone || undefined,
+            preferred_size: data.preferred_size || 'M',
+            created_at: data.created_at,
+          };
+          return { success: true, user };
+        }
+        return { success: false, message: 'Kata sandi staf tidak sesuai.' };
+      }
+    } catch (err) {
+      console.warn('Supabase staff auth check error, falling back to local credentials:', err);
+    }
   }
 
+  // 2. Fallback kredensial lokal (jika offline)
+  const found = INITIAL_USERS.find((u) => u.email.toLowerCase() === cleanEmail);
   if (!found || !['admin', 'owner', 'gudang', 'kasir'].includes(found.role)) {
     return { success: false, message: 'Akses ditolak: Akun tidak terdaftar sebagai staf internal.' };
   }
@@ -269,16 +289,7 @@ export function authenticateStaff(
 }
 
 export function resolveMemberUser(cleanEmail: string): UserProfile | null {
-  let found = INITIAL_USERS.find((u) => u.email.toLowerCase() === cleanEmail);
-  if (!found && ['member', 'kimy', 'member@urbanstyle.com', 'kimy.eka@unpam.ac.id', 'thn071205@gmail.com'].includes(cleanEmail)) {
-    found = INITIAL_USERS.find((u) => u.role === 'customer') || INITIAL_USERS[0];
-  } else if (!found && (cleanEmail === 'admin' || cleanEmail.startsWith('admin@') || cleanEmail === 'owner')) {
-    found = INITIAL_USERS.find((u) => u.role === 'owner' || u.role === 'admin') || INITIAL_USERS[1];
-  } else if (!found && cleanEmail === 'gudang') {
-    found = INITIAL_USERS.find((u) => u.role === 'gudang');
-  } else if (!found && cleanEmail === 'kasir') {
-    found = INITIAL_USERS.find((u) => u.role === 'kasir');
-  }
+  const found = INITIAL_USERS.find((u) => u.email.toLowerCase() === cleanEmail);
   return found || findLocalRegisteredUser(cleanEmail);
 }
 
@@ -313,18 +324,29 @@ export async function resolveOrCreateGoogleUser(
 ): Promise<UserProfile> {
   const cleanEmail = googleEmail.toLowerCase().trim();
 
-  if (process.env.NEXT_PUBLIC_GOOGLE_OAUTH_ENABLED === 'true' && supabase && typeof window !== 'undefined') {
+  // Cek apakah akun sudah terdaftar di Supabase
+  if (isSupabaseConfigured && supabase) {
     try {
-      await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: { redirectTo: `${window.location.origin}/auth/callback` },
-      });
+      const { data } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('email', cleanEmail)
+        .maybeSingle();
+      if (data) {
+        return {
+          id: data.id,
+          email: data.email || cleanEmail,
+          full_name: data.full_name || googleName,
+          role: (data.role as any) || 'customer',
+          phone: data.phone || undefined,
+          address_line: data.address_line || undefined,
+          city: data.city || undefined,
+          postal_code: data.postal_code || undefined,
+          preferred_size: data.preferred_size || 'M',
+          created_at: data.created_at,
+        };
+      }
     } catch {}
-  }
-
-  if (cleanEmail === 'thn071205@gmail.com' || cleanEmail === 'member@urbanstyle.com') {
-    const base = INITIAL_USERS.find((u) => u.role === 'customer') || INITIAL_USERS[0];
-    return { ...base, email: cleanEmail, full_name: googleName || base.full_name };
   }
 
   const existing =
@@ -343,3 +365,4 @@ export async function resolveOrCreateGoogleUser(
   saveLocalRegisteredUser(newProfile);
   return newProfile;
 }
+

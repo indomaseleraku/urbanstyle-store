@@ -36,9 +36,6 @@ interface AuthContextType {
   loginWithGoogle: (googleEmail?: string, googleName?: string) => Promise<{ success: boolean; message?: string }>;
   resetPassword: (email: string, newPass: string) => Promise<{ success: boolean; message?: string }>;
   logout: (redirectTo?: string | unknown) => Promise<void>;
-  loginAsDemoMember: () => Promise<void>;
-  loginAsDemoAdmin: () => Promise<void>;
-  loginAsStaff: (role: StaffRole) => Promise<void>;
   updateUser: (data: Partial<UserProfile>) => Promise<void>;
 }
 
@@ -100,7 +97,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const staffLogin = async (email: string, pass: string): Promise<{ success: boolean; message?: string }> => {
     setIsLoading(true);
     const cleanEmail = email.toLowerCase().trim();
-    const result = authenticateStaff(cleanEmail, pass);
+    const result = await authenticateStaff(cleanEmail, pass);
     if (!result.success || !result.user) {
       setIsLoading(false);
       return { success: false, message: result.message || 'Akses ditolak.' };
@@ -139,7 +136,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return { success: true };
   };
 
-  const loginWithGoogle = async (googleEmail = 'thn071205@gmail.com', googleName = 'Kimy Eka Ardiansyah') => {
+  const loginWithGoogle = async (googleEmail = '', googleName = '') => {
     setIsLoading(true);
     const profile = await resolveOrCreateGoogleUser(googleEmail, googleName);
     setUser(profile);
@@ -164,26 +161,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setUser(null);
     await persistUserSession(null);
     window.location.href = typeof redirectTo === 'string' ? redirectTo : '/';
-  };
-
-  const loginAsDemoMember = async () => {
-    const member = INITIAL_USERS.find((u) => u.role === 'customer') || INITIAL_USERS[0];
-    setUser(member);
-    await persistUserSession(member);
-    setIsAuthModalOpen(false);
-  };
-
-  const loginAsDemoAdmin = async () => {
-    const admin = INITIAL_USERS.find((u) => u.role === 'owner' || u.role === 'admin') || INITIAL_USERS[1];
-    setUser(admin);
-    await persistUserSession(admin);
-    setIsAuthModalOpen(false);
-  };
-
-  const loginAsStaff = async (role: StaffRole) => {
-    const staff = INITIAL_USERS.find((u) => u.role === role || (role === 'owner' && u.role === 'admin')) || INITIAL_USERS[1];
-    setUser(staff);
-    await persistUserSession(staff);
   };
 
   const updateUser = async (data: Partial<UserProfile>) => {
@@ -214,9 +191,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         loginWithGoogle,
         resetPassword,
         logout,
-        loginAsDemoMember,
-        loginAsDemoAdmin,
-        loginAsStaff,
         updateUser,
       }}
     >

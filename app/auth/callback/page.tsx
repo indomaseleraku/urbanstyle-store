@@ -40,7 +40,11 @@ export default function AuthCallbackPage() {
           const { data: exchangeData } = await supabase.auth.exchangeCodeForSession(code);
           if (exchangeData?.session?.user) {
             const u = exchangeData.session.user;
-            const email = u.email || 'member@gmail.com';
+            if (!u.email) {
+              router.replace('/account/login?error=email_not_provided');
+              return;
+            }
+            const email = u.email;
             const fullName =
               u.user_metadata?.full_name ||
               u.user_metadata?.name ||
@@ -53,7 +57,11 @@ export default function AuthCallbackPage() {
         const { data } = await supabase.auth.getSession();
         if (data?.session?.user) {
           const u = data.session.user;
-          const email = u.email || 'member@gmail.com';
+          if (!u.email) {
+            router.replace('/account/login?error=email_not_provided');
+            return;
+          }
+          const email = u.email;
           const fullName =
             u.user_metadata?.full_name ||
             u.user_metadata?.name ||
@@ -71,12 +79,14 @@ export default function AuthCallbackPage() {
     const sub = supabase?.auth.onAuthStateChange(async (event, session) => {
       if ((event === 'SIGNED_IN' || event === 'INITIAL_SESSION') && session?.user) {
         const u = session.user;
-        const email = u.email || 'member@gmail.com';
-        const fullName =
-          u.user_metadata?.full_name ||
-          u.user_metadata?.name ||
-          email.split('@')[0].toUpperCase();
-        await finalizeUserSession(email, fullName);
+        if (u.email) {
+          const email = u.email;
+          const fullName =
+            u.user_metadata?.full_name ||
+            u.user_metadata?.name ||
+            email.split('@')[0].toUpperCase();
+          await finalizeUserSession(email, fullName);
+        }
       }
     });
 
@@ -98,7 +108,7 @@ export default function AuthCallbackPage() {
         US
       </div>
       <p className="text-xs font-mono uppercase tracking-widest text-zinc-600">
-        Memverifikasi Akun Google Anda...
+        Menyelesaikan Autentikasi...
       </p>
     </div>
   );

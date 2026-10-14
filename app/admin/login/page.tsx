@@ -8,15 +8,13 @@ import {
   Lock, ArrowRight, Eye, EyeOff, AlertCircle, ArrowLeft, Terminal
 } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
-import { StaffRole } from '@/lib/types';
-import AdminQuickDemoRoles from '@/components/admin/AdminQuickDemoRoles';
 
 function AdminLoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectTarget = searchParams.get('redirect') || '/admin';
 
-  const { isAuthenticated, isStaff, staffLogin, loginAsStaff } = useAuth();
+  const { isAuthenticated, isStaff, staffLogin } = useAuth();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -50,12 +48,6 @@ function AdminLoginForm() {
     }
   };
 
-  const handleQuickDemoRole = (role: StaffRole) => {
-    setErrorMsg('');
-    loginAsStaff(role);
-    router.push(redirectTarget);
-  };
-
   return (
     <div className="min-h-screen bg-[#09090b] text-zinc-100 font-sans flex flex-col justify-between selection:bg-[#E60012] selection:text-white">
       
@@ -64,14 +56,14 @@ function AdminLoginForm() {
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-1.5 font-mono font-black text-white">
             <span className="w-2.5 h-2.5 bg-[#E60012] inline-block animate-pulse" />
-            <span className="tracking-widest uppercase">KURO-COMMERCE</span>
+            <span className="tracking-widest uppercase">URBANSTYLE</span>
             <span className="text-[10px] bg-zinc-800 text-zinc-300 px-1.5 py-0.5 border border-zinc-700">
-              V5.2
+              Commerce OS
             </span>
           </div>
           <span className="hidden sm:inline text-zinc-600">|</span>
           <span className="hidden sm:inline text-zinc-400 font-mono text-[11px]">
-            PORTAL OTORISASI STAF SIM & DSS
+            PORTAL OTORISASI STAF OPERASIONAL
           </span>
         </div>
 
@@ -105,7 +97,7 @@ function AdminLoginForm() {
                 </span>
               </div>
               <h1 className="text-xl sm:text-2xl font-black uppercase tracking-tight text-white">
-                Masuk Konsol Staf SIM
+                Masuk Konsol Staf
               </h1>
               <p className="text-xs text-zinc-400 leading-relaxed">
                 Autentikasi terisolasi untuk Owner Toko, Staf Gudang (Logistik), dan Staf Kasir (Finance).
@@ -127,9 +119,10 @@ function AdminLoginForm() {
                   ID Email Staf
                 </label>
                 <input
-                  type="text"
+                  type="email"
                   required
-                  placeholder="admin@urbanstyle.com / gudang / kasir"
+                  autoComplete="username"
+                  placeholder="email.staf@urbanstyle.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full px-3.5 py-2.5 bg-[#18181c] border border-zinc-700 text-white text-xs font-mono focus:outline-none focus:border-[#E60012] transition-colors placeholder:text-zinc-600"
@@ -144,6 +137,7 @@ function AdminLoginForm() {
                   <input
                     type={showPassword ? 'text' : 'password'}
                     required
+                    autoComplete="current-password"
                     placeholder="••••••••"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
@@ -165,13 +159,10 @@ function AdminLoginForm() {
                 disabled={isSubmitting}
                 className="w-full py-3 bg-[#E60012] hover:bg-red-700 text-white text-xs font-black uppercase tracking-widest transition-colors flex items-center justify-center gap-2 shadow-lg disabled:opacity-50"
               >
-                <span>{isSubmitting ? 'Memvalidasi...' : 'Masuk Workspace SIM'}</span>
+                <span>{isSubmitting ? 'Memvalidasi...' : 'Masuk Workspace Operasional'}</span>
                 <ArrowRight size={14} />
               </button>
             </form>
-
-            {/* Quick 1-Click Role Simulator */}
-            <AdminQuickDemoRoles onSelectRole={handleQuickDemoRole} />
 
             {/* Security Notice Footer */}
             <div className="pt-2 flex items-center justify-center gap-2 text-[10px] text-zinc-500 font-mono">
@@ -185,7 +176,7 @@ function AdminLoginForm() {
 
       {/* Footer Info */}
       <footer className="border-t border-zinc-900 bg-[#070709] px-4 py-3 text-center text-[10px] font-mono text-zinc-600">
-        UrbanStyle Kuro-Commerce SIM Engine • Hak Cipta © 2026 UrbanStyle Tokyo. All rights reserved.
+        UrbanStyle Commerce OS • Hak Cipta © 2026 UrbanStyle Indonesia. All rights reserved.
       </footer>
 
     </div>
@@ -198,8 +189,8 @@ export default function AdminLoginPage() {
       fallback={
         <div className="min-h-screen bg-[#09090b] flex items-center justify-center text-white font-mono text-xs">
           <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 bg-[#E60012] inline-block animate-pulse" />
-            <span>Memuat Konsol Staf SIM...</span>
+            <div className="w-3.5 h-3.5 border-2 border-[#E60012] border-t-transparent rounded-full animate-spin" />
+            <span>Loading...</span>
           </div>
         </div>
       }
